@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fix Event Codes | Lumina Admin</title>
+<link rel="stylesheet" href="css/style.css">
+
+<style>
+body{
+  margin:0;
+  background:#f8fbff;
+  color:#0f172a;
+}
+
+.wrap{
+  width:min(900px, calc(100% - 24px));
+  margin:30px auto;
+}
+
+.card{
+  background:white;
+  border:1px solid rgba(148,163,184,.25);
+  border-radius:22px;
+  padding:22px;
+  box-shadow:0 12px 28px rgba(15,23,42,.08);
+}
+
+.tableWrap{
+  overflow-x:auto;
+  margin-top:16px;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  min-width:650px;
+}
+
+th,td{
+  padding:12px 10px;
+  border-bottom:1px solid rgba(148,163,184,.20);
+  text-align:left;
+  font-size:14px;
+}
+
+th{
+  color:#64748b;
+  background:#f8fbff;
+}
+
+.badge{
+  display:inline-block;
+  padding:6px 10px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:800;
+}
+
+.ok{
+  background:rgba(34,197,94,.10);
+  color:#15803d;
+  border:1px solid rgba(34,197,94,.30);
+}
+
+.no{
+  background:rgba(239,68,68,.08);
+  color:#b91c1c;
+  border:1px solid rgba(239,68,68,.25);
+}
+
+.msg{
+  margin-top:12px;
+  font-weight:800;
+}
+
+.success{color:#15803d}
+.error{color:#dc2626}
+</style>
+</head>
+
+<body>
+
+<div class="wrap">
+  <div class="card">
+    <h1 style="margin:0 0 8px;">Fix Missing Event Codes</h1>
+    <p class="muted" style="margin:0;">
+      This will add event codes only to events that do not already have one. It will not touch votes, contestants, or payments.
+    </p>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;">
+      <button class="btn" id="scanBtn">Scan Events</button>
+      <button class="btn ghost" id="fixBtn" disabled>Add Missing Codes</button>
+      <a class="btn ghost" href="admin.html">Back to Admin</a>
+    </div>
+
+    <div id="msg" class="msg"></div>
+
+    <div class="tableWrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Event</th>
+            <th>Current Code</th>
+            <th>Status</th>
+            <th>Generated Code</th>
+          </tr>
+        </thead>
+        <tbody id="list">
+          <tr><td colspan="4">Click Scan Events.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+
+import {
+  getAuth,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  doc,
+  updateDoc,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBxry90zexnjiHIjVv_QluPlPWcqfxWb6Q",
+  authDomain: "sma-model-scout.firebaseapp.com",
+  projectId: "sma-model-scout",
+  storageBucket: "sma-model-scout.firebasestorage.app",
+  messagingSenderId: "786081868543",
+  appId: "1:786081868543:web:5805a21ac5dab4c799faca",
+  measurementId: "G-10LWV01GZE"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+const ADMINS = new Set([
+  "mensahpaa00@gmail.com",
+  "techhubgraph@gmail.com"
+]);
+
+const scanBtn = document.getElementById("scanBtn");
+const fixBtn = document.getElementById("fixBtn");
+const list = document.getElementById("list");
+const msg = document.getElementById("msg");
+
+let allEvents = [];
+let missingEvents = [];
+
+function setMsg(text, type=""){
+  msg.textContent = text;
+  msg.className = "msg " + type;
+}
+
+function generateCode(existingCodes){
+  let code = "";
+
+  do{
+    code = String(Math.floor(100000 + Math.random() * 900000));
+  }while(existingCodes.has(code));
+
+  existingCodes.add(code);
+  return code;
+}
+
+async function scanEvents(){
+  setMsg("Scanning events...");
+  fixBtn.disabled = true;
+  list.innerHTML = `<tr><td colspan="4">Scanning...</td></tr>`;
+
+  try{
+    const snap = await getDocs(collection(db, "events"));
+
+    allEvents = snap.docs.map(docu => ({
+      id: docu.id,
+      ...docu.data()
+    }));
+
+    const existingCodes = new Set(
+      allEvents
+        .map(e => String(e.eventCode || "").trim())
+        .filter(Boolean)
+    );
+
+    missingEvents = allEvents
+      .filter(e => !String(e.eventCode || "").trim())
+      .map(e => ({
+        ...e,
+        generatedCode: generateCode(existingCodes)
+      }));
+
+    renderList();
+
+    if(missingEvents.length > 0){
+      fixBtn.disabled = false;
+      setMsg(`${missingEvents.length} event(s) missing event code.`, "error");
+    }else{
+      setMsg("All events already have event codes.", "success");
+    }
+
+  }catch(error){
+    console.error(error);
+    setMsg(error.message || "Could not scan events.", "error");
+  }
+}
+
+function renderList(){
+  list.innerHTML = "";
+
+  if(allEvents.length === 0){
+    list.innerHTML = `<tr><td colspan="4">No events found.</td></tr>`;
+    return;
+  }
+
+  allEvents.forEach(e => {
+    const hasCode = String(e.eventCode || "").trim();
+    const missing = missingEvents.find(x => x.id === e.id);
+
+    const tr = document.createElement("tr");
+
+    tr.innerHTML = `
+      <td>
+        <b>${e.eventName || "Untitled Event"}</b><br>
+        <span class="muted small">${e.id}</span>
+      </td>
+      <td>${hasCode || "—"}</td>
+      <td>
+        ${
+          hasCode
+            ? `<span class="badge ok">Has Code</span>`
+            : `<span class="badge no">Missing</span>`
+        }
+      </td>
+      <td>${missing ? missing.generatedCode : "—"}</td>
+    `;
+
+    list.appendChild(tr);
+  });
+}
+
+async function fixMissingCodes(){
+  if(missingEvents.length === 0){
+    setMsg("No missing event codes to fix.", "success");
+    return;
+  }
+
+  const ok = confirm(
+    `Add generated event codes to ${missingEvents.length} event(s)?\n\nVotes and contestants will not be touched.`
+  );
+
+  if(!ok) return;
+
+  try{
+    fixBtn.disabled = true;
+    scanBtn.disabled = true;
+    setMsg("Adding missing event codes...");
+
+    for(const eventItem of missingEvents){
+      await updateDoc(doc(db, "events", eventItem.id), {
+        eventCode: eventItem.generatedCode,
+        updatedAt: serverTimestamp()
+      });
+    }
+
+    setMsg("Missing event codes added successfully.", "success");
+
+    await scanEvents();
+
+  }catch(error){
+    console.error(error);
+    setMsg(error.message || "Could not add event codes.", "error");
+  }finally{
+    scanBtn.disabled = false;
+  }
+}
+
+scanBtn.addEventListener("click", scanEvents);
+fixBtn.addEventListener("click", fixMissingCodes);
+
+onAuthStateChanged(auth, (user) => {
+  if(!user || !ADMINS.has((user.email || "").toLowerCase())){
+    setMsg("Admin login required.", "error");
+    scanBtn.disabled = true;
+    fixBtn.disabled = true;
+    return;
+  }
+
+  setMsg("Admin verified. Click Scan Events.", "success");
+});
+</script>
+
+</body>
+</html>

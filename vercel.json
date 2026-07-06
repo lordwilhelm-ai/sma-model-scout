@@ -1,0 +1,6 @@
+{
+  "rewrites": [
+    { "source": "/api/ussd-menu", "destination": "/api/ussd-menu" },
+    { "source": "/api/hubtel-callback", "destination": "/api/hubtel-callback" }
+  ]
+}

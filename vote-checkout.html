@@ -1,0 +1,1272 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vote Checkout | Lumina Vote</title>
+<link rel="stylesheet" href="css/style.css">
+
+<style>
+*{
+  box-sizing:border-box;
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+  margin:0;
+  padding:0;
+  overflow-x:hidden;
+  background:#ffffff;
+  color:#111111;
+  font-family:Arial, Helvetica, sans-serif;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.smartHeader{
+  position:sticky;
+  top:0;
+  z-index:100;
+  background:#0b4bea;
+  color:#ffffff;
+}
+
+.smartHeaderInner{
+  height:76px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  padding:0 18px;
+}
+
+.headerLeft,
+.headerRight{
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+
+.menuIcon{
+  border:0;
+  background:transparent;
+  color:white;
+  cursor:pointer;
+  padding:0;
+  display:grid;
+  place-items:center;
+  font-size:31px;
+  line-height:1;
+}
+
+.logoLink{
+  color:white;
+  text-decoration:none;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-weight:900;
+  font-size:22px;
+  letter-spacing:-1px;
+}
+
+.logoMark{
+  width:38px;
+  height:38px;
+  border-radius:50%;
+  background:white;
+  display:grid;
+  place-items:center;
+  position:relative;
+  flex:0 0 auto;
+}
+
+.logoMark::after{
+  content:"";
+  width:18px;
+  height:11px;
+  border-left:6px solid #0b4bea;
+  border-bottom:6px solid #0b4bea;
+  transform:rotate(-45deg);
+  margin-top:-3px;
+}
+
+.sellBtn{
+  border:0;
+  background:#063fc9;
+  color:white;
+  padding:13px 18px;
+  border-radius:999px;
+  font-weight:800;
+  font-size:14px;
+  text-decoration:none;
+  white-space:nowrap;
+}
+
+.mobileMenu{
+  display:none;
+  padding:14px 18px 18px;
+  background:#073fd0;
+  border-top:1px solid rgba(255,255,255,.16);
+}
+
+.mobileMenu.show{
+  display:block;
+}
+
+.mobileMenu a{
+  width:100%;
+  display:flex;
+  justify-content:center;
+  text-decoration:none;
+  padding:13px;
+  border-radius:14px;
+  margin-top:8px;
+  font-weight:800;
+  background:white;
+  color:#0b4bea;
+}
+
+@media(min-width:900px){
+  .smartHeaderInner{
+    height:86px;
+    padding:0 28px;
+  }
+
+  .logoLink{
+    font-size:27px;
+  }
+
+  .logoMark{
+    width:44px;
+    height:44px;
+  }
+
+  .logoMark::after{
+    width:22px;
+    height:13px;
+    border-left-width:7px;
+    border-bottom-width:7px;
+  }
+
+  .sellBtn{
+    padding:15px 25px;
+    font-size:16px;
+  }
+
+  .menuIcon{
+    font-size:34px;
+  }
+}
+
+/* =========================
+   LAYOUT
+========================= */
+
+.checkoutPage{
+  width:min(1180px,100%);
+  margin:0 auto;
+  padding:24px 18px 60px;
+}
+
+.breadcrumb{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  color:#777;
+  font-size:14px;
+  margin-bottom:20px;
+}
+
+.breadcrumb a{
+  color:#0b4bea;
+  text-decoration:none;
+  font-weight:700;
+}
+
+.checkoutShell{
+  display:grid;
+  grid-template-columns:.85fr 1.15fr;
+  gap:22px;
+  align-items:start;
+}
+
+@media(max-width:850px){
+  .checkoutPage{
+    padding:18px 14px 40px;
+  }
+
+  .checkoutShell{
+    grid-template-columns:1fr;
+    gap:14px;
+  }
+}
+
+/* =========================
+   PHOTO CARD
+========================= */
+
+.photoCard{
+  border-radius:18px;
+  overflow:hidden;
+  background:#071321;
+  box-shadow:0 12px 28px rgba(0,0,0,.12);
+}
+
+.photoWrap{
+  position:relative;
+  height:560px;
+  background:linear-gradient(135deg,#071321,#0b4bea);
+}
+
+.contestantPhoto{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+
+.photoFallback{
+  width:100%;
+  height:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:22px;
+  color:white;
+  font-family:Georgia, "Times New Roman", serif;
+  font-size:34px;
+  line-height:1.1;
+  font-weight:900;
+}
+
+.photoOverlay{
+  position:absolute;
+  inset:0;
+  background:linear-gradient(180deg,rgba(0,0,0,.06),rgba(0,0,0,.72));
+  pointer-events:none;
+}
+
+.photoTag{
+  position:absolute;
+  left:16px;
+  top:16px;
+  background:rgba(0,0,0,.70);
+  color:white;
+  border:1px solid rgba(255,255,255,.20);
+  border-radius:999px;
+  padding:9px 13px;
+  font-size:12px;
+  font-weight:900;
+  backdrop-filter:blur(10px);
+}
+
+.photoBottom{
+  position:absolute;
+  left:16px;
+  right:16px;
+  bottom:16px;
+  color:white;
+}
+
+.photoBottom span{
+  display:block;
+  color:#d7d7d7;
+  font-size:13px;
+  margin-bottom:7px;
+}
+
+.photoBottom b{
+  display:block;
+  font-family:Georgia, "Times New Roman", serif;
+  font-size:30px;
+  line-height:1.1;
+}
+
+@media(max-width:850px){
+  .photoWrap{
+    height:320px;
+  }
+}
+
+@media(max-width:600px){
+  .photoWrap{
+    height:260px;
+  }
+
+  .photoBottom b{
+    font-size:24px;
+  }
+}
+
+/* =========================
+   DETAILS CARD
+========================= */
+
+.detailsCard{
+  background:white;
+  border:1px solid #eeeeee;
+  border-radius:18px;
+  padding:24px;
+  box-shadow:0 12px 28px rgba(0,0,0,.07);
+}
+
+.checkoutTag{
+  display:inline-flex;
+  background:#eef3ff;
+  color:#0b4bea;
+  border:1px solid #d8e4ff;
+  border-radius:999px;
+  padding:9px 13px;
+  font-size:12px;
+  font-weight:900;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+}
+
+.checkoutTitle{
+  margin:14px 0 8px;
+  font-family:Georgia, "Times New Roman", serif;
+  font-size:38px;
+  line-height:1.08;
+  font-weight:900;
+  letter-spacing:-1px;
+}
+
+.checkoutSub{
+  margin:0;
+  color:#555;
+  line-height:1.6;
+  font-size:15px;
+}
+
+.metaLine{
+  margin-top:16px;
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+.metaPill{
+  display:inline-flex;
+  padding:8px 11px;
+  border-radius:999px;
+  background:#f7f7f7;
+  color:#333;
+  font-size:12px;
+  font-weight:800;
+  border:1px solid #e5e5e5;
+}
+
+.metaPill.ok{
+  background:rgba(34,197,94,.10);
+  border-color:rgba(34,197,94,.28);
+  color:#15803d;
+}
+
+.metaPill.danger{
+  background:rgba(239,68,68,.08);
+  border-color:rgba(239,68,68,.24);
+  color:#b91c1c;
+}
+
+.infoGrid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  margin-top:18px;
+}
+
+.infoCard{
+  border:1px solid #eeeeee;
+  border-radius:16px;
+  padding:14px;
+  background:#fafafa;
+}
+
+.infoCard span{
+  display:block;
+  color:#777;
+  font-size:12px;
+  font-weight:800;
+}
+
+.infoBig{
+  margin-top:5px;
+  color:#111;
+  font-size:21px;
+  font-weight:900;
+  word-break:break-word;
+}
+
+@media(max-width:650px){
+  .detailsCard{
+    padding:18px;
+  }
+
+  .checkoutTitle{
+    font-size:29px;
+  }
+
+  .infoGrid{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .infoCard:nth-child(3){
+    grid-column:1 / -1;
+  }
+}
+
+/* =========================
+   VOTE PANEL
+========================= */
+
+.votePanel{
+  margin-top:20px;
+  border:1px solid #eeeeee;
+  border-radius:18px;
+  padding:16px;
+  background:#ffffff;
+}
+
+.voteLabel{
+  display:block;
+  margin-bottom:10px;
+  font-size:14px;
+  font-weight:900;
+}
+
+.voteInputWrap{
+  display:grid;
+  grid-template-columns:52px 1fr 52px;
+  gap:9px;
+}
+
+.voteAdjustBtn{
+  height:50px;
+  border:0;
+  border-radius:14px;
+  background:#eef3ff;
+  color:#0b4bea;
+  font-size:25px;
+  font-weight:900;
+  cursor:pointer;
+}
+
+.voteInput{
+  height:50px;
+  width:100%;
+  border:1px solid #dddddd;
+  border-radius:14px;
+  text-align:center;
+  font-size:18px;
+  font-weight:900;
+  outline:none;
+}
+
+.voteInput:focus{
+  border-color:#0b4bea;
+  box-shadow:0 0 0 4px rgba(11,75,234,.12);
+}
+
+.quickVotes{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:8px;
+  margin-top:10px;
+}
+
+.quickVoteBtn{
+  border:1px solid #e2e2e2;
+  background:#fafafa;
+  color:#111;
+  border-radius:14px;
+  padding:11px 8px;
+  font-weight:900;
+  cursor:pointer;
+}
+
+.quickVoteBtn:hover{
+  background:#0b4bea;
+  border-color:#0b4bea;
+  color:white;
+}
+
+/* =========================
+   TOTAL
+========================= */
+
+.totalBox{
+  margin-top:16px;
+  background:#071321;
+  color:white;
+  border-radius:18px;
+  padding:20px;
+}
+
+.totalBox span{
+  display:block;
+  color:#cbd5e1;
+  font-size:13px;
+  font-weight:800;
+}
+
+.totalMoney{
+  margin:6px 0 4px;
+  font-family:Georgia, "Times New Roman", serif;
+  font-size:42px;
+  line-height:1;
+  font-weight:900;
+}
+
+.voteSummary{
+  color:#cbd5e1;
+  font-size:14px;
+  line-height:1.45;
+}
+
+.noteBox{
+  margin-top:14px;
+  border:1px solid #d8e4ff;
+  background:#eef3ff;
+  color:#0b3fb8;
+  border-radius:16px;
+  padding:14px;
+  font-size:13px;
+  line-height:1.55;
+}
+
+.warningBox{
+  margin-top:14px;
+  display:none;
+  border:1px solid rgba(239,68,68,.24);
+  background:rgba(239,68,68,.06);
+  color:#991b1b;
+  border-radius:16px;
+  padding:14px;
+  font-size:13px;
+  line-height:1.55;
+}
+
+.voteBtn{
+  width:100%;
+  margin-top:16px;
+  min-height:58px;
+  border:0;
+  border-radius:999px;
+  background:#000000;
+  color:white;
+  font-size:17px;
+  font-weight:900;
+  cursor:pointer;
+}
+
+.voteBtn:disabled{
+  opacity:.55;
+  cursor:not-allowed;
+}
+
+.secondaryActions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:9px;
+  margin-top:10px;
+}
+
+.secondaryActions a,
+.secondaryActions button{
+  min-height:46px;
+  border-radius:999px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-decoration:none;
+  font-size:14px;
+  font-weight:900;
+}
+
+.backBtn{
+  border:1px solid #dddddd;
+  color:#111;
+  background:white;
+}
+
+.shareBtn{
+  border:1px solid #dddddd;
+  color:#0b4bea;
+  background:white;
+  cursor:pointer;
+}
+
+.msg{
+  margin-top:12px;
+  font-size:13px;
+  font-weight:900;
+  line-height:1.45;
+}
+
+.msg.success{
+  color:#15803d;
+}
+
+.msg.error{
+  color:#dc2626;
+}
+
+.loadingBox{
+  width:min(1180px,calc(100% - 28px));
+  margin:22px auto;
+  border:1px dashed #d7d7d7;
+  border-radius:18px;
+  padding:26px;
+  text-align:center;
+  color:#777;
+}
+
+.toast{
+  position:fixed;
+  left:50%;
+  bottom:20px;
+  transform:translateX(-50%) translateY(20px);
+  background:#111;
+  color:white;
+  padding:12px 16px;
+  border-radius:999px;
+  font-size:13px;
+  font-weight:900;
+  opacity:0;
+  pointer-events:none;
+  transition:.25s;
+  z-index:250;
+}
+
+.toast.show{
+  opacity:1;
+  transform:translateX(-50%) translateY(0);
+}
+
+.footer{
+  margin-top:28px;
+  text-align:center;
+  color:#777;
+  font-size:13px;
+  line-height:1.6;
+}
+
+@media(max-width:600px){
+  .secondaryActions{
+    grid-template-columns:1fr;
+  }
+
+  .totalMoney{
+    font-size:34px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header class="smartHeader">
+  <div class="smartHeaderInner">
+    <div class="headerLeft">
+      <button class="menuIcon" id="menuBtn" type="button">☰</button>
+
+      <a class="logoLink" href="index.html">
+        <span class="logoMark"></span>
+        <span>Lumina Vote</span>
+      </a>
+    </div>
+
+    <div class="headerRight">
+      <a class="sellBtn" href="event-registration.html">Sell tickets</a>
+    </div>
+  </div>
+
+  <div class="mobileMenu" id="mobileMenu">
+    <a href="index.html">Home</a>
+    <a href="voting-home.html">Competitions</a>
+    <a id="mobileBackLink" href="voting-home.html">Back to Competition</a>
+  </div>
+</header>
+
+<div id="loadingBox" class="loadingBox">
+  Loading checkout...
+</div>
+
+<main class="checkoutPage" id="checkoutSection" style="display:none;">
+
+  <div class="breadcrumb">
+    <a href="index.html">Home</a>
+    <span>/</span>
+    <a href="voting-home.html">Competitions</a>
+    <span>/</span>
+    <a id="backToEventBtn" href="voting-home.html">Competition</a>
+    <span>/</span>
+    <span>Checkout</span>
+  </div>
+
+  <section class="checkoutShell">
+
+    <div class="photoCard">
+      <div class="photoWrap" id="photoWrap">
+        <img class="contestantPhoto" id="contestantPhoto" src="images/model1.jpg" alt="Contestant Photo">
+
+        <div class="photoOverlay"></div>
+        <div class="photoTag" id="photoTag">Contestant</div>
+
+        <div class="photoBottom">
+          <span>You are voting for</span>
+          <b id="photoName">Contestant</b>
+        </div>
+      </div>
+    </div>
+
+    <div class="detailsCard">
+      <div class="checkoutTag">Secure Vote Checkout</div>
+
+      <h1 class="checkoutTitle" id="checkoutTitle">Vote Checkout</h1>
+
+      <p class="checkoutSub" id="checkoutSub">
+        Loading contestant and competition details...
+      </p>
+
+      <div class="metaLine">
+        <span class="metaPill" id="eventStatusDisplay">Status: —</span>
+        <span class="metaPill" id="eventCodeDisplay">Code: —</span>
+        <span class="metaPill" id="contestantNumberDisplay">Contestant: —</span>
+        <span class="metaPill" id="categoryDisplay" style="display:none;">Category: —</span>
+      </div>
+
+      <div class="infoGrid">
+        <div class="infoCard">
+          <span>Vote Price</span>
+          <div class="infoBig" id="votePriceDisplay">GHS 1</div>
+        </div>
+
+        <div class="infoCard">
+          <span>Current Votes</span>
+          <div class="infoBig" id="currentVotesDisplay">0</div>
+        </div>
+
+        <div class="infoCard">
+          <span>Competition</span>
+          <div class="infoBig" id="eventShortName">—</div>
+        </div>
+      </div>
+
+      <form onsubmit="return false;">
+
+        <div class="votePanel">
+          <label class="voteLabel">Number of Votes</label>
+
+          <div class="voteInputWrap">
+            <button type="button" class="voteAdjustBtn" id="minusBtn">−</button>
+
+            <input
+              type="number"
+              id="voteInput"
+              class="voteInput"
+              min="1"
+              value="1"
+              inputmode="numeric"
+            >
+
+            <button type="button" class="voteAdjustBtn" id="plusBtn">+</button>
+          </div>
+
+          <div class="quickVotes">
+            <button type="button" class="quickVoteBtn" data-votes="5">5</button>
+            <button type="button" class="quickVoteBtn" data-votes="10">10</button>
+            <button type="button" class="quickVoteBtn" data-votes="20">20</button>
+            <button type="button" class="quickVoteBtn" data-votes="50">50</button>
+          </div>
+        </div>
+
+        <div class="totalBox">
+          <span>Total Amount</span>
+          <div class="totalMoney" id="totalAmount">GHS 1.00</div>
+          <div class="voteSummary" id="priceHint">1 vote = GHS 1.00</div>
+        </div>
+
+        <div class="noteBox">
+          Tap <b>Vote</b> to continue to secure payment. Your vote will reflect after payment confirmation.
+        </div>
+
+        <div class="warningBox" id="warningBox">
+          Voting is not available for this contestant or competition.
+        </div>
+
+        <button type="button" class="voteBtn" id="payBtn">Vote</button>
+
+        <div class="secondaryActions">
+          <a class="backBtn" id="backToEventBtn2" href="voting-home.html">Back to Competition</a>
+          <button type="button" class="shareBtn" id="shareBtn">Share Competition</button>
+        </div>
+
+        <div id="msg" class="msg"></div>
+      </form>
+    </div>
+
+  </section>
+
+  <div class="footer">
+    © <span id="y"></span> Lumina Creative Co<br>
+    Site created by <b>Lord Wilhelm</b> (0593410452)
+  </div>
+
+</main>
+
+<div class="toast" id="toast">Copied</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+
+import {
+  getFirestore,
+  doc,
+  getDoc
+} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBxry90zexnjiHIjVv_QluPlPWcqfxWb6Q",
+  authDomain: "sma-model-scout.firebaseapp.com",
+  projectId: "sma-model-scout",
+  storageBucket: "sma-model-scout.firebasestorage.app",
+  messagingSenderId: "786081868543",
+  appId: "1:786081868543:web:5805a21ac5dab4c799faca",
+  measurementId: "G-10LWV01GZE"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+document.getElementById("y").textContent = new Date().getFullYear();
+
+const urlParams = new URLSearchParams(window.location.search);
+const eventId = urlParams.get("eventId");
+const contestantId = urlParams.get("contestantId");
+const presetVotes = parseInt(urlParams.get("votes") || "1", 10);
+
+const menuBtn = document.getElementById("menuBtn");
+const mobileMenu = document.getElementById("mobileMenu");
+
+const loadingBox = document.getElementById("loadingBox");
+const checkoutSection = document.getElementById("checkoutSection");
+
+const backToEventBtn = document.getElementById("backToEventBtn");
+const backToEventBtn2 = document.getElementById("backToEventBtn2");
+const mobileBackLink = document.getElementById("mobileBackLink");
+
+const contestantPhoto = document.getElementById("contestantPhoto");
+const photoWrap = document.getElementById("photoWrap");
+const photoTag = document.getElementById("photoTag");
+const photoName = document.getElementById("photoName");
+
+const checkoutTitle = document.getElementById("checkoutTitle");
+const checkoutSub = document.getElementById("checkoutSub");
+
+const eventStatusDisplay = document.getElementById("eventStatusDisplay");
+const eventCodeDisplay = document.getElementById("eventCodeDisplay");
+const contestantNumberDisplay = document.getElementById("contestantNumberDisplay");
+const categoryDisplay = document.getElementById("categoryDisplay");
+
+const votePriceDisplay = document.getElementById("votePriceDisplay");
+const currentVotesDisplay = document.getElementById("currentVotesDisplay");
+const eventShortName = document.getElementById("eventShortName");
+
+const voteInput = document.getElementById("voteInput");
+const totalAmount = document.getElementById("totalAmount");
+const priceHint = document.getElementById("priceHint");
+const payBtn = document.getElementById("payBtn");
+const msg = document.getElementById("msg");
+
+const minusBtn = document.getElementById("minusBtn");
+const plusBtn = document.getElementById("plusBtn");
+const quickVoteButtons = document.querySelectorAll(".quickVoteBtn");
+
+const warningBox = document.getElementById("warningBox");
+const shareBtn = document.getElementById("shareBtn");
+const toast = document.getElementById("toast");
+
+let eventData = null;
+let contestantData = null;
+let votePrice = 1;
+let toastTimer = null;
+
+menuBtn.addEventListener("click", () => {
+  mobileMenu.classList.toggle("show");
+});
+
+document.addEventListener("input", (e) => {
+  if(e.target && e.target.id === "voteInput"){
+    updateTotal();
+  }
+});
+
+minusBtn.addEventListener("click", () => {
+  let count = parseInt(voteInput.value || "1", 10);
+  count = isNaN(count) ? 1 : count;
+
+  if(count > 1){
+    voteInput.value = count - 1;
+    updateTotal();
+  }
+});
+
+plusBtn.addEventListener("click", () => {
+  let count = parseInt(voteInput.value || "1", 10);
+  count = isNaN(count) ? 1 : count;
+
+  voteInput.value = count + 1;
+  updateTotal();
+});
+
+quickVoteButtons.forEach(btn => {
+  btn.addEventListener("click", () => {
+    const amount = parseInt(btn.dataset.votes || "1", 10);
+    voteInput.value = amount;
+    updateTotal();
+  });
+});
+
+shareBtn.addEventListener("click", shareEvent);
+
+function showToast(text){
+  toast.textContent = text;
+  toast.classList.add("show");
+
+  clearTimeout(toastTimer);
+
+  toastTimer = setTimeout(() => {
+    toast.classList.remove("show");
+  }, 1800);
+}
+
+function setMsg(text, type){
+  msg.textContent = text;
+  msg.className = "msg " + type;
+}
+
+function normalizeStatus(status){
+  const s = String(status || "").toLowerCase();
+
+  if(s === "active" || s === "live") return "active";
+  if(s === "upcoming") return "upcoming";
+  if(s === "paused") return "paused";
+
+  return "closed";
+}
+
+function prettyStatus(status){
+  const s = normalizeStatus(status);
+
+  if(s === "active") return "Live";
+  if(s === "upcoming") return "Upcoming";
+  if(s === "paused") return "Paused";
+
+  return "Closed";
+}
+
+function shortText(text, max = 18){
+  const value = String(text || "").trim();
+
+  if(value.length <= max) return value || "—";
+
+  return value.slice(0, max) + "...";
+}
+
+function getEventUrl(){
+  const basePath = window.location.pathname.replace(/[^/]*$/, "");
+  return `${window.location.origin}${basePath}live-event-details.html?eventId=${eventId}`;
+}
+
+async function shareEvent(){
+  if(!eventData){
+    showToast("Competition not ready.");
+    return;
+  }
+
+  const title = eventData.eventName || "Lumina Vote Competition";
+  const text = `Vote in ${title} on Lumina Vote.`;
+  const url = getEventUrl();
+
+  try{
+    if(navigator.share){
+      await navigator.share({ title, text, url });
+      return;
+    }
+
+    if(navigator.clipboard && window.isSecureContext){
+      await navigator.clipboard.writeText(url);
+      showToast("Competition link copied.");
+      return;
+    }
+
+    window.open(`https://wa.me/?text=${encodeURIComponent(text + " " + url)}`, "_blank");
+  }catch(error){
+    console.error(error);
+    showToast("Could not share competition.");
+  }
+}
+
+function updateTotal(){
+  let count = parseInt(voteInput.value || "1", 10);
+
+  if(isNaN(count) || count < 1){
+    count = 1;
+    voteInput.value = 1;
+  }
+
+  const total = count * votePrice;
+
+  totalAmount.textContent = "GHS " + total.toFixed(2);
+  priceHint.textContent = `${count.toLocaleString()} vote(s) × GHS ${votePrice.toFixed(2)} = GHS ${total.toFixed(2)}`;
+}
+
+function renderPhoto(){
+  const image = contestantData?.photoUrl && String(contestantData.photoUrl).trim() !== ""
+    ? contestantData.photoUrl
+    : "";
+
+  if(image){
+    contestantPhoto.src = image;
+    contestantPhoto.style.display = "block";
+    return;
+  }
+
+  contestantPhoto.style.display = "none";
+
+  const oldFallback = photoWrap.querySelector(".photoFallback");
+  if(oldFallback){
+    oldFallback.remove();
+  }
+
+  const fallback = document.createElement("div");
+  fallback.className = "photoFallback";
+  fallback.textContent = contestantData?.fullName || "Contestant";
+
+  photoWrap.insertBefore(fallback, photoWrap.firstChild);
+}
+
+function updateAvailability(){
+  const contestantStatus = String(contestantData?.status || "active").toLowerCase();
+  const eventStatus = normalizeStatus(eventData?.status || "active");
+
+  const canVote = contestantStatus === "active" && eventStatus === "active";
+
+  if(canVote){
+    warningBox.style.display = "none";
+    payBtn.disabled = false;
+    payBtn.textContent = "Vote";
+    return;
+  }
+
+  warningBox.style.display = "block";
+
+  if(contestantStatus !== "active"){
+    warningBox.textContent = "This contestant is not active for voting.";
+  }else if(eventStatus !== "active"){
+    warningBox.textContent = `This competition is ${prettyStatus(eventStatus).toLowerCase()}, so voting is not available.`;
+  }else{
+    warningBox.textContent = "Voting is not available.";
+  }
+
+  payBtn.disabled = true;
+  payBtn.textContent = "Voting Unavailable";
+}
+
+async function loadCheckout(){
+  if(!eventId || !contestantId){
+    loadingBox.textContent = "Missing event or contestant information.";
+    return;
+  }
+
+  try{
+    const eventRef = doc(db, "events", eventId);
+    const contestantRef = doc(db, "eventContestants", contestantId);
+
+    const [eventSnap, contestantSnap] = await Promise.all([
+      getDoc(eventRef),
+      getDoc(contestantRef)
+    ]);
+
+    if(!eventSnap.exists()){
+      loadingBox.textContent = "Competition not found.";
+      return;
+    }
+
+    if(!contestantSnap.exists()){
+      loadingBox.textContent = "Contestant not found.";
+      return;
+    }
+
+    eventData = {
+      id: eventSnap.id,
+      ...eventSnap.data()
+    };
+
+    contestantData = {
+      id: contestantSnap.id,
+      ...contestantSnap.data()
+    };
+
+    votePrice = Number(eventData.votePrice || 1);
+
+    if(isNaN(votePrice) || votePrice < 1){
+      votePrice = 1;
+    }
+
+    const eventName = eventData.eventName || "Competition";
+    const contestantName = contestantData.fullName || "Contestant";
+    const contestantNumber = contestantData.contestantNumber || "";
+
+    renderPhoto();
+
+    photoName.textContent = contestantNumber
+      ? `Contestant ${contestantNumber} — ${contestantName}`
+      : contestantName;
+
+    photoTag.textContent = contestantData.categoryName || "Contestant";
+
+    checkoutTitle.textContent = contestantNumber
+      ? `Vote for Contestant ${contestantNumber}`
+      : `Vote for ${contestantName}`;
+
+    checkoutSub.innerHTML =
+      `You are voting for <b>${contestantName}</b> in <b>${eventName}</b>.`;
+
+    eventStatusDisplay.textContent = `Status: ${prettyStatus(eventData.status)}`;
+    eventStatusDisplay.className = normalizeStatus(eventData.status) === "active"
+      ? "metaPill ok"
+      : "metaPill danger";
+
+    eventCodeDisplay.textContent = `Code: ${eventData.eventCode || contestantData.eventCode || "—"}`;
+    contestantNumberDisplay.textContent = `Contestant: ${contestantNumber || "—"}`;
+
+    if(contestantData.categoryName){
+      categoryDisplay.textContent = `Category: ${contestantData.categoryName}`;
+      categoryDisplay.style.display = "inline-flex";
+    }else{
+      categoryDisplay.style.display = "none";
+    }
+
+    votePriceDisplay.textContent = `GHS ${votePrice.toFixed(2)}`;
+    currentVotesDisplay.textContent = Number(contestantData.votes || 0).toLocaleString();
+    eventShortName.textContent = shortText(eventName, 18);
+
+    voteInput.value = (!isNaN(presetVotes) && presetVotes > 0) ? presetVotes : 1;
+
+    const eventLink = `live-event-details.html?eventId=${eventId}`;
+
+    backToEventBtn.href = eventLink;
+    backToEventBtn2.href = eventLink;
+    mobileBackLink.href = eventLink;
+
+    updateTotal();
+    updateAvailability();
+
+    document.title = `Vote for ${contestantName} | Lumina Vote`;
+
+    loadingBox.style.display = "none";
+    checkoutSection.style.display = "block";
+
+  }catch(error){
+    console.error(error);
+    loadingBox.textContent = "Failed to load checkout details.";
+  }
+}
+
+payBtn.addEventListener("click", async () => {
+  const votesBought = parseInt(voteInput.value || "0", 10);
+
+  if(!votesBought || votesBought < 1){
+    setMsg("Enter valid votes.", "error");
+    return;
+  }
+
+  if(!eventData || !contestantData){
+    setMsg("Checkout data is not ready.", "error");
+    return;
+  }
+
+  const contestantStatus = String(contestantData.status || "active").toLowerCase();
+  const eventStatus = normalizeStatus(eventData.status || "active");
+
+  if(contestantStatus !== "active"){
+    setMsg("This contestant is not active for voting.", "error");
+    return;
+  }
+
+  if(eventStatus !== "active"){
+    setMsg("This competition is not active for voting.", "error");
+    return;
+  }
+
+  payBtn.disabled = true;
+  payBtn.textContent = "Processing...";
+  setMsg("", "success");
+
+  const amountInMinor = Math.round(votesBought * votePrice * 100);
+
+  try{
+    const fakeEmail = `vote_${Date.now()}@luminavote.com`;
+
+    const initResp = await fetch("/.netlify/functions/initialize-payment", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: fakeEmail,
+        amount: amountInMinor,
+        metadata: {
+          phone: eventData.contactPhone || "",
+          eventId,
+          eventCode: eventData.eventCode || contestantData.eventCode || "",
+          eventName: eventData.eventName || "",
+
+          contestantId,
+          contestantNumber: contestantData.contestantNumber || "",
+          contestantName: contestantData.fullName || "",
+
+          categoryId: contestantData.categoryId || "",
+          categoryCode: contestantData.categoryCode || "",
+          categoryName: contestantData.categoryName || "",
+
+          votesBought
+        }
+      })
+    });
+
+    const initJson = await initResp.json();
+
+    if(!initResp.ok){
+      throw new Error(initJson.message || "Vote initialization failed");
+    }
+
+    const payData = initJson.data || initJson;
+
+    if(!payData.authorization_url){
+      throw new Error("No payment link returned");
+    }
+
+    window.location.href = payData.authorization_url;
+
+  }catch(error){
+    console.error(error);
+    setMsg(error.message || "Vote initialization failed", "error");
+    payBtn.disabled = false;
+    payBtn.textContent = "Vote";
+  }
+});
+
+loadCheckout();
+</script>
+
+</body>
+</html>

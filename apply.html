@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Apply | SMA Model Scout</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header class="nav">
+    <div class="brand">SMA <span>Model Scout</span></div>
+    <a class="btn small ghost" href="index.html">Home</a>
+  </header>
+
+  <main class="container">
+    <section class="card">
+      <h1 style="margin:0 0 8px;">Application Form</h1>
+      <p class="muted" style="margin-top:0;">
+        Send <b>GHS 250</b> to <b>050 791 2510</b> (Bernard Kyei Baffour). Use your <b>FULL NAME</b> as reference.
+      </p>
+
+      <div class="notice">
+        ⚠️ After payment, enter the MoMo reference from your SMS/statement.
+      </div>
+
+      <form class="form" id="appForm" enctype="multipart/form-data">
+        <div class="row">
+          <div>
+            <label>Full Name *</label>
+            <input required name="Full Name" placeholder="e.g. Ama Mensah" />
+          </div>
+          <div>
+            <label>Age *</label>
+            <input required type="number" name="Age" placeholder="e.g. 19" />
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label>Gender *</label>
+            <select required name="Gender">
+              <option value="">Select</option>
+              <option>Male</option>
+              <option>Female</option>
+            </select>
+          </div>
+          <div>
+            <label>Your Contact *</label>
+            <input required name="Contact" placeholder="e.g. 0551234567" />
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label>Parent / Guardian Name *</label>
+            <input required name="Parent Name" />
+          </div>
+          <div>
+            <label>Parent / Guardian Contact *</label>
+            <input required name="Parent Contact" placeholder="e.g. 055xxxxxxx" />
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label>Residence *</label>
+            <input required name="Residence" placeholder="Town / Area" />
+          </div>
+          <div>
+            <label>GPS Address *</label>
+            <input required name="GPS Address" placeholder="e.g. CC-123-4567" />
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label>Have you been in an agency before? *</label>
+            <select required name="Previous Agency">
+              <option value="">Select</option>
+              <option>Yes</option>
+              <option>No</option>
+            </select>
+          </div>
+          <div>
+            <label>If yes, which agency?</label>
+            <input name="Agency Name" />
+          </div>
+        </div>
+
+        <label>Why you want to join SMA? *</label>
+        <textarea required rows="4" name="Reason"></textarea>
+
+        <div class="row">
+          <div>
+            <label>Upload Photo 1 *</label>
+            <input required type="file" name="Photo 1" accept="image/*" />
+          </div>
+          <div>
+            <label>Upload Photo 2 *</label>
+            <input required type="file" name="Photo 2" accept="image/*" />
+          </div>
+        </div>
+
+        <label>MoMo Reference *</label>
+        <input required name="MoMo Reference" />
+
+        <button class="btn" type="submit" style="width:100%; margin-top:16px;">Submit Application</button>
+        <p class="small">Confirmation will be sent within <b>24 hours</b>.</p>
+      </form>
+
+      <div class="footer">Site created by <b>Lord Wilhelm</b> (0593410452)</div>
+    </section>
+  </main>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+    import { getFirestore, collection, addDoc, Timestamp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBxry90zexnjiHIjVv_QluPlPWcqfxWb6Q",
+      authDomain: "sma-model-scout.firebaseapp.com",
+      projectId: "sma-model-scout",
+      storageBucket: "sma-model-scout.firebasestorage.app",
+      messagingSenderId: "786081868543",
+      appId: "1:786081868543:web:5805a21ac5dab4c799faca",
+      measurementId: "G-10LWV01GZE"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const OWNER_ENDPOINT = "https://formsubmit.co/mensahpaa00@gmail.com";
+    const MANAGER_ENDPOINT = "https://formsubmit.co/techhubgraph@gmail.com";
+
+    const form = document.getElementById("appForm");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const btn = form.querySelector('button[type="submit"]');
+      btn.textContent = "Submitting...";
+      btn.disabled = true;
+
+      try {
+        // 1) Save details to Firestore (no photos here)
+        const data = new FormData(form);
+
+        const docData = {
+          fullName: String(data.get("Full Name") || "").trim(),
+          age: Number(data.get("Age") || 0),
+          gender: String(data.get("Gender") || "").trim(),
+          contact: String(data.get("Contact") || "").trim(),
+          parentName: String(data.get("Parent Name") || "").trim(),
+          parentContact: String(data.get("Parent Contact") || "").trim(),
+          residence: String(data.get("Residence") || "").trim(),
+          gpsAddress: String(data.get("GPS Address") || "").trim(),
+          previousAgency: String(data.get("Previous Agency") || "").trim(),
+          agencyName: String(data.get("Agency Name") || "").trim(),
+          reason: String(data.get("Reason") || "").trim(),
+          momoRef: String(data.get("MoMo Reference") || "").trim(),
+          status: "pending",
+          createdAt: Timestamp.fromDate(new Date())
+        };
+
+        await addDoc(collection(db, "applications"), docData);
+
+        // 2) Email OWNER + MANAGER with PHOTOS using FormSubmit (same FormData)
+        const ownerData = new FormData(form);
+        ownerData.append("_subject", "New SMA Model Application (FULL + PHOTOS)");
+        ownerData.append("_captcha", "false");
+
+        const ownerRes = await fetch(OWNER_ENDPOINT, { method: "POST", body: ownerData });
+
+        const managerData = new FormData(form);
+        managerData.append("_subject", "New SMA Model Application (FULL + PHOTOS)");
+        managerData.append("_captcha", "false");
+
+        await fetch(MANAGER_ENDPOINT, { method: "POST", body: managerData });
+
+        if (ownerRes.ok) {
+          window.location.href = "success.html";
+        } else {
+          alert("Email submission failed. Check internet and try again.");
+          btn.textContent = "Submit Application";
+          btn.disabled = false;
+        }
+
+      } catch (err) {
+        alert("Submission failed. Check internet and try again.");
+        btn.textContent = "Submit Application";
+        btn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>

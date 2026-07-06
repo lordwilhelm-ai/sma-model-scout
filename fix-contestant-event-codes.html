@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fix Contestant Event Codes | Lumina Admin</title>
+<link rel="stylesheet" href="css/style.css">
+
+<style>
+body{
+  margin:0;
+  background:#f8fbff;
+  color:#0f172a;
+}
+
+.wrap{
+  width:min(1000px, calc(100% - 24px));
+  margin:30px auto;
+}
+
+.card{
+  background:white;
+  border:1px solid rgba(148,163,184,.25);
+  border-radius:22px;
+  padding:22px;
+  box-shadow:0 12px 28px rgba(15,23,42,.08);
+}
+
+.tableWrap{
+  overflow-x:auto;
+  margin-top:16px;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  min-width:760px;
+}
+
+th,td{
+  padding:12px 10px;
+  border-bottom:1px solid rgba(148,163,184,.20);
+  text-align:left;
+  font-size:14px;
+  vertical-align:top;
+}
+
+th{
+  color:#64748b;
+  background:#f8fbff;
+}
+
+.badge{
+  display:inline-block;
+  padding:6px 10px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:800;
+}
+
+.ok{
+  background:rgba(34,197,94,.10);
+  color:#15803d;
+  border:1px solid rgba(34,197,94,.30);
+}
+
+.no{
+  background:rgba(239,68,68,.08);
+  color:#b91c1c;
+  border:1px solid rgba(239,68,68,.25);
+}
+
+.warn{
+  background:rgba(245,158,11,.10);
+  color:#b45309;
+  border:1px solid rgba(245,158,11,.30);
+}
+
+.msg{
+  margin-top:12px;
+  font-weight:800;
+}
+
+.success{color:#15803d}
+.error{color:#dc2626}
+.muted{color:#64748b}
+.small{font-size:12px}
+</style>
+</head>
+
+<body>
+
+<div class="wrap">
+  <div class="card">
+    <h1 style="margin:0 0 8px;">Fix Contestant Event Codes</h1>
+
+    <p class="muted" style="margin:0;">
+      This copies missing event details into old contestants. It will not touch contestant votes, payment records, or event totals.
+    </p>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;">
+      <button class="btn" id="scanBtn">Scan Contestants</button>
+      <button class="btn ghost" id="fixBtn" disabled>Fix Missing Fields</button>
+      <a class="btn ghost" href="admin.html">Back to Admin</a>
+    </div>
+
+    <div id="msg" class="msg"></div>
+
+    <div class="tableWrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Contestant</th>
+            <th>Event ID</th>
+            <th>Current Event Code</th>
+            <th>Event Found</th>
+            <th>Action Needed</th>
+          </tr>
+        </thead>
+        <tbody id="list">
+          <tr><td colspan="5">Click Scan Contestants.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+
+import {
+  getAuth,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  doc,
+  updateDoc,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBxry90zexnjiHIjVv_QluPlPWcqfxWb6Q",
+  authDomain: "sma-model-scout.firebaseapp.com",
+  projectId: "sma-model-scout",
+  storageBucket: "sma-model-scout.firebasestorage.app",
+  messagingSenderId: "786081868543",
+  appId: "1:786081868543:web:5805a21ac5dab4c799faca",
+  measurementId: "G-10LWV01GZE"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+const ADMINS = new Set([
+  "mensahpaa00@gmail.com",
+  "techhubgraph@gmail.com"
+]);
+
+const scanBtn = document.getElementById("scanBtn");
+const fixBtn = document.getElementById("fixBtn");
+const list = document.getElementById("list");
+const msg = document.getElementById("msg");
+
+let eventsMap = new Map();
+let contestants = [];
+let fixList = [];
+
+function setMsg(text, type=""){
+  msg.textContent = text;
+  msg.className = "msg " + type;
+}
+
+function needsFix(contestant, eventItem){
+  if(!eventItem) return false;
+
+  const hasEventCode = String(contestant.eventCode || "").trim();
+  const hasEventName = String(contestant.eventName || "").trim();
+  const hasOrganizerId = String(contestant.organizerId || "").trim();
+  const hasOrganizerName = String(contestant.organizerName || "").trim();
+
+  return !hasEventCode || !hasEventName || !hasOrganizerId || !hasOrganizerName;
+}
+
+async function scanContestants(){
+  setMsg("Scanning contestants...");
+  fixBtn.disabled = true;
+  list.innerHTML = `<tr><td colspan="5">Scanning...</td></tr>`;
+
+  try{
+    const [eventsSnap, contestantsSnap] = await Promise.all([
+      getDocs(collection(db, "events")),
+      getDocs(collection(db, "eventContestants"))
+    ]);
+
+    eventsMap = new Map();
+
+    eventsSnap.docs.forEach(docu => {
+      eventsMap.set(docu.id, {
+        id: docu.id,
+        ...docu.data()
+      });
+    });
+
+    contestants = contestantsSnap.docs.map(docu => ({
+      id: docu.id,
+      ...docu.data()
+    }));
+
+    fixList = contestants
+      .map(c => {
+        const eventItem = eventsMap.get(c.eventId);
+
+        return {
+          contestant: c,
+          eventItem,
+          canFix: !!eventItem,
+          shouldFix: needsFix(c, eventItem)
+        };
+      })
+      .filter(x => x.shouldFix && x.canFix);
+
+    renderList();
+
+    if(fixList.length > 0){
+      fixBtn.disabled = false;
+      setMsg(`${fixList.length} contestant(s) need missing event fields fixed.`, "error");
+    }else{
+      setMsg("All contestants already have the needed event fields, or no fixable records found.", "success");
+    }
+
+  }catch(error){
+    console.error(error);
+    setMsg(error.message || "Could not scan contestants.", "error");
+  }
+}
+
+function renderList(){
+  list.innerHTML = "";
+
+  if(contestants.length === 0){
+    list.innerHTML = `<tr><td colspan="5">No contestants found.</td></tr>`;
+    return;
+  }
+
+  contestants.forEach(c => {
+    const eventItem = eventsMap.get(c.eventId);
+    const shouldFix = needsFix(c, eventItem);
+    const canFix = !!eventItem;
+
+    const tr = document.createElement("tr");
+
+    let actionBadge = `<span class="badge ok">OK</span>`;
+
+    if(!canFix){
+      actionBadge = `<span class="badge warn">Event missing</span>`;
+    }else if(shouldFix){
+      actionBadge = `<span class="badge no">Needs fix</span>`;
+    }
+
+    tr.innerHTML = `
+      <td>
+        <b>${c.contestantNumber ? "Contestant " + c.contestantNumber + " — " : ""}${c.fullName || "Unnamed Contestant"}</b><br>
+        <span class="muted small">${c.id}</span>
+      </td>
+
+      <td>
+        ${c.eventId || "—"}<br>
+        <span class="muted small">${eventItem ? (eventItem.eventName || "Untitled Event") : "No matching event found"}</span>
+      </td>
+
+      <td>
+        ${c.eventCode || "—"}<br>
+        <span class="muted small">Will use: ${eventItem?.eventCode || "—"}</span>
+      </td>
+
+      <td>
+        ${
+          eventItem
+            ? `<span class="badge ok">Found</span>`
+            : `<span class="badge warn">Not found</span>`
+        }
+      </td>
+
+      <td>${actionBadge}</td>
+    `;
+
+    list.appendChild(tr);
+  });
+}
+
+async function fixMissingFields(){
+  if(fixList.length === 0){
+    setMsg("No contestant fields to fix.", "success");
+    return;
+  }
+
+  const ok = confirm(
+    `Fix ${fixList.length} contestant record(s)?\n\nThis will only add missing eventCode, eventName, organizerId, and organizerName. Votes will not be touched.`
+  );
+
+  if(!ok) return;
+
+  try{
+    fixBtn.disabled = true;
+    scanBtn.disabled = true;
+    setMsg("Fixing contestant event fields...");
+
+    for(const item of fixList){
+      const c = item.contestant;
+      const e = item.eventItem;
+
+      const updateData = {
+        updatedAt: serverTimestamp()
+      };
+
+      if(!String(c.eventCode || "").trim()){
+        updateData.eventCode = e.eventCode || "";
+      }
+
+      if(!String(c.eventName || "").trim()){
+        updateData.eventName = e.eventName || "";
+      }
+
+      if(!String(c.organizerId || "").trim()){
+        updateData.organizerId = e.organizerId || "";
+      }
+
+      if(!String(c.organizerName || "").trim()){
+        updateData.organizerName = e.organizerName || "";
+      }
+
+      await updateDoc(doc(db, "eventContestants", c.id), updateData);
+    }
+
+    setMsg("Contestant event fields fixed successfully.", "success");
+
+    await scanContestants();
+
+  }catch(error){
+    console.error(error);
+    setMsg(error.message || "Could not fix contestant event fields.", "error");
+  }finally{
+    scanBtn.disabled = false;
+  }
+}
+
+scanBtn.addEventListener("click", scanContestants);
+fixBtn.addEventListener("click", fixMissingFields);
+
+onAuthStateChanged(auth, (user) => {
+  if(!user || !ADMINS.has((user.email || "").toLowerCase())){
+    setMsg("Admin login required.", "error");
+    scanBtn.disabled = true;
+    fixBtn.disabled = true;
+    return;
+  }
+
+  setMsg("Admin verified. Click Scan Contestants.", "success");
+});
+</script>
+
+</body>
+</html>

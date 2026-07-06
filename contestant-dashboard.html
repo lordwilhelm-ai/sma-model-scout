@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contestant Dashboard | Lumina Creative</title>
+<link rel="stylesheet" href="css/style.css">
+
+<style>
+.topStats{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:16px;
+margin-top:20px;
+}
+
+@media(max-width:900px){
+.topStats{grid-template-columns:repeat(2,1fr)}
+}
+
+@media(max-width:600px){
+.topStats{grid-template-columns:1fr}
+}
+
+.statCard{
+background:white;
+border:1px solid var(--stroke);
+border-radius:20px;
+padding:20px;
+box-shadow:0 10px 24px rgba(15,23,42,0.06);
+}
+
+.statLabel{
+font-size:13px;
+color:var(--muted);
+margin-bottom:8px;
+}
+
+.statValue{
+font-size:28px;
+font-weight:900;
+color:var(--accent-dark);
+}
+
+.dashGrid{
+display:grid;
+grid-template-columns:0.95fr 1.05fr;
+gap:20px;
+margin-top:24px;
+}
+
+@media(max-width:1000px){
+.dashGrid{grid-template-columns:1fr}
+}
+
+.panel{
+background:white;
+border:1px solid var(--stroke);
+border-radius:22px;
+padding:20px;
+box-shadow:0 10px 24px rgba(15,23,42,0.06);
+}
+
+.profileCard{
+text-align:center;
+}
+
+.profileImg{
+width:180px;
+height:220px;
+object-fit:cover;
+border-radius:24px;
+margin:0 auto 16px;
+border:1px solid var(--stroke);
+box-shadow:0 12px 24px rgba(15,23,42,0.08);
+background:#dbeafe;
+}
+
+.rankBadge{
+display:inline-flex;
+align-items:center;
+padding:8px 12px;
+border-radius:999px;
+font-size:13px;
+font-weight:800;
+background:#eef4ff;
+border:1px solid #d6e4ff;
+color:var(--accent-dark);
+margin-bottom:12px;
+}
+
+.progressWrap{
+margin-top:18px;
+}
+
+.progressBar{
+width:100%;
+height:14px;
+background:#eaf0fb;
+border-radius:999px;
+overflow:hidden;
+}
+
+.progressFill{
+height:100%;
+width:72%;
+background:linear-gradient(135deg,#2563eb,#1d4ed8);
+border-radius:999px;
+}
+
+.voteHistory{
+display:grid;
+gap:12px;
+margin-top:14px;
+}
+
+.voteRow{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:14px;
+border:1px solid var(--stroke);
+border-radius:16px;
+background:#fbfdff;
+}
+
+@media(max-width:700px){
+.voteRow{
+flex-direction:column;
+align-items:flex-start;
+gap:6px;
+}
+}
+
+.infoList{
+display:grid;
+gap:12px;
+margin-top:14px;
+}
+
+.infoItem{
+padding:14px;
+border:1px solid var(--stroke);
+border-radius:16px;
+background:#fbfdff;
+}
+
+.bigNumber{
+font-size:36px;
+font-weight:900;
+color:var(--accent-dark);
+margin:8px 0;
+}
+</style>
+</head>
+<body>
+
+<header class="nav">
+<div class="brand">Lumina <span>Contestant Dashboard</span></div>
+
+<div style="display:flex;gap:10px;">
+<a class="btn small ghost" href="event-details.html">Event Page</a>
+<a class="btn small" href="voting-home.html">Voting Home</a>
+</div>
+</header>
+
+<main class="container fade-in">
+
+<section class="card hero-glow">
+<div class="section-tag">CONTESTANT PANEL</div>
+<h1 style="margin-bottom:8px;">Contestant 1 — Ama Mensah</h1>
+<p class="muted" style="margin:0;">
+View your votes, rank, event details, and overall progress.
+</p>
+</section>
+
+<section class="topStats">
+<div class="statCard">
+<div class="statLabel">Total Votes</div>
+<div class="statValue">1,240</div>
+</div>
+
+<div class="statCard">
+<div class="statLabel">Current Rank</div>
+<div class="statValue">#1</div>
+</div>
+
+<div class="statCard">
+<div class="statLabel">Event Status</div>
+<div class="statValue" style="font-size:20px;">Active</div>
+</div>
+
+<div class="statCard">
+<div class="statLabel">Vote Price</div>
+<div class="statValue">GHS 1</div>
+</div>
+</section>
+
+<section class="dashGrid">
+
+<div class="panel profileCard">
+<img class="profileImg" src="images/model1.jpg" alt="Contestant Photo">
+
+<div class="rankBadge">Leaderboard Rank #1</div>
+
+<h2 style="margin:6px 0 4px;">Ama Mensah</h2>
+<p class="muted" style="margin:0;">Face of SMA 2026 Contestant</p>
+
+<div class="progressWrap">
+<p class="small" style="margin-bottom:8px;">Progress compared to current target</p>
+<div class="progressBar">
+<div class="progressFill"></div>
+</div>
+<p class="small" style="margin-top:8px;">72% of current target reached</p>
+</div>
+
+<div class="infoList">
+<div class="infoItem">
+<div class="small">Contestant Number</div>
+<div style="font-weight:900;">1</div>
+</div>
+
+<div class="infoItem">
+<div class="small">Event</div>
+<div style="font-weight:900;">Face of SMA 2026</div>
+</div>
+
+<div class="infoItem">
+<div class="small">Voting Ends</div>
+<div style="font-weight:900;">30 March 2026</div>
+</div>
+</div>
+</div>
+
+<div class="panel">
+<h2>Your Vote Summary</h2>
+
+<div class="notice">
+<b>Good news:</b><br>
+You are currently leading the event leaderboard.
+</div>
+
+<div class="bigNumber">1,240 votes</div>
+<p class="muted">This is your current total vote count.</p>
+
+<hr>
+
+<h2 style="margin-top:18px;">Recent Vote Activity</h2>
+
+<div class="voteHistory">
+
+<div class="voteRow">
+<div>
+<div style="font-weight:800;">+120 votes added</div>
+<div class="small">Today, 10:42 AM</div>
+</div>
+<div class="small">MoMo confirmed</div>
+</div>
+
+<div class="voteRow">
+<div>
+<div style="font-weight:800;">+80 votes added</div>
+<div class="small">Yesterday, 7:15 PM</div>
+</div>
+<div class="small">MoMo confirmed</div>
+</div>
+
+<div class="voteRow">
+<div>
+<div style="font-weight:800;">+45 votes added</div>
+<div class="small">Yesterday, 1:03 PM</div>
+</div>
+<div class="small">MoMo confirmed</div>
+</div>
+
+<div class="voteRow">
+<div>
+<div style="font-weight:800;">+30 votes added</div>
+<div class="small">2 days ago</div>
+</div>
+<div class="small">MoMo confirmed</div>
+</div>
+
+</div>
+
+<hr>
+
+<h2 style="margin-top:18px;">Event Notes</h2>
+
+<div class="infoList">
+
+<div class="infoItem">
+<div class="small">Event Organizer</div>
+<div style="font-weight:900;">Sunset Modeling Agency</div>
+</div>
+
+<div class="infoItem">
+<div class="small">Voting Status</div>
+<div style="font-weight:900;">Open</div>
+</div>
+
+<div class="infoItem">
+<div class="small">Important</div>
+<div style="font-weight:900;">Contestants can only view results here.</div>
+</div>
+
+</div>
+</div>
+
+</section>
+
+<div class="footer">
+© <span id="y"></span> Lumina Creative Co<br>
+Site created by <b>Lord Wilhelm</b> (0593410452)
+</div>
+
+</main>
+
+<script>
+document.getElementById("y").textContent = new Date().getFullYear();
+</script>
+
+</body>
+</html>

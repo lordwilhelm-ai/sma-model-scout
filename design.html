@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Graphic Design | Lumina Creative Co</title>
+<link rel="stylesheet" href="css/style.css">
+
+<style>
+.designHero{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:24px;
+align-items:center;
+margin-top:20px;
+}
+
+@media(max-width:900px){
+.designHero{grid-template-columns:1fr}
+}
+
+.designTitle{
+font-size:38px;
+font-weight:900;
+margin-bottom:10px;
+}
+
+.designSub{
+color:var(--muted);
+line-height:1.6;
+}
+
+.designPoster{
+height:280px;
+border-radius:18px;
+background:linear-gradient(135deg,#2563eb,#0ea5e9,#60a5fa);
+display:flex;
+align-items:center;
+justify-content:center;
+text-align:center;
+font-size:28px;
+font-weight:900;
+padding:20px;
+color:white;
+}
+
+.serviceGrid{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:16px;
+margin-top:24px;
+}
+
+@media(max-width:900px){
+.serviceGrid{grid-template-columns:1fr}
+}
+
+.serviceCard{
+padding:22px;
+border-radius:16px;
+border:1px solid var(--stroke);
+background:rgba(255,255,255,0.03);
+transition:.2s;
+}
+
+.serviceCard:hover{
+transform:translateY(-4px);
+}
+
+.sectionSpace{
+margin-top:20px;
+}
+</style>
+</head>
+<body>
+
+<header class="nav">
+<div class="brand">Lumina <span>Creative Co</span></div>
+
+<div style="display:flex;gap:10px;">
+<a class="btn small ghost" href="index.html">Home</a>
+<a class="btn small" href="apply.html">Model Scout</a>
+</div>
+</header>
+
+<main class="container">
+
+<section class="card designHero">
+
+<div>
+<div class="designTitle">Graphic Design Services</div>
+
+<p class="designSub">
+Request flyers, posters, logos, social media designs, event artwork, branding materials, and more through Lumina Creative.
+</p>
+
+<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:18px;">
+<a class="btn" href="#request-design">Request Design</a>
+<a class="btn ghost" href="#services">View Services</a>
+</div>
+</div>
+
+<div class="designPoster">
+DESIGN<br>BRANDING<br>CREATIVITY
+</div>
+
+</section>
+
+<section class="card sectionSpace" id="services">
+<h2 style="margin:0 0 10px;">Our Design Services</h2>
+
+<div class="serviceGrid">
+
+<div class="serviceCard">
+<h3>Flyers & Posters</h3>
+<p class="muted small">
+Event flyers, promo posters, birthday designs, show announcements, and church artwork.
+</p>
+</div>
+
+<div class="serviceCard">
+<h3>Branding</h3>
+<p class="muted small">
+Logos, business cards, brand kits, and visual identity for businesses and personal brands.
+</p>
+</div>
+
+<div class="serviceCard">
+<h3>Social Media Designs</h3>
+<p class="muted small">
+Instagram posts, WhatsApp ads, Facebook banners, and digital campaign creatives.
+</p>
+</div>
+
+</div>
+</section>
+
+<section class="card sectionSpace" id="request-design">
+<h2 style="margin:0 0 10px;">Request Graphic Design</h2>
+<p class="muted">Fill this form to request a design job.</p>
+
+<form class="form" id="designForm">
+<div class="row">
+<div>
+<label>Full Name</label>
+<input type="text" name="name" placeholder="Your full name" required>
+</div>
+<div>
+<label>Phone Number</label>
+<input type="text" name="phone" placeholder="e.g. 0551234567" required>
+</div>
+</div>
+
+<div class="row">
+<div>
+<label>Email Address</label>
+<input type="email" name="email" placeholder="your@email.com" required>
+</div>
+<div>
+<label>Type of Design</label>
+<select name="type" required>
+<option value="">Select Design Type</option>
+<option>Flyer</option>
+<option>Poster</option>
+<option>Logo</option>
+<option>Branding</option>
+<option>Social Media Design</option>
+<option>Other</option>
+</select>
+</div>
+</div>
+
+<div class="row">
+<div>
+<label>Deadline</label>
+<input type="date" name="deadline" required>
+</div>
+<div>
+<label>Budget</label>
+<input type="text" name="budget" placeholder="Your budget" required>
+</div>
+</div>
+
+<label>Project Description</label>
+<textarea rows="4" name="description" placeholder="Explain what you want designed" required></textarea>
+
+<label>Upload Reference File (optional)</label>
+<input type="file" disabled>
+<p class="small">File upload will be added later.</p>
+
+<button type="submit" class="btn" style="margin-top:16px;">Submit Design Request</button>
+</form>
+</section>
+
+<div class="footer">
+© <span id="y"></span> Lumina Creative Co<br>
+Site created by <b>Lord Wilhelm</b> (0593410452)
+</div>
+
+</main>
+
+<script>
+document.getElementById("y").textContent = new Date().getFullYear();
+</script>
+<script type="module" src="design.js"></script>
+
+</body>
+</html>

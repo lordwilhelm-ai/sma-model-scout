@@ -1,0 +1,441 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vote Confirmed | Lumina Vote</title>
+<link rel="stylesheet" href="css/style.css">
+
+<style>
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  min-height:100vh;
+  background:#ffffff;
+  color:#111111;
+  font-family:Arial, Helvetica, sans-serif;
+}
+
+/* HEADER */
+.smartHeader{
+  background:#0b4bea;
+  color:white;
+}
+
+.smartHeaderInner{
+  height:76px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 18px;
+}
+
+.logoLink{
+  color:white;
+  text-decoration:none;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-weight:900;
+  font-size:22px;
+  letter-spacing:-1px;
+}
+
+.logoMark{
+  width:38px;
+  height:38px;
+  border-radius:50%;
+  background:white;
+  position:relative;
+  flex:0 0 auto;
+}
+
+.logoMark::after{
+  content:"";
+  position:absolute;
+  left:10px;
+  top:9px;
+  width:18px;
+  height:11px;
+  border-left:6px solid #0b4bea;
+  border-bottom:6px solid #0b4bea;
+  transform:rotate(-45deg);
+}
+
+.headerBtn{
+  background:#063fc9;
+  color:white;
+  text-decoration:none;
+  padding:13px 18px;
+  border-radius:999px;
+  font-size:14px;
+  font-weight:800;
+}
+
+@media(min-width:900px){
+  .smartHeaderInner{
+    height:86px;
+    padding:0 28px;
+  }
+
+  .logoLink{
+    font-size:27px;
+  }
+
+  .logoMark{
+    width:44px;
+    height:44px;
+  }
+
+  .logoMark::after{
+    width:22px;
+    height:13px;
+    border-left-width:7px;
+    border-bottom-width:7px;
+  }
+}
+
+/* PAGE */
+.successPage{
+  min-height:calc(100vh - 76px);
+  display:grid;
+  grid-template-columns:1fr;
+}
+
+.heroSide{
+  background:#071321;
+  color:white;
+  padding:64px 22px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+}
+
+.heroContent{
+  width:min(520px,100%);
+}
+
+.heroContent h1{
+  margin:0;
+  font-family:Georgia, "Times New Roman", serif;
+  font-size:44px;
+  line-height:1.05;
+  font-weight:900;
+  letter-spacing:-1px;
+}
+
+.heroContent p{
+  margin:22px auto 0;
+  color:#d7d7d7;
+  font-size:18px;
+  line-height:1.55;
+}
+
+.confirmSide{
+  padding:34px 18px 60px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.box{
+  width:min(540px,100%);
+  background:white;
+  border:1px solid #eeeeee;
+  border-radius:22px;
+  padding:26px;
+  box-shadow:0 14px 32px rgba(0,0,0,.08);
+}
+
+.icon{
+  width:66px;
+  height:66px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  background:#071321;
+  color:white;
+  font-size:31px;
+  font-weight:900;
+  margin-bottom:18px;
+}
+
+h2{
+  margin:0 0 12px;
+  font-family:Georgia, "Times New Roman", serif;
+  font-size:34px;
+  line-height:1.1;
+  font-weight:900;
+}
+
+p{
+  color:#555;
+  line-height:1.65;
+  margin:0;
+  font-size:15px;
+}
+
+.success{
+  color:#15803d;
+  font-weight:900;
+}
+
+.error{
+  color:#dc2626;
+  font-weight:900;
+}
+
+.smallText{
+  display:block;
+  margin-top:12px;
+  color:#777;
+  font-size:13px;
+  line-height:1.5;
+}
+
+.actions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-top:24px;
+}
+
+.btnMain,
+.btnGhost{
+  min-height:52px;
+  border-radius:999px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-decoration:none;
+  font-size:15px;
+  font-weight:900;
+}
+
+.btnMain{
+  background:#000;
+  color:white;
+}
+
+.btnGhost{
+  border:1px solid #dddddd;
+  background:white;
+  color:#0b4bea;
+}
+
+.footerCredit{
+  margin-top:26px;
+  color:#777;
+  font-size:13px;
+  line-height:1.6;
+  text-align:center;
+}
+
+@media(min-width:900px){
+  .successPage{
+    min-height:calc(100vh - 86px);
+    grid-template-columns:1fr 1fr;
+  }
+
+  .heroSide{
+    padding:80px 38px;
+  }
+
+  .heroContent h1{
+    font-size:56px;
+  }
+
+  .confirmSide{
+    padding:44px 34px;
+  }
+}
+
+@media(max-width:560px){
+  .heroSide{
+    padding:54px 18px;
+  }
+
+  .heroContent h1{
+    font-size:37px;
+  }
+
+  .heroContent p{
+    font-size:16px;
+  }
+
+  .box{
+    padding:22px;
+    border-radius:18px;
+  }
+
+  h2{
+    font-size:29px;
+  }
+
+  .actions{
+    grid-template-columns:1fr;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header class="smartHeader">
+  <div class="smartHeaderInner">
+    <a class="logoLink" href="index.html">
+      <span class="logoMark"></span>
+      <span>Lumina Vote</span>
+    </a>
+
+    <a class="headerBtn" href="voting-home.html">Competitions</a>
+  </div>
+</header>
+
+<main class="successPage">
+
+  <section class="heroSide">
+    <div class="heroContent">
+      <h1>Your vote is being confirmed</h1>
+      <p>We are checking your payment and updating the competition results.</p>
+    </div>
+  </section>
+
+  <section class="confirmSide">
+    <div class="box">
+      <div class="icon" id="icon">…</div>
+
+      <h2 id="title">Confirming Vote...</h2>
+
+      <p id="message">
+        Please wait while we confirm your payment securely.
+      </p>
+
+      <div class="actions" id="actions" style="display:none;">
+        <a id="backBtn" class="btnMain" href="voting-home.html">Back to Event</a>
+        <a class="btnGhost" href="voting-home.html">All Competitions</a>
+      </div>
+
+      <div class="footerCredit">
+        © <span id="y"></span> Lumina Creative Co<br>
+        Site created by <b>Lord Wilhelm</b> (0593410452)
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+document.getElementById("y").textContent = new Date().getFullYear();
+
+const icon = document.getElementById("icon");
+const title = document.getElementById("title");
+const message = document.getElementById("message");
+const actions = document.getElementById("actions");
+const backBtn = document.getElementById("backBtn");
+
+const params = new URLSearchParams(window.location.search);
+const reference =
+  params.get("reference") ||
+  params.get("trxref") ||
+  params.get("transactionId") ||
+  params.get("transaction_id") ||
+  params.get("paymentId") ||
+  params.get("payment_id") ||
+  params.get("clientReference") ||
+  params.get("client_reference") ||
+  params.get("ref");
+
+function showError(text){
+  icon.textContent = "!";
+  icon.style.background = "#dc2626";
+
+  title.textContent = "Vote Not Confirmed";
+
+  message.innerHTML = `<span class="error">${text}</span>`;
+
+  backBtn.href = "voting-home.html";
+  backBtn.textContent = "Back to Competitions";
+
+  actions.style.display = "grid";
+}
+
+function showSuccess(text, eventId, extraText = "", alreadyProcessed = false){
+  icon.textContent = "✓";
+  icon.style.background = "#16a34a";
+
+  title.textContent = alreadyProcessed ? "Vote Already Confirmed" : "Vote Confirmed";
+
+  message.innerHTML = `
+    <span class="success">${text}</span>
+    ${extraText ? `<span class="smallText">${extraText}</span>` : ""}
+  `;
+
+  backBtn.href = eventId
+    ? `live-event-details.html?eventId=${eventId}`
+    : "voting-home.html";
+
+  backBtn.textContent = "Back to Event";
+
+  actions.style.display = "grid";
+}
+
+async function confirmPayment(){
+  if(!reference){
+    showError("No payment reference found.");
+    return;
+  }
+
+  try{
+    const verifyResp = await fetch(
+      `/.netlify/functions/verify-payment?reference=${encodeURIComponent(reference)}`
+    );
+
+    const verifyJson = await verifyResp.json();
+
+    if(!verifyResp.ok || !verifyJson.status){
+      throw new Error(verifyJson.message || "Could not verify payment.");
+    }
+
+    const data = verifyJson.data || {};
+
+    const eventId = data.eventId || "";
+    const eventName = data.eventName || "Competition";
+    const contestantNumber = data.contestantNumber || "";
+    const contestantName = data.contestantName || "";
+    const categoryName = data.categoryName || "";
+    const votesBought = Number(data.votesBought || 0);
+
+    const contestantText = contestantNumber
+      ? `Contestant ${contestantNumber}${contestantName ? " — " + contestantName : ""}`
+      : contestantName;
+
+    const categoryText = categoryName ? `Category: ${categoryName}` : "";
+
+    const extraText =
+      `${eventName}${contestantText ? " • " + contestantText : ""}${categoryText ? " • " + categoryText : ""}`;
+
+    showSuccess(
+      verifyJson.alreadyProcessed
+        ? "This payment had already been confirmed earlier."
+        : `${votesBought.toLocaleString()} vote(s) added successfully.`,
+      eventId,
+      extraText,
+      verifyJson.alreadyProcessed
+    );
+
+  }catch(error){
+    console.error(error);
+    showError(error.message || "Something went wrong while confirming vote.");
+  }
+}
+
+confirmPayment();
+</script>
+
+</body>
+</html>

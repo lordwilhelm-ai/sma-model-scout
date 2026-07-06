@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Event Details | Lumina Creative</title>
+<link rel="stylesheet" href="css/style.css">
+
+<style>
+.contestantGrid{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:20px;
+margin-top:20px;
+}
+
+@media(max-width:900px){
+.contestantGrid{grid-template-columns:1fr 1fr}
+}
+
+@media(max-width:600px){
+.contestantGrid{grid-template-columns:1fr}
+}
+
+.contestantCard{
+background:white;
+border-radius:20px;
+border:1px solid var(--stroke);
+overflow:hidden;
+box-shadow:0 10px 24px rgba(0,0,0,0.06);
+transition:0.2s;
+}
+
+.contestantImg{
+width:100%;
+height:280px;
+object-fit:cover;
+}
+
+.contestantBody{
+padding:18px;
+}
+
+.voteCount{
+font-size:26px;
+font-weight:900;
+color:var(--accent-dark);
+}
+
+.rankBadge{
+display:inline-block;
+padding:6px 12px;
+border-radius:999px;
+background:#eef4ff;
+font-weight:700;
+margin-bottom:10px;
+}
+
+.voteBox{
+margin-top:16px;
+}
+
+.eliminatedTag{
+display:inline-block;
+padding:6px 10px;
+background:#ef4444;
+color:white;
+font-size:12px;
+font-weight:800;
+border-radius:999px;
+margin-bottom:8px;
+}
+</style>
+</head>
+<body>
+
+<header class="nav">
+<div class="brand">Lumina <span>Creative</span></div>
+
+<div style="display:flex;gap:10px;">
+<a class="btn small ghost" href="voting-home.html">All Events</a>
+<a class="btn small" href="vote.html">Register Event</a>
+</div>
+</header>
+
+<main class="container">
+
+<section class="card">
+
+<h1>Face of SMA 2026</h1>
+
+<p class="muted">
+Vote for your favorite contestant. Ranking updates automatically.
+</p>
+
+</section>
+
+<section>
+
+<h2>Contestants</h2>
+
+<div class="contestantGrid" id="contestantGrid">
+
+<div class="contestantCard" data-votes="1240">
+
+<img class="contestantImg" src="images/model1.jpg">
+
+<div class="contestantBody">
+
+<div class="rankBadge">Rank #1</div>
+
+<h3>Ama Mensah</h3>
+
+<div class="voteCount">1240 votes</div>
+
+<div class="voteBox">
+<a class="btn" href="vote-checkout.html">Vote Now</a>
+</div>
+
+</div>
+</div>
+
+
+<div class="contestantCard" data-votes="1110">
+
+<img class="contestantImg" src="images/model2.jpg">
+
+<div class="contestantBody">
+
+<div class="rankBadge">Rank #2</div>
+
+<h3>Efua Grant</h3>
+
+<div class="voteCount">1110 votes</div>
+
+<div class="voteBox">
+<a class="btn" href="vote-checkout.html">Vote Now</a>
+</div>
+
+</div>
+</div>
+
+
+<div class="contestantCard" data-votes="980" data-status="eliminated">
+
+<img class="contestantImg" src="images/model3.jpg">
+
+<div class="contestantBody">
+
+<div class="eliminatedTag">ELIMINATED</div>
+
+<h3>Akosua Poku</h3>
+
+<div class="voteCount">980 votes</div>
+
+<div class="voteBox">
+<button class="btn ghost" disabled>Voting Closed</button>
+</div>
+
+</div>
+</div>
+
+
+<div class="contestantCard" data-votes="860">
+
+<img class="contestantImg" src="images/model4.jpg">
+
+<div class="contestantBody">
+
+<div class="rankBadge">Rank #4</div>
+
+<h3>Naa Adjeley</h3>
+
+<div class="voteCount">860 votes</div>
+
+<div class="voteBox">
+<a class="btn" href="vote-checkout.html">Vote Now</a>
+</div>
+
+</div>
+</div>
+
+</div>
+
+</section>
+
+<div class="footer">
+© <span id="y"></span> Lumina Creative Co<br>
+Site created by <b>Lord Wilhelm</b> (0593410452)
+</div>
+
+</main>
+
+<script>
+
+document.getElementById("y").textContent = new Date().getFullYear();
+
+/* leaderboard sorting */
+
+const grid = document.getElementById("contestantGrid");
+
+const cards = Array.from(grid.children);
+
+cards.sort((a,b)=>{
+return b.dataset.votes - a.dataset.votes;
+});
+
+cards.forEach(card=>{
+grid.appendChild(card);
+});
+
+</script>
+
+</body>
+</html>

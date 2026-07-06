@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin Settings | Lumina Creative</title>
+<link rel="stylesheet" href="css/style.css">
+
+<style>
+.settingsWrap{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:24px;
+margin-top:20px;
+align-items:start;
+}
+
+@media(max-width:900px){
+.settingsWrap{grid-template-columns:1fr}
+}
+
+.settingsPanel{
+background:white;
+border:1px solid var(--stroke);
+border-radius:24px;
+padding:24px;
+box-shadow:0 12px 28px rgba(15,23,42,0.08);
+}
+
+.previewPanel{
+padding:24px;
+border-radius:24px;
+background:linear-gradient(135deg,#2563eb,#1d4ed8);
+color:white;
+box-shadow:0 14px 30px rgba(37,99,235,0.20);
+}
+
+.previewPanel h2{
+margin:0 0 10px;
+color:white;
+}
+
+.previewPanel p{
+color:#dbeafe;
+}
+
+.previewCard{
+margin-top:16px;
+background:white;
+color:var(--text);
+border-radius:20px;
+padding:20px;
+box-shadow:0 10px 24px rgba(15,23,42,0.06);
+}
+
+.previewGrid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:12px;
+margin-top:10px;
+}
+
+@media(max-width:600px){
+.previewGrid{grid-template-columns:1fr}
+}
+
+.previewItem{
+border:1px solid var(--stroke);
+border-radius:14px;
+padding:12px;
+background:#fbfdff;
+}
+
+.previewLabel{
+font-size:12px;
+color:var(--muted);
+margin-bottom:4px;
+}
+
+.previewValue{
+font-size:18px;
+font-weight:900;
+color:var(--accent-dark);
+}
+
+.noticeBox{
+margin-top:16px;
+padding:14px;
+border-radius:16px;
+background:#f1f6ff;
+border:1px solid #d6e4ff;
+color:#1e3a8a;
+}
+
+.statusPill{
+display:inline-flex;
+align-items:center;
+padding:8px 12px;
+border-radius:999px;
+font-size:13px;
+font-weight:800;
+background:rgba(34,197,94,.12);
+border:1px solid rgba(34,197,94,.28);
+color:#15803d;
+margin-top:12px;
+}
+
+.msg{
+margin-top:14px;
+font-size:14px;
+font-weight:800;
+}
+
+.msg.error{color:#dc2626;}
+.msg.success{color:#15803d;}
+
+.loadingBox{
+padding:18px;
+border:1px dashed var(--stroke);
+border-radius:18px;
+background:#fbfdff;
+color:var(--muted);
+}
+</style>
+</head>
+<body>
+
+<header class="nav">
+<div class="brand">Lumina <span>Admin Settings</span></div>
+
+<div style="display:flex;gap:10px;flex-wrap:wrap;">
+<a class="btn small ghost" href="master-admin-dashboard.html">Master Admin</a>
+<a class="btn small" href="index.html">Home</a>
+</div>
+</header>
+
+<main class="container fade-in">
+
+<section class="card hero-glow">
+<div class="section-tag">PLATFORM SETTINGS</div>
+<h1 style="margin-bottom:8px;">Admin Commission Settings</h1>
+<p class="muted" style="margin:0;">
+Only admin should control the platform commission used for event voting.
+</p>
+</section>
+
+<div id="loadingBox" class="loadingBox">Loading platform settings...</div>
+
+<section id="settingsSection" class="settingsWrap" style="display:none;">
+
+<div class="settingsPanel">
+
+<h2 style="margin-top:0;">Commission Control</h2>
+<p class="muted" style="margin-top:0;">
+Change the commission percentage below. Organizers will only see the updated value on event registration.
+</p>
+
+<form class="form" onsubmit="return false;">
+
+<label>Platform Commission (%)</label>
+<input type="number" id="commissionInput" value="20" min="0" max="100" oninput="updatePreview()">
+
+<label>Example Vote Price (GHS)</label>
+<input type="number" id="examplePrice" value="1" min="1" oninput="updatePreview()">
+
+<button type="button" class="btn" style="margin-top:16px;" id="saveBtn">
+Save Commission
+</button>
+
+<div id="saveMsg" class="msg"></div>
+
+</form>
+
+<div class="statusPill" id="saveStatus">
+Current setting active
+</div>
+
+</div>
+
+<div class="previewPanel">
+
+<h2>Live Preview</h2>
+<p>
+This is how the organizer revenue preview will look after you save the commission.
+</p>
+
+<div class="previewCard">
+
+<div class="previewGrid">
+
+<div class="previewItem">
+<div class="previewLabel">Commission Percent</div>
+<div class="previewValue" id="pPercent">20%</div>
+</div>
+
+<div class="previewItem">
+<div class="previewLabel">Vote Price</div>
+<div class="previewValue" id="pPrice">GHS 1.00</div>
+</div>
+
+</div>
+
+<div class="previewGrid">
+
+<div class="previewItem">
+<div class="previewLabel">Platform Gets</div>
+<div class="previewValue" id="pPlatform">GHS 0.20</div>
+</div>
+
+<div class="previewItem">
+<div class="previewLabel">Organizer Gets</div>
+<div class="previewValue" id="pOrganizer">GHS 0.80</div>
+</div>
+
+</div>
+
+<div class="previewGrid">
+
+<div class="previewItem">
+<div class="previewLabel">Example (1,000 votes)</div>
+<div class="previewValue" id="pExample">GHS 800.00</div>
+</div>
+
+<div class="previewItem">
+<div class="previewLabel">What organizers see</div>
+<div class="previewValue" id="pVisible">20%</div>
+</div>
+
+</div>
+
+</div>
+
+<div class="noticeBox">
+<b>Important:</b><br>
+This saved commission will be read automatically by your Firebase-connected event registration page.
+</div>
+
+</div>
+
+</section>
+
+<div class="footer">
+© <span id="y"></span> Lumina Creative Co<br>
+Site created by <b>Lord Wilhelm</b> (0593410452)
+</div>
+
+</main>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import {
+  getFirestore,
+  doc,
+  getDoc,
+  setDoc
+} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBxry90zexnjiHIjVv_QluPlPWcqfxWb6Q",
+  authDomain: "sma-model-scout.firebaseapp.com",
+  projectId: "sma-model-scout",
+  storageBucket: "sma-model-scout.firebasestorage.app",
+  messagingSenderId: "786081868543",
+  appId: "1:786081868543:web:5805a21ac5dab4c799faca",
+  measurementId: "G-10LWV01GZE"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+document.getElementById("y").textContent = new Date().getFullYear();
+
+const loadingBox = document.getElementById("loadingBox");
+const settingsSection = document.getElementById("settingsSection");
+const commissionInput = document.getElementById("commissionInput");
+const examplePrice = document.getElementById("examplePrice");
+const saveBtn = document.getElementById("saveBtn");
+const saveMsg = document.getElementById("saveMsg");
+const saveStatus = document.getElementById("saveStatus");
+
+function setMsg(text, type="error"){
+  saveMsg.textContent = text;
+  saveMsg.className = "msg " + type;
+}
+
+window.updatePreview = function(){
+  let percent = parseFloat(commissionInput.value);
+  let price = parseFloat(examplePrice.value);
+
+  if (isNaN(percent) || percent < 0) percent = 0;
+  if (percent > 100) percent = 100;
+  if (isNaN(price) || price < 1) price = 1;
+
+  const platform = price * (percent / 100);
+  const organizer = price - platform;
+  const example = organizer * 1000;
+
+  document.getElementById("pPercent").textContent = percent.toFixed(0) + "%";
+  document.getElementById("pPrice").textContent = "GHS " + price.toFixed(2);
+  document.getElementById("pPlatform").textContent = "GHS " + platform.toFixed(2);
+  document.getElementById("pOrganizer").textContent = "GHS " + organizer.toFixed(2);
+  document.getElementById("pExample").textContent = "GHS " + example.toFixed(2);
+  document.getElementById("pVisible").textContent = percent.toFixed(0) + "%";
+};
+
+async function loadSettings(){
+  try{
+    const ref = doc(db, "platformSettings", "main");
+    const snap = await getDoc(ref);
+
+    if(snap.exists()){
+      const data = snap.data();
+      commissionInput.value = Number(data.platformCommission || 20);
+      examplePrice.value = 1;
+      saveStatus.textContent = `Current setting active • ${Number(data.platformCommission || 20)}%`;
+    }else{
+      commissionInput.value = 20;
+      examplePrice.value = 1;
+
+      await setDoc(ref, {
+        platformCommission: 20,
+        updatedAt: new Date().toISOString()
+      });
+
+      saveStatus.textContent = "Current setting active • 20%";
+    }
+
+    updatePreview();
+    loadingBox.style.display = "none";
+    settingsSection.style.display = "grid";
+  }catch(error){
+    console.error(error);
+    loadingBox.textContent = "Could not load platform settings.";
+  }
+}
+
+saveBtn.addEventListener("click", async () => {
+  let percent = parseFloat(commissionInput.value);
+
+  if (isNaN(percent) || percent < 0 || percent > 100) {
+    setMsg("Enter a valid commission between 0 and 100.");
+    return;
+  }
+
+  saveBtn.disabled = true;
+  saveBtn.textContent = "Saving...";
+  setMsg("", "success");
+
+  try{
+    await setDoc(doc(db, "platformSettings", "main"), {
+      platformCommission: percent,
+      updatedAt: new Date().toISOString()
+    }, { merge: true });
+
+    saveStatus.textContent = `Current setting active • ${percent}%`;
+    setMsg("Commission saved successfully.", "success");
+    updatePreview();
+  }catch(error){
+    console.error(error);
+    setMsg("Could not save commission.");
+  }finally{
+    saveBtn.disabled = false;
+    saveBtn.textContent = "Save Commission";
+  }
+});
+
+loadSettings();
+</script>
+
+</body>
+</html>

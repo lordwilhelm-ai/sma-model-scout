@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contestant Login | Lumina Creative</title>
+<link rel="stylesheet" href="css/style.css">
+
+<style>
+.loginWrap{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:24px;
+align-items:center;
+margin-top:20px;
+}
+
+@media(max-width:900px){
+.loginWrap{grid-template-columns:1fr}
+}
+
+.loginPanel{
+background:white;
+border:1px solid var(--stroke);
+border-radius:24px;
+padding:28px;
+box-shadow:0 12px 28px rgba(15,23,42,0.08);
+}
+
+.sidePanel{
+padding:28px;
+border-radius:24px;
+background:linear-gradient(135deg,#2563eb,#1d4ed8);
+color:white;
+box-shadow:0 14px 30px rgba(37,99,235,0.20);
+}
+
+.sidePanel h2{
+margin:0 0 12px;
+color:white;
+font-size:34px;
+}
+
+.sidePanel p{
+color:#dbeafe;
+}
+
+.featureList{
+display:grid;
+gap:12px;
+margin-top:18px;
+}
+
+.featureItem{
+padding:14px 16px;
+border-radius:16px;
+background:rgba(255,255,255,0.10);
+border:1px solid rgba(255,255,255,0.18);
+}
+
+.switchRow{
+display:flex;
+gap:10px;
+margin-bottom:18px;
+flex-wrap:wrap;
+}
+
+.switchBtn{
+padding:10px 16px;
+border-radius:999px;
+border:1px solid var(--stroke);
+background:white;
+color:var(--text);
+cursor:pointer;
+font-weight:800;
+}
+
+.switchBtn.active{
+background:linear-gradient(135deg,var(--accent),var(--accent-dark));
+color:white;
+border-color:transparent;
+}
+
+.hidden{
+display:none;
+}
+
+.msg{
+margin-top:12px;
+font-size:14px;
+font-weight:700;
+}
+
+.msg.error{color:#dc2626;}
+.msg.success{color:#15803d;}
+</style>
+</head>
+<body>
+
+<header class="nav">
+<div class="brand">Lumina <span>Contestant Access</span></div>
+
+<div style="display:flex;gap:10px;">
+<a class="btn small ghost" href="index.html">Home</a>
+<a class="btn small" href="voting-home.html">Voting Home</a>
+</div>
+</header>
+
+<main class="container fade-in">
+
+<section class="card hero-glow loginWrap">
+
+<div class="sidePanel">
+<div class="section-tag" style="background:rgba(255,255,255,0.14);color:white;border:none;">CONTESTANT PORTAL</div>
+<h2>Track Your Votes</h2>
+<p>
+Contestants can log in to monitor votes, ranking, and event progress.
+</p>
+
+<div class="featureList">
+<div class="featureItem">View total votes</div>
+<div class="featureItem">Check leaderboard ranking</div>
+<div class="featureItem">Monitor vote activity</div>
+<div class="featureItem">Track event status</div>
+</div>
+</div>
+
+<div class="loginPanel">
+
+<div class="switchRow">
+<button class="switchBtn active" id="loginTab" onclick="showTab('login')">Login</button>
+<button class="switchBtn" id="signupTab" onclick="showTab('signup')">Create Account</button>
+</div>
+
+<div id="loginBox">
+<h1 style="margin-bottom:8px;">Contestant Login</h1>
+
+<form class="form" onsubmit="return false;">
+<label>Email Address</label>
+<input type="email" id="contestantLoginEmail" placeholder="Enter your email">
+
+<label>Password</label>
+<input type="password" id="contestantLoginPassword" placeholder="Enter your password">
+
+<button type="button" class="btn" style="width:100%;margin-top:16px;" id="loginBtn">
+Login
+</button>
+
+<div id="loginMsg" class="msg"></div>
+</form>
+</div>
+
+<div id="signupBox" class="hidden">
+<h1 style="margin-bottom:8px;">Create Contestant Account</h1>
+
+<form class="form" onsubmit="return false;">
+
+<div class="row">
+<div>
+<label>Full Name</label>
+<input type="text" id="signupFullName">
+</div>
+<div>
+<label>Phone</label>
+<input type="text" id="signupPhone">
+</div>
+</div>
+
+<label>Email</label>
+<input type="email" id="signupEmail">
+
+<label>Password</label>
+<input type="password" id="signupPassword">
+
+<label>Event Name</label>
+<input type="text" id="signupEvent">
+
+<label>Contestant Number</label>
+<input type="text" id="signupNumber">
+
+<button type="button" class="btn" style="width:100%;margin-top:16px;" id="signupBtn">
+Create Account
+</button>
+
+<div id="signupMsg" class="msg"></div>
+</form>
+</div>
+
+</div>
+
+</section>
+
+<div class="footer">
+© <span id="y"></span> Lumina Creative Co<br>
+Site created by <b>Lord Wilhelm</b> (0593410452)
+</div>
+
+</main>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+
+import {
+getAuth,
+signInWithEmailAndPassword,
+createUserWithEmailAndPassword
+} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+
+import {
+getFirestore,
+doc,
+setDoc
+} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+
+const firebaseConfig = {
+apiKey: "AIzaSyBxry90zexnjiHIjVv_QluPlPWcqfxWb6Q",
+authDomain: "sma-model-scout.firebaseapp.com",
+projectId: "sma-model-scout",
+storageBucket: "sma-model-scout.firebasestorage.app",
+messagingSenderId: "786081868543",
+appId: "1:786081868543:web:5805a21ac5dab4c799faca",
+measurementId: "G-10LWV01GZE"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+document.getElementById("y").textContent = new Date().getFullYear();
+
+
+window.showTab = function(tab){
+
+const loginBox = document.getElementById("loginBox");
+const signupBox = document.getElementById("signupBox");
+
+const loginTab = document.getElementById("loginTab");
+const signupTab = document.getElementById("signupTab");
+
+if(tab==="login"){
+loginBox.classList.remove("hidden");
+signupBox.classList.add("hidden");
+loginTab.classList.add("active");
+signupTab.classList.remove("active");
+}else{
+signupBox.classList.remove("hidden");
+loginBox.classList.add("hidden");
+signupTab.classList.add("active");
+loginTab.classList.remove("active");
+}
+
+}
+
+
+const loginBtn = document.getElementById("loginBtn");
+const signupBtn = document.getElementById("signupBtn");
+
+const loginMsg = document.getElementById("loginMsg");
+const signupMsg = document.getElementById("signupMsg");
+
+
+loginBtn.addEventListener("click", async ()=>{
+
+const email=document.getElementById("contestantLoginEmail").value;
+const password=document.getElementById("contestantLoginPassword").value;
+
+if(!email || !password){
+loginMsg.textContent="Enter email and password";
+loginMsg.className="msg error";
+return;
+}
+
+try{
+
+await signInWithEmailAndPassword(auth,email,password);
+
+loginMsg.textContent="Login successful";
+loginMsg.className="msg success";
+
+window.location.href="contestant-dashboard.html";
+
+}catch(e){
+
+loginMsg.textContent="Login failed";
+loginMsg.className="msg error";
+
+}
+
+});
+
+
+signupBtn.addEventListener("click", async ()=>{
+
+const fullName=document.getElementById("signupFullName").value;
+const phone=document.getElementById("signupPhone").value;
+const email=document.getElementById("signupEmail").value;
+const password=document.getElementById("signupPassword").value;
+const eventName=document.getElementById("signupEvent").value;
+const number=document.getElementById("signupNumber").value;
+
+if(!fullName||!phone||!email||!password||!eventName||!number){
+signupMsg.textContent="Fill all fields";
+signupMsg.className="msg error";
+return;
+}
+
+try{
+
+const userCred=await createUserWithEmailAndPassword(auth,email,password);
+
+await setDoc(doc(db,"contestants",userCred.user.uid),{
+
+fullName,
+phone,
+email,
+eventName,
+contestantNumber:number,
+role:"contestant",
+createdAt:new Date().toISOString()
+
+});
+
+signupMsg.textContent="Account created";
+signupMsg.className="msg success";
+
+window.location.href="contestant-dashboard.html";
+
+}catch(e){
+
+signupMsg.textContent="Signup failed";
+signupMsg.className="msg error";
+
+}
+
+});
+
+</script>
+
+</body>
+</html>

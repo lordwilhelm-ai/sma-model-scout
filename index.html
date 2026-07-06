@@ -1,0 +1,1111 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lumina Vote | Lumina Creative Co</title>
+<link rel="stylesheet" href="css/style.css">
+
+<style>
+*{
+  box-sizing:border-box;
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+  margin:0;
+  overflow-x:hidden;
+  background:#ffffff;
+  color:#111111;
+  font-family:Arial, Helvetica, sans-serif;
+}
+
+/* =========================
+   SMARTCAST STYLE HEADER
+========================= */
+
+.smartHeader{
+  position:sticky;
+  top:0;
+  z-index:100;
+  background:#0b4bea;
+  color:#ffffff;
+}
+
+.smartHeaderInner{
+  height:86px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  padding:0 26px;
+}
+
+.headerLeft,
+.headerRight{
+  display:flex;
+  align-items:center;
+  gap:18px;
+}
+
+.menuIcon,
+.searchIcon{
+  border:0;
+  background:transparent;
+  color:white;
+  cursor:pointer;
+  padding:0;
+  display:grid;
+  place-items:center;
+}
+
+.menuIcon{
+  font-size:34px;
+  line-height:1;
+}
+
+.searchIcon{
+  font-size:34px;
+  line-height:1;
+}
+
+.logoLink{
+  color:white;
+  text-decoration:none;
+  display:flex;
+  align-items:center;
+  gap:9px;
+  font-weight:900;
+  font-size:27px;
+  letter-spacing:-1.3px;
+}
+
+.logoMark{
+  width:44px;
+  height:44px;
+  border-radius:50%;
+  background:white;
+  display:grid;
+  place-items:center;
+  position:relative;
+  flex:0 0 auto;
+}
+
+.logoMark::after{
+  content:"";
+  width:22px;
+  height:13px;
+  border-left:7px solid #0b4bea;
+  border-bottom:7px solid #0b4bea;
+  transform:rotate(-45deg);
+  margin-top:-3px;
+}
+
+.sellBtn{
+  border:0;
+  background:#063fc9;
+  color:white;
+  padding:15px 25px;
+  border-radius:999px;
+  font-weight:800;
+  font-size:16px;
+  text-decoration:none;
+  white-space:nowrap;
+}
+
+.mobileMenu{
+  display:none;
+  padding:14px 18px 18px;
+  background:#073fd0;
+  border-top:1px solid rgba(255,255,255,.16);
+}
+
+.mobileMenu.show{
+  display:block;
+}
+
+.mobileMenu a,
+.mobileMenu button{
+  width:100%;
+  border:0;
+  display:flex;
+  justify-content:center;
+  text-decoration:none;
+  padding:13px;
+  border-radius:14px;
+  margin-top:8px;
+  font-weight:800;
+  background:white;
+  color:#0b4bea;
+}
+
+.mobileMenu button{
+  cursor:pointer;
+}
+
+@media(max-width:680px){
+  .smartHeaderInner{
+    height:76px;
+    padding:0 16px;
+  }
+
+  .logoLink{
+    font-size:21px;
+    letter-spacing:-.8px;
+  }
+
+  .logoMark{
+    width:38px;
+    height:38px;
+  }
+
+  .logoMark::after{
+    width:18px;
+    height:11px;
+    border-left-width:6px;
+    border-bottom-width:6px;
+  }
+
+  .sellBtn{
+    font-size:14px;
+    padding:13px 18px;
+  }
+
+  .menuIcon,
+  .searchIcon{
+    font-size:31px;
+  }
+
+  .headerLeft,
+  .headerRight{
+    gap:12px;
+  }
+}
+
+/* =========================
+   HERO
+========================= */
+
+.hero{
+  min-height:580px;
+  background:#071321;
+  color:white;
+  display:grid;
+  place-items:center;
+  text-align:center;
+  padding:80px 18px;
+}
+
+.heroContent{
+  width:min(680px,100%);
+}
+
+.hero h1{
+  margin:0;
+  font-family:Georgia, "Times New Roman", serif;
+  font-size:52px;
+  line-height:1.05;
+  font-weight:900;
+  letter-spacing:-1.5px;
+}
+
+.hero p{
+  margin:28px auto 0;
+  max-width:590px;
+  color:#f1f5f9;
+  font-size:22px;
+  line-height:1.45;
+  font-weight:500;
+}
+
+.heroActions{
+  display:flex;
+  justify-content:center;
+  gap:18px;
+  flex-wrap:wrap;
+  margin-top:52px;
+}
+
+.heroPrimary,
+.heroGhost{
+  min-width:260px;
+  text-align:center;
+  text-decoration:none;
+  padding:21px 28px;
+  border-radius:999px;
+  font-size:20px;
+  font-weight:800;
+}
+
+.heroPrimary{
+  background:#0b4bea;
+  color:white;
+}
+
+.heroGhost{
+  border:1.5px solid rgba(255,255,255,.82);
+  color:white;
+  background:transparent;
+}
+
+@media(max-width:680px){
+  .hero{
+    min-height:520px;
+    padding:70px 22px;
+  }
+
+  .hero h1{
+    font-size:40px;
+  }
+
+  .hero p{
+    font-size:20px;
+    margin-top:24px;
+  }
+
+  .heroActions{
+    margin-top:44px;
+    gap:14px;
+  }
+
+  .heroPrimary,
+  .heroGhost{
+    min-width:0;
+    width:100%;
+    max-width:305px;
+    padding:18px 22px;
+    font-size:18px;
+  }
+}
+
+/* =========================
+   SECTIONS
+========================= */
+
+.pageSection{
+  padding:46px 22px;
+}
+
+.sectionInner{
+  width:min(1180px,100%);
+  margin:0 auto;
+}
+
+.sectionTop{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px;
+  margin-bottom:24px;
+}
+
+.sectionTop h2{
+  margin:0;
+  color:#191919;
+  font-family:Georgia, "Times New Roman", serif;
+  font-size:38px;
+  line-height:1.1;
+  font-weight:900;
+  letter-spacing:-1px;
+}
+
+.seeAllBtn{
+  text-decoration:none;
+  color:#111;
+  border:1px solid #dddddd;
+  background:white;
+  border-radius:999px;
+  padding:18px 33px;
+  font-size:18px;
+  font-weight:500;
+  white-space:nowrap;
+}
+
+@media(max-width:680px){
+  .pageSection{
+    padding:38px 16px;
+  }
+
+  .sectionTop h2{
+    font-size:27px;
+  }
+
+  .seeAllBtn{
+    padding:14px 25px;
+    font-size:16px;
+  }
+}
+
+/* =========================
+   POPULAR HORIZONTAL CARDS
+========================= */
+
+.loadingBox,
+.emptyBox{
+  border:1px dashed #d7d7d7;
+  border-radius:18px;
+  padding:26px;
+  text-align:center;
+  color:#777;
+}
+
+.popularScroller{
+  display:flex;
+  gap:14px;
+  overflow-x:auto;
+  scroll-snap-type:x mandatory;
+  padding:2px 0 12px;
+  scrollbar-width:none;
+}
+
+.popularScroller::-webkit-scrollbar{
+  display:none;
+}
+
+.competitionCard{
+  min-width:310px;
+  max-width:310px;
+  scroll-snap-align:start;
+  text-decoration:none;
+  color:#111;
+}
+
+.posterWrap{
+  position:relative;
+  height:150px;
+  border-radius:9px;
+  overflow:hidden;
+  background:#081427;
+}
+
+.posterWrap img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+
+.posterFallback{
+  height:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+  text-align:center;
+  color:white;
+  font-weight:900;
+  font-size:24px;
+  background:linear-gradient(135deg,#071321,#0b4bea);
+}
+
+.cardStatus{
+  position:absolute;
+  left:10px;
+  top:10px;
+  background:rgba(0,0,0,.70);
+  color:white;
+  border-radius:999px;
+  padding:7px 10px;
+  font-size:11px;
+  font-weight:900;
+  backdrop-filter:blur(8px);
+}
+
+.cardType{
+  position:absolute;
+  right:10px;
+  top:10px;
+  background:rgba(255,255,255,.92);
+  color:#111;
+  border-radius:999px;
+  padding:7px 10px;
+  font-size:11px;
+  font-weight:900;
+  backdrop-filter:blur(8px);
+}
+
+.cardLine{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  margin-top:12px;
+}
+
+.cardTitle{
+  font-size:18px;
+  font-weight:800;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.cardPrice{
+  font-size:18px;
+  font-weight:900;
+  white-space:nowrap;
+}
+
+.cardPrice b{
+  font-weight:900;
+}
+
+.perVote{
+  color:#999;
+  font-weight:500;
+  margin-left:4px;
+}
+
+.organizerLine{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  color:#606060;
+  margin-top:16px;
+  font-size:15px;
+}
+
+.organizerIcon{
+  width:18px;
+  height:18px;
+  border:1.8px solid #888;
+  border-radius:50%;
+  position:relative;
+  flex:0 0 auto;
+}
+
+.organizerIcon::after{
+  content:"";
+  position:absolute;
+  left:50%;
+  top:15px;
+  transform:translateX(-50%);
+  width:20px;
+  height:10px;
+  border:1.8px solid #888;
+  border-top:0;
+  border-radius:0 0 10px 10px;
+}
+
+@media(max-width:680px){
+  .competitionCard{
+    min-width:190px;
+    max-width:190px;
+  }
+
+  .posterWrap{
+    height:82px;
+  }
+
+  .cardStatus,
+  .cardType{
+    font-size:9px;
+    padding:5px 7px;
+  }
+
+  .cardTitle,
+  .cardPrice{
+    font-size:14px;
+  }
+
+  .perVote{
+    font-size:13px;
+  }
+
+  .organizerLine{
+    margin-top:13px;
+    font-size:12px;
+  }
+}
+
+/* =========================
+   ORGANIZER CTA
+========================= */
+
+.organizerCta{
+  padding:90px 18px 110px;
+  text-align:center;
+}
+
+.organizerCta h2{
+  margin:0 auto;
+  max-width:560px;
+  font-family:Georgia, "Times New Roman", serif;
+  font-size:42px;
+  line-height:1.13;
+  font-weight:900;
+  letter-spacing:-1px;
+}
+
+.organizerCta p{
+  margin:20px 0 0;
+  color:#333;
+  font-size:18px;
+}
+
+.organizerCta a{
+  margin-top:28px;
+  display:inline-flex;
+  text-decoration:none;
+  color:white;
+  background:#0b4bea;
+  border-radius:999px;
+  padding:18px 31px;
+  font-size:17px;
+  font-weight:800;
+}
+
+@media(max-width:680px){
+  .organizerCta{
+    padding:76px 18px 92px;
+  }
+
+  .organizerCta h2{
+    font-size:32px;
+  }
+
+  .organizerCta p{
+    font-size:15px;
+  }
+}
+
+/* =========================
+   FOOTER
+========================= */
+
+.smartFooter{
+  background:#171717;
+  color:white;
+  padding:55px 32px 70px;
+}
+
+.footerInner{
+  width:min(1180px,100%);
+  margin:0 auto;
+}
+
+.footerLogo{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  font-weight:900;
+  font-size:35px;
+  letter-spacing:-1.5px;
+  margin-bottom:40px;
+}
+
+.footerLogo .logoMark{
+  width:60px;
+  height:60px;
+}
+
+.footerLogo .logoMark::after{
+  width:30px;
+  height:17px;
+  border-left-width:9px;
+  border-bottom-width:9px;
+}
+
+.footerBlock{
+  margin-top:34px;
+}
+
+.footerBlock h3{
+  margin:0 0 25px;
+  font-size:30px;
+  letter-spacing:-.5px;
+}
+
+.footerBlock p,
+.footerBlock a{
+  color:white;
+  text-decoration:none;
+  display:block;
+  margin:0 0 22px;
+  font-size:16px;
+}
+
+.socials{
+  display:flex;
+  gap:12px;
+  margin-top:18px;
+}
+
+.socialCircle{
+  width:45px;
+  height:45px;
+  border-radius:50%;
+  border:1px solid white;
+  display:grid;
+  place-items:center;
+  font-size:21px;
+  font-weight:800;
+}
+
+.footerCredit{
+  margin-top:46px;
+  color:#d4d4d4;
+  font-size:14px;
+  line-height:1.6;
+}
+
+@media(max-width:680px){
+  .smartFooter{
+    padding:45px 32px 64px;
+  }
+
+  .footerLogo{
+    font-size:30px;
+  }
+
+  .footerBlock h3{
+    font-size:27px;
+  }
+}
+
+/* =========================
+   SEARCH OVERLAY
+========================= */
+
+.searchOverlay{
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:200;
+  background:rgba(0,0,0,.66);
+  padding:90px 18px 18px;
+}
+
+.searchOverlay.show{
+  display:block;
+}
+
+.searchBox{
+  width:min(680px,100%);
+  margin:0 auto;
+  background:white;
+  border-radius:22px;
+  padding:18px;
+}
+
+.searchBoxTop{
+  display:flex;
+  gap:10px;
+}
+
+.searchBox input{
+  flex:1;
+  border:1px solid #ddd;
+  border-radius:15px;
+  padding:15px;
+  font-size:16px;
+  outline:none;
+}
+
+.closeSearch{
+  border:0;
+  border-radius:15px;
+  padding:0 18px;
+  background:#111;
+  color:white;
+  font-weight:800;
+}
+
+.searchHint{
+  margin:14px 0 0;
+  color:#666;
+  font-size:14px;
+}
+</style>
+</head>
+
+<body>
+
+<header class="smartHeader">
+  <div class="smartHeaderInner">
+    <div class="headerLeft">
+      <button class="menuIcon" id="menuBtn" type="button">☰</button>
+
+      <a class="logoLink" href="index.html">
+        <span class="logoMark"></span>
+        <span>Lumina Vote</span>
+      </a>
+    </div>
+
+    <div class="headerRight">
+      <button class="searchIcon" id="searchBtn" type="button">⌕</button>
+      <a class="sellBtn" href="event-registration.html">Sell tickets</a>
+    </div>
+  </div>
+
+  <div class="mobileMenu" id="mobileMenu">
+    <a href="voting-home.html">Events</a>
+    <button id="mobileDashboardBtn" type="button">Dashboard</button>
+    <a href="event-registration.html">Create event</a>
+  </div>
+</header>
+
+<div class="searchOverlay" id="searchOverlay">
+  <div class="searchBox">
+    <div class="searchBoxTop">
+      <input id="globalSearchInput" type="search" placeholder="Search events...">
+      <button class="closeSearch" id="closeSearch" type="button">Close</button>
+    </div>
+    <p class="searchHint">Type an event name. Matching events will show in the popular section.</p>
+  </div>
+</div>
+
+<main>
+
+  <section class="hero">
+    <div class="heroContent">
+      <h1>Vote. Buy tickets.<br>Support events.</h1>
+      <p>Discover voting competitions, ticketed events, and live campaigns from organisers on Lumina Vote.</p>
+
+      <div class="heroActions">
+        <a class="heroPrimary" href="event-registration.html">Create event</a>
+        <a class="heroGhost" href="voting-home.html">See all events</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="pageSection" id="popular">
+    <div class="sectionInner">
+      <div class="sectionTop">
+        <h2>Popular Events</h2>
+        <a class="seeAllBtn" href="voting-home.html">See all</a>
+      </div>
+
+      <div id="popularLoading" class="loadingBox">Loading events...</div>
+      <div id="popularEmpty" class="emptyBox" style="display:none;">No events available yet.</div>
+      <div class="popularScroller" id="popularScroller"></div>
+    </div>
+  </section>
+
+  <section class="organizerCta">
+    <h2>Got an event or competition to organize?</h2>
+    <p>Create your organizer account and start selling tickets or collecting votes.</p>
+    <a href="event-registration.html">Become an organizer</a>
+  </section>
+
+</main>
+
+<footer class="smartFooter">
+  <div class="footerInner">
+    <div class="footerLogo">
+      <span class="logoMark"></span>
+      <span>Lumina Vote</span>
+    </div>
+
+    <div class="footerBlock">
+      <p>Download the Lumina Vote app</p>
+      <p style="opacity:.75;">App Store / Google Play coming soon</p>
+    </div>
+
+    <div class="footerBlock">
+      <p>Let’s connect on social media</p>
+      <div class="socials">
+        <div class="socialCircle">𝕏</div>
+        <div class="socialCircle">◎</div>
+        <div class="socialCircle">f</div>
+      </div>
+    </div>
+
+    <div class="footerBlock">
+      <h3>Helpful Links</h3>
+      <a href="voting-home.html">Events</a>
+      <a href="event-registration.html">Create Event</a>
+      <button id="footerDashboardBtn" type="button" style="border:0;background:transparent;color:white;padding:0;margin:0 0 22px;font-size:16px;cursor:pointer;">My Account</button>
+    </div>
+
+    <div class="footerBlock">
+      <h3>About Us</h3>
+      <p>Lumina Vote helps organisers run voting competitions, ticketed events, and public event campaigns online.</p>
+    </div>
+
+    <div class="footerCredit">
+      © <span id="y"></span> Lumina Creative Co<br>
+      Site created by <b>Lord Wilhelm</b> (0593410452)
+    </div>
+  </div>
+</footer>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+import {
+  getFirestore,
+  collection,
+  onSnapshot
+} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBxry90zexnjiHIjVv_QluPlPWcqfxWb6Q",
+  authDomain: "sma-model-scout.firebaseapp.com",
+  projectId: "sma-model-scout",
+  storageBucket: "sma-model-scout.firebasestorage.app",
+  messagingSenderId: "786081868543",
+  appId: "1:786081868543:web:5805a21ac5dab4c799faca",
+  measurementId: "G-10LWV01GZE"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+document.getElementById("y").textContent = new Date().getFullYear();
+
+const menuBtn = document.getElementById("menuBtn");
+const mobileMenu = document.getElementById("mobileMenu");
+
+const searchBtn = document.getElementById("searchBtn");
+const searchOverlay = document.getElementById("searchOverlay");
+const closeSearch = document.getElementById("closeSearch");
+const globalSearchInput = document.getElementById("globalSearchInput");
+
+const mobileDashboardBtn = document.getElementById("mobileDashboardBtn");
+const footerDashboardBtn = document.getElementById("footerDashboardBtn");
+
+const popularLoading = document.getElementById("popularLoading");
+const popularEmpty = document.getElementById("popularEmpty");
+const popularScroller = document.getElementById("popularScroller");
+
+let allEvents = [];
+let allContestants = [];
+let searchText = "";
+
+menuBtn.addEventListener("click", () => {
+  mobileMenu.classList.toggle("show");
+});
+
+searchBtn.addEventListener("click", () => {
+  searchOverlay.classList.add("show");
+  setTimeout(() => globalSearchInput.focus(), 80);
+});
+
+closeSearch.addEventListener("click", () => {
+  searchOverlay.classList.remove("show");
+});
+
+searchOverlay.addEventListener("click", (e) => {
+  if(e.target === searchOverlay){
+    searchOverlay.classList.remove("show");
+  }
+});
+
+globalSearchInput.addEventListener("input", () => {
+  searchText = globalSearchInput.value.trim().toLowerCase();
+  renderPopularEvents();
+});
+
+function goToDashboard(){
+  const redirect = encodeURIComponent("organizer-dashboard.html");
+
+  const unsubscribe = onAuthStateChanged(auth, (user) => {
+    unsubscribe();
+
+    if(user){
+      window.location.href = "organizer-dashboard.html";
+    }else{
+      window.location.href = `organizer-login.html?redirect=${redirect}`;
+    }
+  });
+}
+
+mobileDashboardBtn.addEventListener("click", goToDashboard);
+footerDashboardBtn.addEventListener("click", goToDashboard);
+
+function normalizeStatus(status){
+  const s = String(status || "").toLowerCase();
+
+  if(s === "active" || s === "live") return "active";
+  if(s === "upcoming") return "upcoming";
+  if(s === "paused") return "paused";
+  return "closed";
+}
+
+function statusLabel(status){
+  const s = normalizeStatus(status);
+
+  if(s === "active") return "Live";
+  if(s === "upcoming") return "Upcoming";
+  if(s === "paused") return "Paused";
+  return "Past";
+}
+
+function hasVoting(item){
+  return !!item.votingEnabled || item.type === "voting" || item.type === "voting_tickets" || !item.type;
+}
+
+function hasTickets(item){
+  return !!item.ticketsEnabled || item.type === "tickets" || item.type === "voting_tickets";
+}
+
+function getEventTypeLabel(item){
+  if(hasTickets(item) && hasVoting(item)) return "Voting + Tickets";
+  if(hasTickets(item)) return "Ticketed Event";
+  return "Voting Competition";
+}
+
+function getCardPrice(item){
+  if(hasTickets(item) && !hasVoting(item)){
+    return `From&nbsp;&nbsp;<b>GHS ${Number(item.ticketPrice || 0).toFixed(2)}</b>`;
+  }
+
+  if(hasTickets(item) && hasVoting(item)){
+    return `<b>GHS ${Number(item.ticketPrice || 0).toFixed(2)}</b> <span class="perVote">ticket</span>`;
+  }
+
+  return `<b>GHS ${Number(item.votePrice || 0).toFixed(2)}</b> <span class="perVote">per vote</span>`;
+}
+
+function getCreatedTime(item){
+  const raw = item.createdAt || "";
+
+  if(raw && typeof raw.toDate === "function"){
+    return raw.toDate().getTime();
+  }
+
+  const time = Date.parse(raw);
+  return isNaN(time) ? 0 : time;
+}
+
+function getContestantsForEvent(eventId){
+  return allContestants.filter(c => c.eventId === eventId);
+}
+
+function getVotesForEvent(eventItem){
+  const contestantVotes = getContestantsForEvent(eventItem.id).reduce((sum, c) => {
+    return sum + Number(c.votes || 0);
+  }, 0);
+
+  return Math.max(contestantVotes, Number(eventItem.totalVotes || 0));
+}
+
+function getTicketSoldCount(item){
+  return Number(item.ticketsSold || 0);
+}
+
+function sortPopularEvents(events){
+  return [...events].sort((a, b) => {
+    const statusA = normalizeStatus(a.status);
+    const statusB = normalizeStatus(b.status);
+
+    const rank = {
+      active:1,
+      upcoming:2,
+      paused:3,
+      closed:4
+    };
+
+    if(rank[statusA] !== rank[statusB]){
+      return rank[statusA] - rank[statusB];
+    }
+
+    const scoreA = getVotesForEvent(a) + getTicketSoldCount(a);
+    const scoreB = getVotesForEvent(b) + getTicketSoldCount(b);
+
+    if(scoreB !== scoreA){
+      return scoreB - scoreA;
+    }
+
+    return getCreatedTime(b) - getCreatedTime(a);
+  });
+}
+
+function createEventCard(item){
+  const link = document.createElement("a");
+  link.className = "competitionCard";
+  link.href = `live-event-details.html?eventId=${item.id}`;
+
+  const image = item.posterUrl && String(item.posterUrl).trim() !== "" ? item.posterUrl : "";
+  const title = item.eventName || "Untitled Event";
+  const organizer = item.organizerName || item.organizer || "Lumina Vote";
+
+  const posterHtml = image
+    ? `<img src="${image}" alt="${title} poster">`
+    : `<div class="posterFallback">${title}</div>`;
+
+  link.innerHTML = `
+    <div class="posterWrap">
+      ${posterHtml}
+      <div class="cardStatus">${statusLabel(item.status)}</div>
+      <div class="cardType">${getEventTypeLabel(item)}</div>
+    </div>
+
+    <div class="cardLine">
+      <div class="cardTitle">${title}</div>
+      <div class="cardPrice">${getCardPrice(item)}</div>
+    </div>
+
+    <div class="organizerLine">
+      <span class="organizerIcon"></span>
+      <span>${organizer}</span>
+    </div>
+  `;
+
+  return link;
+}
+
+function renderPopularEvents(){
+  popularScroller.innerHTML = "";
+
+  let items = sortPopularEvents(allEvents);
+
+  if(searchText){
+    items = items.filter(item =>
+      String(item.eventName || "").toLowerCase().includes(searchText) ||
+      String(item.eventCode || "").toLowerCase().includes(searchText) ||
+      String(item.organizerName || "").toLowerCase().includes(searchText) ||
+      String(item.organizer || "").toLowerCase().includes(searchText) ||
+      String(item.location || "").toLowerCase().includes(searchText)
+    );
+  }
+
+  items = items.slice(0, 12);
+
+  popularLoading.style.display = "none";
+
+  if(items.length === 0){
+    popularEmpty.style.display = "block";
+    popularEmpty.textContent = searchText
+      ? "No event matches your search."
+      : "No events available yet.";
+    return;
+  }
+
+  popularEmpty.style.display = "none";
+
+  items.forEach(item => {
+    popularScroller.appendChild(createEventCard(item));
+  });
+}
+
+onSnapshot(collection(db, "events"), (snapshot) => {
+  allEvents = snapshot.docs.map(docu => ({
+    id: docu.id,
+    ...docu.data()
+  }));
+
+  renderPopularEvents();
+}, (error) => {
+  console.error(error);
+  popularLoading.textContent = "Could not load events.";
+});
+
+onSnapshot(collection(db, "eventContestants"), (snapshot) => {
+  allContestants = snapshot.docs.map(docu => ({
+    id: docu.id,
+    ...docu.data()
+  }));
+
+  renderPopularEvents();
+}, (error) => {
+  console.error(error);
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,625 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Master Admin Dashboard | Lumina Creative</title>
+<link rel="stylesheet" href="css/style.css">
+
+<style>
+.topStats{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:16px;
+margin-top:20px;
+}
+
+@media(max-width:950px){
+.topStats{grid-template-columns:repeat(2,1fr)}
+}
+
+@media(max-width:600px){
+.topStats{grid-template-columns:1fr}
+}
+
+.statCard{
+background:white;
+border:1px solid var(--stroke);
+border-radius:20px;
+padding:20px;
+box-shadow:0 10px 24px rgba(15,23,42,0.06);
+}
+
+.statLabel{
+font-size:13px;
+color:var(--muted);
+margin-bottom:8px;
+}
+
+.statValue{
+font-size:28px;
+font-weight:900;
+color:var(--accent-dark);
+}
+
+.adminGrid{
+display:grid;
+grid-template-columns:1.15fr .85fr;
+gap:20px;
+margin-top:24px;
+}
+
+@media(max-width:1100px){
+.adminGrid{grid-template-columns:1fr}
+}
+
+.panel{
+background:white;
+border:1px solid var(--stroke);
+border-radius:22px;
+padding:20px;
+box-shadow:0 10px 24px rgba(15,23,42,0.06);
+}
+
+.eventList{
+display:grid;
+gap:14px;
+margin-top:14px;
+}
+
+.eventRow{
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:14px;
+padding:16px;
+border:1px solid var(--stroke);
+border-radius:18px;
+background:#fbfdff;
+cursor:pointer;
+transition:.2s;
+}
+
+.eventRow:hover{
+transform:translateY(-2px);
+box-shadow:0 10px 20px rgba(15,23,42,0.06);
+}
+
+@media(max-width:760px){
+.eventRow{
+flex-direction:column;
+align-items:flex-start;
+}
+}
+
+.eventLeft{
+display:flex;
+gap:14px;
+align-items:center;
+}
+
+.eventPoster{
+width:76px;
+height:76px;
+object-fit:cover;
+border-radius:18px;
+border:1px solid var(--stroke);
+background:#dbeafe;
+}
+
+.eventName{
+font-size:18px;
+font-weight:900;
+margin:0 0 4px;
+}
+
+.eventMeta{
+margin:0;
+font-size:13px;
+color:var(--muted);
+}
+
+.eventRight{
+display:flex;
+align-items:center;
+gap:10px;
+flex-wrap:wrap;
+}
+
+.moneyMini{
+font-size:18px;
+font-weight:900;
+color:var(--accent-dark);
+}
+
+.statusBadge{
+display:inline-flex;
+align-items:center;
+padding:6px 10px;
+border-radius:999px;
+font-size:12px;
+font-weight:800;
+}
+
+.liveBadge{
+background:rgba(34,197,94,.12);
+border:1px solid rgba(34,197,94,.28);
+color:#15803d;
+}
+
+.pendingBadge{
+background:rgba(245,158,11,.12);
+border:1px solid rgba(245,158,11,.28);
+color:#b45309;
+}
+
+.closedBadge{
+background:rgba(148,163,184,.12);
+border:1px solid rgba(148,163,184,.28);
+color:#475569;
+}
+
+.pausedBadge{
+background:rgba(239,68,68,.10);
+border:1px solid rgba(239,68,68,.25);
+color:#b91c1c;
+}
+
+.paidBadge{
+background:rgba(34,197,94,.12);
+border:1px solid rgba(34,197,94,.28);
+color:#15803d;
+}
+
+.unpaidBadge{
+background:rgba(239,68,68,.12);
+border:1px solid rgba(239,68,68,.28);
+color:#b91c1c;
+}
+
+.processingBadge{
+background:rgba(245,158,11,.12);
+border:1px solid rgba(245,158,11,.28);
+color:#b45309;
+}
+
+.quickActions{
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+margin-top:14px;
+}
+
+.infoBox{
+padding:16px;
+border:1px solid var(--stroke);
+border-radius:18px;
+background:#fbfdff;
+margin-top:14px;
+}
+
+.detailLabel{
+font-size:12px;
+color:var(--muted);
+margin-bottom:5px;
+}
+
+.detailValue{
+font-weight:900;
+font-size:18px;
+}
+
+.split2{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:12px;
+margin-top:14px;
+}
+
+@media(max-width:650px){
+.split2{grid-template-columns:1fr}
+}
+
+.topActionRow{
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:12px;
+flex-wrap:wrap;
+margin-top:16px;
+}
+
+.emptyBox{
+padding:18px;
+border:1px dashed var(--stroke);
+border-radius:18px;
+text-align:center;
+color:var(--muted);
+background:#fbfdff;
+margin-top:14px;
+}
+
+.loadingBox{
+padding:18px;
+border:1px dashed var(--stroke);
+border-radius:18px;
+text-align:center;
+color:var(--muted);
+background:#fbfdff;
+margin-top:14px;
+}
+</style>
+</head>
+<body>
+
+<header class="nav">
+<div class="brand">Lumina <span>Master Admin</span></div>
+
+<div style="display:flex;gap:10px;flex-wrap:wrap;">
+<a class="btn small ghost" href="index.html">Home</a>
+<a class="btn small ghost" href="voting-home.html">Voting Home</a>
+<a class="btn small" href="admin-settings.html">Admin Settings</a>
+</div>
+</header>
+
+<main class="container fade-in">
+
+<section class="card hero-glow">
+<div class="section-tag">MASTER ADMIN PANEL</div>
+<h1 style="margin-bottom:8px;">Voting Platform Overview</h1>
+<p class="muted" style="margin:0;">
+Manage events, payouts, approvals, and overall platform activity.
+</p>
+
+<div class="topActionRow">
+<div class="small">Quick access to commission settings and platform controls.</div>
+<a class="btn small" href="admin-settings.html">Open Admin Settings</a>
+</div>
+</section>
+
+<section class="topStats">
+<div class="statCard">
+<div class="statLabel">Total Events</div>
+<div class="statValue" id="totalEvents">0</div>
+</div>
+
+<div class="statCard">
+<div class="statLabel">Active Events</div>
+<div class="statValue" id="activeEvents">0</div>
+</div>
+
+<div class="statCard">
+<div class="statLabel">Total Votes</div>
+<div class="statValue" id="totalVotes">0</div>
+</div>
+
+<div class="statCard">
+<div class="statLabel">Platform Revenue</div>
+<div class="statValue" id="platformRevenue">GHS 0.00</div>
+</div>
+</section>
+
+<section class="adminGrid">
+
+<div class="panel">
+<h2 style="margin:0;">All Events</h2>
+<p class="muted" style="margin:6px 0 0;">Track event status, payout, and total revenue.</p>
+
+<div id="loadingBox" class="loadingBox">Loading events...</div>
+<div id="emptyBox" class="emptyBox" style="display:none;">No events found yet.</div>
+<div class="eventList" id="eventList"></div>
+</div>
+
+<div class="panel">
+<h2 style="margin:0;">Selected Event</h2>
+<p class="muted" style="margin:6px 0 0;">Click any event on the left to manage it.</p>
+
+<div class="infoBox">
+<div class="detailLabel">Event Name</div>
+<div class="detailValue" id="dEventName">—</div>
+</div>
+
+<div class="split2">
+<div class="infoBox">
+<div class="detailLabel">Organizer</div>
+<div class="detailValue" id="dOrganizer">—</div>
+</div>
+
+<div class="infoBox">
+<div class="detailLabel">Event Status</div>
+<div class="detailValue" id="dStatus">—</div>
+</div>
+</div>
+
+<div class="split2">
+<div class="infoBox">
+<div class="detailLabel">Vote Price</div>
+<div class="detailValue" id="dVotePrice">—</div>
+</div>
+
+<div class="infoBox">
+<div class="detailLabel">Total Votes</div>
+<div class="detailValue" id="dVotes">0</div>
+</div>
+</div>
+
+<div class="split2">
+<div class="infoBox">
+<div class="detailLabel">Total Revenue</div>
+<div class="detailValue" id="dRevenue">GHS 0.00</div>
+</div>
+
+<div class="infoBox">
+<div class="detailLabel">Platform Cut</div>
+<div class="detailValue" id="dPlatformCut">GHS 0.00</div>
+</div>
+</div>
+
+<div class="split2">
+<div class="infoBox">
+<div class="detailLabel">Organizer Balance</div>
+<div class="detailValue" id="dOrganizerBalance">GHS 0.00</div>
+</div>
+
+<div class="infoBox">
+<div class="detailLabel">Payout Status</div>
+<div class="detailValue" id="dPayout">Unpaid</div>
+</div>
+</div>
+
+<div class="split2">
+<div class="infoBox">
+<div class="detailLabel">End Date</div>
+<div class="detailValue" id="dEndDate">—</div>
+</div>
+
+<div class="infoBox">
+<div class="detailLabel">Event ID</div>
+<div class="detailValue" id="dEventId">—</div>
+</div>
+</div>
+
+<div class="quickActions">
+<button class="btn small" onclick="markPayout('processing')">Mark Processing</button>
+<button class="btn small ghost" onclick="markPayout('paid')">Mark Paid</button>
+<button class="btn small ghost" onclick="setEventStatus('active')">Set Live</button>
+<button class="btn small ghost" onclick="setEventStatus('paused')">Pause Event</button>
+<button class="btn small ghost" onclick="setEventStatus('closed')">Close Event</button>
+<a class="btn small ghost" id="openEventBtn" href="voting-home.html">Open Event</a>
+</div>
+
+<div class="notice" style="margin-top:16px;">
+<b>Admin control:</b><br>
+Use the buttons above to update payout and event status.
+</div>
+</div>
+
+</section>
+
+<div class="footer">
+© <span id="y"></span> Lumina Creative Co<br>
+Site created by <b>Lord Wilhelm</b> (0593410452)
+</div>
+
+</main>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import {
+  getFirestore,
+  collection,
+  onSnapshot,
+  doc,
+  updateDoc,
+  query,
+  where
+} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBxry90zexnjiHIjVv_QluPlPWcqfxWb6Q",
+  authDomain: "sma-model-scout.firebaseapp.com",
+  projectId: "sma-model-scout",
+  storageBucket: "sma-model-scout.firebasestorage.app",
+  messagingSenderId: "786081868543",
+  appId: "1:786081868543:web:5805a21ac5dab4c799faca",
+  measurementId: "G-10LWV01GZE"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+document.getElementById("y").textContent = new Date().getFullYear();
+
+const eventList = document.getElementById("eventList");
+const loadingBox = document.getElementById("loadingBox");
+const emptyBox = document.getElementById("emptyBox");
+
+let allEvents = [];
+let selectedEvent = null;
+
+function prettyStatus(status){
+  const s = (status || "").toLowerCase();
+  if (s === "active" || s === "live") return "Live";
+  if (s === "upcoming") return "Upcoming";
+  if (s === "paused") return "Paused";
+  return "Closed";
+}
+
+function statusBadgeClass(status){
+  const s = (status || "").toLowerCase();
+  if (s === "active" || s === "live") return "statusBadge liveBadge";
+  if (s === "upcoming") return "statusBadge pendingBadge";
+  if (s === "paused") return "statusBadge pausedBadge";
+  return "statusBadge closedBadge";
+}
+
+function payoutBadgeClass(status){
+  const s = (status || "unpaid").toLowerCase();
+  if (s === "paid") return "statusBadge paidBadge";
+  if (s === "processing") return "statusBadge processingBadge";
+  return "statusBadge unpaidBadge";
+}
+
+async function getVotesForEvent(eventId){
+  return new Promise((resolve) => {
+    const q = query(collection(db, "eventContestants"), where("eventId", "==", eventId));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      let total = 0;
+      snapshot.docs.forEach(docSnap => {
+        total += Number(docSnap.data().votes || 0);
+      });
+      unsubscribe();
+      resolve(total);
+    }, () => {
+      resolve(0);
+    });
+  });
+}
+
+function renderSelectedEvent(item){
+  if(!item) return;
+
+  const totalVotes = Number(item.totalVotes || 0);
+  const votePrice = Number(item.votePrice || 0);
+  const totalRevenue = totalVotes * votePrice;
+  const commissionPercent = Number(item.platformCommission || 0);
+  const platformCut = totalRevenue * (commissionPercent / 100);
+  const organizerBalance = totalRevenue - platformCut;
+  const payoutStatus = (item.payoutStatus || "unpaid").toLowerCase();
+
+  document.getElementById("dEventName").textContent = item.eventName || "—";
+  document.getElementById("dOrganizer").textContent = item.organizerName || "—";
+  document.getElementById("dStatus").textContent = prettyStatus(item.status);
+  document.getElementById("dVotePrice").textContent = `GHS ${votePrice.toFixed(2)}`;
+  document.getElementById("dVotes").textContent = totalVotes.toLocaleString();
+  document.getElementById("dRevenue").textContent = `GHS ${totalRevenue.toFixed(2)}`;
+  document.getElementById("dPlatformCut").textContent = `GHS ${platformCut.toFixed(2)}`;
+  document.getElementById("dOrganizerBalance").textContent = `GHS ${organizerBalance.toFixed(2)}`;
+  document.getElementById("dPayout").textContent = payoutStatus.charAt(0).toUpperCase() + payoutStatus.slice(1);
+  document.getElementById("dEndDate").textContent = item.endDate || "—";
+  document.getElementById("dEventId").textContent = item.id || "—";
+  document.getElementById("openEventBtn").href = `live-event-details.html?eventId=${item.id}`;
+}
+
+function createEventRow(item){
+  const totalVotes = Number(item.totalVotes || 0);
+  const totalRevenue = totalVotes * Number(item.votePrice || 0);
+  const poster = item.posterUrl && item.posterUrl.trim() !== "" ? item.posterUrl : "images/event1.jpg";
+
+  const row = document.createElement("div");
+  row.className = "eventRow";
+
+  row.innerHTML = `
+    <div class="eventLeft">
+      <img class="eventPoster" src="${poster}" alt="${item.eventName || 'Event'}">
+      <div>
+        <p class="eventName">${item.eventName || "Untitled Event"}</p>
+        <p class="eventMeta">Organizer: ${item.organizerName || "Unknown Organizer"}</p>
+      </div>
+    </div>
+
+    <div class="eventRight">
+      <span class="${statusBadgeClass(item.status)}">${prettyStatus(item.status)}</span>
+      <span class="${payoutBadgeClass(item.payoutStatus)}">${(item.payoutStatus || "unpaid").charAt(0).toUpperCase() + (item.payoutStatus || "unpaid").slice(1)}</span>
+      <span class="moneyMini">GHS ${totalRevenue.toFixed(2)}</span>
+    </div>
+  `;
+
+  row.addEventListener("click", () => {
+    selectedEvent = item;
+    renderSelectedEvent(item);
+  });
+
+  return row;
+}
+
+function renderEventList(items){
+  eventList.innerHTML = "";
+
+  if(items.length === 0){
+    emptyBox.style.display = "block";
+    return;
+  }
+
+  emptyBox.style.display = "none";
+
+  items.forEach(item => {
+    eventList.appendChild(createEventRow(item));
+  });
+}
+
+function renderStats(items){
+  const totalEvents = items.length;
+  const activeEvents = items.filter(item => (item.status || "").toLowerCase() === "active").length;
+  const totalVotes = items.reduce((sum, item) => sum + Number(item.totalVotes || 0), 0);
+  const platformRevenue = items.reduce((sum, item) => {
+    const totalRevenue = Number(item.totalVotes || 0) * Number(item.votePrice || 0);
+    const platformCut = totalRevenue * (Number(item.platformCommission || 0) / 100);
+    return sum + platformCut;
+  }, 0);
+
+  document.getElementById("totalEvents").textContent = totalEvents.toLocaleString();
+  document.getElementById("activeEvents").textContent = activeEvents.toLocaleString();
+  document.getElementById("totalVotes").textContent = totalVotes.toLocaleString();
+  document.getElementById("platformRevenue").textContent = `GHS ${platformRevenue.toFixed(2)}`;
+}
+
+window.markPayout = async function(status){
+  if(!selectedEvent) return;
+
+  try{
+    await updateDoc(doc(db, "events", selectedEvent.id), {
+      payoutStatus: status
+    });
+  }catch(error){
+    alert("Could not update payout status.");
+  }
+};
+
+window.setEventStatus = async function(status){
+  if(!selectedEvent) return;
+
+  try{
+    await updateDoc(doc(db, "events", selectedEvent.id), {
+      status: status
+    });
+  }catch(error){
+    alert("Could not update event status.");
+  }
+};
+
+onSnapshot(collection(db, "events"), async (snapshot) => {
+  const baseEvents = snapshot.docs.map(docSnap => ({
+    id: docSnap.id,
+    ...docSnap.data()
+  }));
+
+  const enriched = [];
+  for (const item of baseEvents) {
+    const votes = await getVotesForEvent(item.id);
+    enriched.push({
+      ...item,
+      totalVotes: votes
+    });
+  }
+
+  enriched.sort((a, b) => String(b.createdAt || "").localeCompare(String(a.createdAt || "")));
+
+  allEvents = enriched;
+  loadingBox.style.display = "none";
+  renderStats(allEvents);
+  renderEventList(allEvents);
+
+  if(allEvents.length > 0){
+    const stillExists = selectedEvent && allEvents.find(x => x.id === selectedEvent.id);
+    selectedEvent = stillExists || allEvents[0];
+    renderSelectedEvent(selectedEvent);
+  }
+}, (error) => {
+  console.error(error);
+  loadingBox.textContent = "Could not load events.";
+});
+</script>
+
+</body>
+</html>
