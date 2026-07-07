@@ -1210,52 +1210,37 @@ payBtn.addEventListener("click", async () => {
   }
 
   payBtn.disabled = true;
-  payBtn.textContent = "Processing...";
+  payBtn.textContent = "Redirecting to Hubtel...";
   setMsg("", "success");
 
-  const amountInMinor = Math.round(votesBought * votePrice * 100);
+  const amount = votesBought * votePrice; // GHS
+  const contestantName = contestantData.fullName || "Contestant";
 
   try{
-    const fakeEmail = `vote_${Date.now()}@luminavote.com`;
-
-    const initResp = await fetch("/.netlify/functions/initialize-payment", {
+    const resp = await fetch("/api/create-checkout", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        email: fakeEmail,
-        amount: amountInMinor,
-        metadata: {
-          phone: eventData.contactPhone || "",
-          eventId,
-          eventCode: eventData.eventCode || contestantData.eventCode || "",
-          eventName: eventData.eventName || "",
-
-          contestantId,
-          contestantNumber: contestantData.contestantNumber || "",
-          contestantName: contestantData.fullName || "",
-
-          categoryId: contestantData.categoryId || "",
-          categoryCode: contestantData.categoryCode || "",
-          categoryName: contestantData.categoryName || "",
-
-          votesBought
-        }
+        contestantId: contestantId,
+        contestantName: contestantName,
+        eventId: eventId,
+        amount: amount,
+        votes: votesBought,
+        voterEmail: `vote_${Date.now()}@luminavote.com`
       })
     });
 
-    const initJson = await initResp.json();
+    const data = await resp.json();
 
-    if(!initResp.ok){
-      throw new Error(initJson.message || "Vote initialization failed");
+    if(!resp.ok){
+      throw new Error(data.error || "Failed to create checkout");
     }
 
-    const payData = initJson.data || initJson;
-
-    if(!payData.authorization_url){
+    if(!data.checkoutUrl){
       throw new Error("No payment link returned");
     }
 
-    window.location.href = payData.authorization_url;
+    window.location.href = data.checkoutUrl;
 
   }catch(error){
     console.error(error);
