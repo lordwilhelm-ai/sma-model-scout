@@ -1437,7 +1437,7 @@ payBtn.addEventListener("click", async () => {
     try { initJson = JSON.parse(initText); } catch (e) { initJson = null; }
 
     if(!initResp.ok){
-      const msg = initJson?.message || initJson?.description || initText || "Ticket payment initialization failed";
+      const msg = initJson?.note || initJson?.message || initJson?.description || initText || "Ticket payment initialization failed";
       throw new Error(msg);
     }
 

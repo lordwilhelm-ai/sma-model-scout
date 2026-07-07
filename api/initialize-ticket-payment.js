@@ -188,8 +188,7 @@ export default async function handler(req, res) {
     };
 
     const endpoints = [
-      'https://payproxyapi.hubtel.com/items/initiate',
-      'https://api.hubtel.com/items/v1/initiate'
+      'https://payproxyapi.hubtel.com/items/initiate'
     ];
 
     const auth = Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
@@ -225,10 +224,15 @@ export default async function handler(req, res) {
     const paymentUrl = extractHubtelPaymentUrl(data);
 
     if (!response.ok || !paymentUrl) {
-      res.status(response.status || 400).json({
-        message: data?.description || data?.message || text || 'Hubtel ticket initialization failed',
+      const message = data?.description || data?.message || data?.error || text || 'Hubtel ticket initialization failed';
+      const debug = {
+        status: response.status,
         hubtel: data || text,
-      });
+      };
+      if (response.status === 401) {
+        debug.note = 'Unauthorized. Verify HUBTEL_CLIENT_ID, HUBTEL_CLIENT_SECRET, and Merchant Account API access.';
+      }
+      res.status(response.status || 400).json({ message, ...debug });
       return;
     }
 

@@ -1235,7 +1235,7 @@ payBtn.addEventListener("click", async () => {
     try { data = JSON.parse(respText); } catch (e) { data = null; }
 
     if(!resp.ok){
-      const msg = data?.error || data?.message || respText || "Failed to create checkout";
+      const msg = data?.note || data?.error || data?.message || respText || "Failed to create checkout";
       throw new Error(msg);
     }
 
