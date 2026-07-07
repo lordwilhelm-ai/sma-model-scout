@@ -187,22 +187,47 @@ export default async function handler(req, res) {
       ...(merchantAccountNumber ? { merchantAccountNumber } : {}),
     };
 
-    const response = await fetch('https://payproxyapi.hubtel.com/items/initiate', {
-      method: 'POST',
-      headers: {
-        Authorization: `Basic ${Buffer.from(`${clientId}:${clientSecret}`).toString('base64')}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(payload),
-    });
+    const endpoints = [
+      'https://payproxyapi.hubtel.com/items/initiate',
+      'https://api.hubtel.com/items/v1/initiate'
+    ];
 
-    const data = await response.json();
+    const auth = Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
+    let response = null;
+    let text = '';
+    let data = null;
+
+    for (const url of endpoints) {
+      try {
+        response = await fetch(url, {
+          method: 'POST',
+          headers: {
+            Authorization: `Basic ${auth}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload),
+        });
+
+        text = await response.text();
+        try { data = JSON.parse(text); } catch (e) { console.error('Hubtel init parse error for', url, e, 'text:', text); data = null; }
+
+        if (response.ok && extractHubtelPaymentUrl(data)) break;
+      } catch (e) {
+        console.error('Error contacting Hubtel at', url, e);
+      }
+    }
+
+    if (!response) {
+      res.status(500).json({ message: 'No response from Hubtel' });
+      return;
+    }
+
     const paymentUrl = extractHubtelPaymentUrl(data);
 
     if (!response.ok || !paymentUrl) {
       res.status(response.status || 400).json({
-        message: data.description || data.message || 'Hubtel ticket initialization failed',
-        hubtel: data,
+        message: data?.description || data?.message || text || 'Hubtel ticket initialization failed',
+        hubtel: data || text,
       });
       return;
     }

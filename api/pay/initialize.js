@@ -51,22 +51,44 @@ export default async function handler(req, res) {
       ...(merchantAccountNumber ? { merchantAccountNumber } : {}),
     };
 
-    const response = await fetch('https://payproxyapi.hubtel.com/items/initiate', {
-      method: 'POST',
-      headers: {
-        Authorization: 'Basic ' + Buffer.from(`${clientId}:${clientSecret}`).toString('base64'),
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(payload),
-    });
+    const endpoints = [
+      'https://payproxyapi.hubtel.com/items/initiate',
+      'https://api.hubtel.com/items/v1/initiate'
+    ];
 
-    const text = await response.text();
-    let data;
-    try {
-      data = JSON.parse(text);
-    } catch (err) {
-      console.error('Hubtel init parse error:', err, 'text:', text);
-      data = null;
+    const auth = Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
+    let response = null;
+    let text = '';
+    let data = null;
+
+    for (const url of endpoints) {
+      try {
+        response = await fetch(url, {
+          method: 'POST',
+          headers: {
+            Authorization: 'Basic ' + auth,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload),
+        });
+
+        text = await response.text();
+        try {
+          data = JSON.parse(text);
+        } catch (err) {
+          console.error('Hubtel init parse error for', url, err, 'text:', text);
+          data = null;
+        }
+
+        if (response.ok) break;
+      } catch (err) {
+        console.error('Error calling Hubtel endpoint', url, err);
+      }
+    }
+
+    if (!response) {
+      res.status(500).json({ message: 'No response from Hubtel' });
+      return;
     }
 
     if (!response.ok) {
