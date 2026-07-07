@@ -1401,7 +1401,7 @@ payBtn.addEventListener("click", async () => {
   const amountInMinor = Math.round(quantity * ticketPrice * 100);
 
   try{
-    const initResp = await fetch("/.netlify/functions/initialize-ticket-payment", {
+    const initResp = await fetch("/api/initialize-ticket-payment", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

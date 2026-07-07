@@ -514,7 +514,7 @@ async function confirmTicketPayment(){
 
   try{
     const verifyResp = await fetch(
-      `/.netlify/functions/verify-ticket-payment?reference=${encodeURIComponent(reference)}`
+      `/api/verify-ticket-payment?reference=${encodeURIComponent(reference)}`
     );
 
     const verifyJson = await verifyResp.json();

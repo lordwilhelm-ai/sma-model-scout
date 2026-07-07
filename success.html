@@ -392,7 +392,7 @@ async function confirmPayment(){
 
   try{
     const verifyResp = await fetch(
-      `/.netlify/functions/verify-payment?reference=${encodeURIComponent(reference)}`
+      `/api/verify-payment?reference=${encodeURIComponent(reference)}`
     );
 
     const verifyJson = await verifyResp.json();
