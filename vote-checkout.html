@@ -1230,17 +1230,22 @@ payBtn.addEventListener("click", async () => {
       })
     });
 
-    const data = await resp.json();
+    const respText = await resp.text();
+    let data = null;
+    try { data = JSON.parse(respText); } catch (e) { data = null; }
 
     if(!resp.ok){
-      throw new Error(data.error || "Failed to create checkout");
+      const msg = data?.error || data?.message || respText || "Failed to create checkout";
+      throw new Error(msg);
     }
 
-    if(!data.checkoutUrl){
+    const checkoutUrl = (data && (data.checkoutUrl || data.data?.checkoutUrl || data.data?.paymentUrl || data.paymentUrl)) || null;
+
+    if(!checkoutUrl){
       throw new Error("No payment link returned");
     }
 
-    window.location.href = data.checkoutUrl;
+    window.location.href = checkoutUrl;
 
   }catch(error){
     console.error(error);

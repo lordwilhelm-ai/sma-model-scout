@@ -1432,19 +1432,23 @@ payBtn.addEventListener("click", async () => {
       })
     });
 
-    const initJson = await initResp.json();
+    const initText = await initResp.text();
+    let initJson = null;
+    try { initJson = JSON.parse(initText); } catch (e) { initJson = null; }
 
     if(!initResp.ok){
-      throw new Error(initJson.message || "Ticket payment initialization failed");
+      const msg = initJson?.message || initJson?.description || initText || "Ticket payment initialization failed";
+      throw new Error(msg);
     }
 
-    const payData = initJson.data || initJson;
+    const payData = (initJson && (initJson.data || initJson)) || null;
+    const payLink = payData?.authorization_url || payData?.authorizationUrl || initJson?.checkoutUrl || initJson?.paymentUrl || initJson?.url || null;
 
-    if(!payData.authorization_url){
+    if(!payLink){
       throw new Error("No payment link returned");
     }
 
-    window.location.href = payData.authorization_url;
+    window.location.href = payLink;
 
   }catch(error){
     console.error(error);
