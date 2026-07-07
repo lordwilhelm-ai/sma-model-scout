@@ -1,4 +1,4 @@
-import fetch from 'node-fetch';
+const fetch = globalThis.fetch;
 
 function getSiteUrl(req) {
   const override = process.env.HUBTEL_SITE_URL || process.env.SITE_URL;

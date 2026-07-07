@@ -1,5 +1,5 @@
 import admin from 'firebase-admin';
-import fetch from 'node-fetch';
+const fetch = globalThis.fetch;
 
 function initFirebaseAdmin() {
   if (admin.apps.length) return;
