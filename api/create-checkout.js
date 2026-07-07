@@ -34,10 +34,29 @@ export default async function handler(req, res) {
       })
     });
     
-    const data = await response.json();
+    const text = await response.text();
+    let data;
+
+    try {
+      data = JSON.parse(text);
+    } catch (parseError) {
+      console.error('Hubtel response parse error:', parseError, 'response text:', text);
+      data = null;
+    }
     
     if(!response.ok){
-      return res.status(500).json({ error: data.message || 'Hubtel error' });
+      const message =
+        data?.message ||
+        data?.description ||
+        data?.error ||
+        text ||
+        'Hubtel error';
+      return res.status(500).json({ error: message });
+    }
+
+    if (!data || !data.data || !data.data.checkoutUrl) {
+      console.error('Unexpected Hubtel response:', text);
+      return res.status(500).json({ error: 'No checkout URL returned by Hubtel', raw: text });
     }
 
     res.status(200).json({ checkoutUrl: data.data.checkoutUrl });
