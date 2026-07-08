@@ -25,7 +25,6 @@ body{
   font-family:Arial, Helvetica, sans-serif;
 }
 
-
 /* =========================
    HEADER
 ========================= */
@@ -171,42 +170,9 @@ body{
 ========================= */
 
 .checkoutPage{
-  width:min(1180px,100%);
+  width:min(560px,100%);
   margin:0 auto;
   padding:24px 18px 60px;
-}
-
-.breadcrumb{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  color:#d7c07a;
-  font-size:14px;
-  margin-bottom:20px;
-}
-
-.breadcrumb a{
-  color:#0b4bea;
-  text-decoration:none;
-  font-weight:700;
-}
-
-.checkoutShell{
-  display:grid;
-  grid-template-columns:.85fr 1.15fr;
-  gap:22px;
-  align-items:start;
-}
-
-@media(max-width:850px){
-  .checkoutPage{
-    padding:18px 14px 40px;
-  }
-
-  .checkoutShell{
-    grid-template-columns:1fr;
-    gap:14px;
-  }
 }
 
 /* =========================
@@ -217,12 +183,12 @@ body{
   border-radius:18px;
   overflow:hidden;
   background:rgba(18,12,7,0.95);
-  box-shadow:0 12px 28px rgba(0,0,0,.12);
+  box-shadow:0 12px 28px rgba(0,0,0,.25);
 }
 
 .photoWrap{
   position:relative;
-  height:560px;
+  height:460px;
   background:linear-gradient(135deg, rgba(21,22,24,0.95), rgba(8,24,57,0.96));
 }
 
@@ -251,22 +217,41 @@ body{
 .photoOverlay{
   position:absolute;
   inset:0;
-  background:linear-gradient(180deg,rgba(0,0,0,.06),rgba(0,0,0,.72));
+  background:linear-gradient(180deg,rgba(0,0,0,.10),rgba(0,0,0,.80));
   pointer-events:none;
 }
 
-.photoTag{
+.photoTopRow{
   position:absolute;
   left:16px;
+  right:16px;
   top:16px;
-  background:rgba(0,0,0,.70);
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+.photoPill{
+  background:rgba(0,0,0,.65);
   color:#f7ebd9;
-  border:1px solid rgba(255,255,255,.20);
+  border:1px solid rgba(255,255,255,.22);
   border-radius:999px;
-  padding:9px 13px;
+  padding:8px 12px;
   font-size:12px;
   font-weight:900;
   backdrop-filter:blur(10px);
+}
+
+.photoPill.ok{
+  background:rgba(34,197,94,.22);
+  border-color:rgba(34,197,94,.4);
+  color:#bbf7d0;
+}
+
+.photoPill.danger{
+  background:rgba(239,68,68,.22);
+  border-color:rgba(239,68,68,.4);
+  color:#fecaca;
 }
 
 .photoBottom{
@@ -279,7 +264,7 @@ body{
 
 .photoBottom span{
   display:block;
-  color:#d7d7d7;
+  color:#e2d6c2;
   font-size:13px;
   margin-bottom:7px;
 }
@@ -287,159 +272,31 @@ body{
 .photoBottom b{
   display:block;
   font-family:Georgia, "Times New Roman", serif;
-  font-size:30px;
-  line-height:1.1;
-}
-
-@media(max-width:850px){
-  .photoWrap{
-    height:320px;
-  }
+  font-size:28px;
+  line-height:1.15;
 }
 
 @media(max-width:600px){
   .photoWrap{
-    height:260px;
+    height:340px;
   }
 
   .photoBottom b{
-    font-size:24px;
+    font-size:23px;
   }
 }
 
 /* =========================
-   DETAILS CARD
+   ACTION CARD
 ========================= */
 
-.detailsCard{
+.actionCard{
+  margin-top:14px;
   background:rgba(255,255,255,0.05);
   border:1px solid rgba(212,175,55,0.18);
   border-radius:18px;
-  padding:24px;
-  box-shadow:0 12px 28px rgba(0,0,0,.07);
-}
-
-.checkoutTag{
-  display:inline-flex;
-  background:#eef3ff;
-  color:#0b4bea;
-  border:1px solid #d8e4ff;
-  border-radius:999px;
-  padding:9px 13px;
-  font-size:12px;
-  font-weight:900;
-  letter-spacing:.04em;
-  text-transform:uppercase;
-}
-
-.checkoutTitle{
-  margin:14px 0 8px;
-  font-family:Georgia, "Times New Roman", serif;
-  font-size:38px;
-  line-height:1.08;
-  font-weight:900;
-  letter-spacing:-1px;
-  color:#f7ebd9;
-}
-
-.checkoutSub{
-  margin:0;
-  color:#e6d9c4;
-  line-height:1.6;
-  font-size:15px;
-}
-
-.checkoutSub b{
-  color:#f7ebd9;
-}
-
-.metaLine{
-  margin-top:16px;
-  display:flex;
-  gap:8px;
-  flex-wrap:wrap;
-}
-
-.metaPill{
-  display:inline-flex;
-  padding:8px 11px;
-  border-radius:999px;
-  background:#f7f7f7;
-  color:#3a3a3a;
-  font-size:12px;
-  font-weight:800;
-  border:1px solid rgba(212,175,55,0.18);
-}
-
-.metaPill.ok{
-  background:rgba(34,197,94,.10);
-  border-color:rgba(34,197,94,.28);
-  color:#15803d;
-}
-
-.metaPill.danger{
-  background:rgba(239,68,68,.08);
-  border-color:rgba(239,68,68,.24);
-  color:#b91c1c;
-}
-
-.infoGrid{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:10px;
-  margin-top:18px;
-}
-
-.infoCard{
-  border:1px solid rgba(212,175,55,0.18);
-  border-radius:16px;
-  padding:14px;
-  background:#fafafa;
-}
-
-.infoCard span{
-  display:block;
-  color:#7a7a7a;
-  font-size:12px;
-  font-weight:800;
-}
-
-.infoBig{
-  margin-top:5px;
-  color:#181818;
-  font-size:21px;
-  font-weight:900;
-  word-break:break-word;
-}
-
-@media(max-width:650px){
-  .detailsCard{
-    padding:18px;
-  }
-
-  .checkoutTitle{
-    font-size:29px;
-  }
-
-  .infoGrid{
-    grid-template-columns:1fr 1fr;
-  }
-
-  .infoCard:nth-child(3){
-    grid-column:1 / -1;
-  }
-}
-
-/* =========================
-   VOTE PANEL
-========================= */
-
-.votePanel{
-  margin-top:20px;
-  border:1px solid rgba(212,175,55,0.18);
-  border-radius:18px;
-  padding:16px;
-  background:#ffffff;
+  padding:18px;
+  box-shadow:0 12px 28px rgba(0,0,0,.15);
 }
 
 .voteLabel{
@@ -447,7 +304,7 @@ body{
   margin-bottom:10px;
   font-size:14px;
   font-weight:900;
-  color:#161616;
+  color:#f7ebd9;
 }
 
 .voteInputWrap{
@@ -493,9 +350,9 @@ body{
 }
 
 .quickVoteBtn{
-  border:1px solid #e2e2e2;
-  background:#fafafa;
-  color:#333333;
+  border:1px solid rgba(212,175,55,0.25);
+  background:rgba(255,255,255,0.05);
+  color:#f7ebd9;
   border-radius:14px;
   padding:11px 8px;
   font-weight:900;
@@ -508,48 +365,26 @@ body{
   color:#f7ebd9;
 }
 
-/* =========================
-   TOTAL
-========================= */
-
-.totalBox{
+.totalRow{
   margin-top:16px;
-  background:rgba(18,12,7,0.95);
-  color:#f7ebd9;
-  border-radius:18px;
-  padding:20px;
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  gap:10px;
 }
 
-.totalBox span{
-  display:block;
-  color:#cbd5e1;
+.totalRow span{
+  color:#d7c07a;
   font-size:13px;
   font-weight:800;
 }
 
 .totalMoney{
-  margin:6px 0 4px;
   font-family:Georgia, "Times New Roman", serif;
-  font-size:42px;
+  font-size:28px;
   line-height:1;
   font-weight:900;
-}
-
-.voteSummary{
-  color:#cbd5e1;
-  font-size:14px;
-  line-height:1.45;
-}
-
-.noteBox{
-  margin-top:14px;
-  border:1px solid #d8e4ff;
-  background:#eef3ff;
-  color:#0b3fb8;
-  border-radius:16px;
-  padding:14px;
-  font-size:13px;
-  line-height:1.55;
+  color:#f7ebd9;
 }
 
 .warningBox{
@@ -557,7 +392,7 @@ body{
   display:none;
   border:1px solid rgba(239,68,68,.24);
   background:rgba(239,68,68,.06);
-  color:#991b1b;
+  color:#fca5a5;
   border-radius:16px;
   padding:14px;
   font-size:13px;
@@ -630,7 +465,7 @@ body{
 }
 
 .loadingBox{
-  width:min(1180px,calc(100% - 28px));
+  width:min(560px,calc(100% - 28px));
   margin:22px auto;
   border:1px dashed #d7d7d7;
   border-radius:18px;
@@ -673,10 +508,6 @@ body{
   .secondaryActions{
     grid-template-columns:1fr;
   }
-
-  .totalMoney{
-    font-size:34px;
-  }
 }
 </style>
 </head>
@@ -712,119 +543,71 @@ body{
 
 <main class="checkoutPage" id="checkoutSection" style="display:none;">
 
-  <div class="breadcrumb">
-    <a href="index.html">Home</a>
-    <span>/</span>
-    <a href="voting-home.html">Competitions</a>
-    <span>/</span>
-    <a id="backToEventBtn" href="voting-home.html">Competition</a>
-    <span>/</span>
-    <span>Checkout</span>
+  <div class="photoCard">
+    <div class="photoWrap" id="photoWrap">
+      <img class="contestantPhoto" id="contestantPhoto" src="images/model1.jpg" alt="Contestant Photo">
+
+      <div class="photoOverlay"></div>
+
+      <div class="photoTopRow">
+        <span class="photoPill" id="eventStatusDisplay">Status: —</span>
+        <span class="photoPill" id="contestantNumberDisplay">Contestant: —</span>
+        <span class="photoPill" id="categoryDisplay" style="display:none;">Category: —</span>
+      </div>
+
+      <div class="photoBottom">
+        <span>You are voting for</span>
+        <b id="photoName">Contestant</b>
+      </div>
+    </div>
   </div>
 
-  <section class="checkoutShell">
+  <div class="actionCard">
+    <form onsubmit="return false;">
 
-    <div class="photoCard">
-      <div class="photoWrap" id="photoWrap">
-        <img class="contestantPhoto" id="contestantPhoto" src="images/model1.jpg" alt="Contestant Photo">
+      <label class="voteLabel">Number of Votes</label>
 
-        <div class="photoOverlay"></div>
-        <div class="photoTag" id="photoTag">Contestant</div>
+      <div class="voteInputWrap">
+        <button type="button" class="voteAdjustBtn" id="minusBtn">−</button>
 
-        <div class="photoBottom">
-          <span>You are voting for</span>
-          <b id="photoName">Contestant</b>
-        </div>
-      </div>
-    </div>
+        <input
+          type="number"
+          id="voteInput"
+          class="voteInput"
+          min="1"
+          value="1"
+          inputmode="numeric"
+        >
 
-    <div class="detailsCard">
-      <div class="checkoutTag">Secure Vote Checkout</div>
-
-      <h1 class="checkoutTitle" id="checkoutTitle">Vote Checkout</h1>
-
-      <p class="checkoutSub" id="checkoutSub">
-        Loading contestant and competition details...
-      </p>
-
-      <div class="metaLine">
-        <span class="metaPill" id="eventStatusDisplay">Status: —</span>
-        <span class="metaPill" id="eventCodeDisplay">Code: —</span>
-        <span class="metaPill" id="contestantNumberDisplay">Contestant: —</span>
-        <span class="metaPill" id="categoryDisplay" style="display:none;">Category: —</span>
+        <button type="button" class="voteAdjustBtn" id="plusBtn">+</button>
       </div>
 
-      <div class="infoGrid">
-        <div class="infoCard">
-          <span>Vote Price</span>
-          <div class="infoBig" id="votePriceDisplay">GHS 1</div>
-        </div>
-
-        <div class="infoCard">
-          <span>Current Votes</span>
-          <div class="infoBig" id="currentVotesDisplay">0</div>
-        </div>
-
-        <div class="infoCard">
-          <span>Competition</span>
-          <div class="infoBig" id="eventShortName">—</div>
-        </div>
+      <div class="quickVotes">
+        <button type="button" class="quickVoteBtn" data-votes="5">5</button>
+        <button type="button" class="quickVoteBtn" data-votes="10">10</button>
+        <button type="button" class="quickVoteBtn" data-votes="20">20</button>
+        <button type="button" class="quickVoteBtn" data-votes="50">50</button>
       </div>
 
-      <form onsubmit="return false;">
+      <div class="totalRow">
+        <span id="priceHint">1 vote = GHS 1.00</span>
+        <div class="totalMoney" id="totalAmount">GHS 1.00</div>
+      </div>
 
-        <div class="votePanel">
-          <label class="voteLabel">Number of Votes</label>
+      <div class="warningBox" id="warningBox">
+        Voting is not available for this contestant or competition.
+      </div>
 
-          <div class="voteInputWrap">
-            <button type="button" class="voteAdjustBtn" id="minusBtn">−</button>
+      <button type="button" class="voteBtn" id="payBtn">Vote</button>
 
-            <input
-              type="number"
-              id="voteInput"
-              class="voteInput"
-              min="1"
-              value="1"
-              inputmode="numeric"
-            >
+      <div class="secondaryActions">
+        <a class="backBtn" id="backToEventBtn2" href="voting-home.html">Back to Competition</a>
+        <button type="button" class="shareBtn" id="shareBtn">Share Competition</button>
+      </div>
 
-            <button type="button" class="voteAdjustBtn" id="plusBtn">+</button>
-          </div>
-
-          <div class="quickVotes">
-            <button type="button" class="quickVoteBtn" data-votes="5">5</button>
-            <button type="button" class="quickVoteBtn" data-votes="10">10</button>
-            <button type="button" class="quickVoteBtn" data-votes="20">20</button>
-            <button type="button" class="quickVoteBtn" data-votes="50">50</button>
-          </div>
-        </div>
-
-        <div class="totalBox">
-          <span>Total Amount</span>
-          <div class="totalMoney" id="totalAmount">GHS 1.00</div>
-          <div class="voteSummary" id="priceHint">1 vote = GHS 1.00</div>
-        </div>
-
-        <div class="noteBox">
-          Tap <b>Vote</b> to continue to secure payment. Your vote will reflect after payment confirmation.
-        </div>
-
-        <div class="warningBox" id="warningBox">
-          Voting is not available for this contestant or competition.
-        </div>
-
-        <button type="button" class="voteBtn" id="payBtn">Vote</button>
-
-        <div class="secondaryActions">
-          <a class="backBtn" id="backToEventBtn2" href="voting-home.html">Back to Competition</a>
-          <button type="button" class="shareBtn" id="shareBtn">Share Competition</button>
-        </div>
-
-        <div id="msg" class="msg"></div>
-      </form>
-    </div>
-
-  </section>
+      <div id="msg" class="msg"></div>
+    </form>
+  </div>
 
   <div class="footer">
     © <span id="y"></span> Lumina Creative Co<br>
@@ -870,26 +653,16 @@ const mobileMenu = document.getElementById("mobileMenu");
 const loadingBox = document.getElementById("loadingBox");
 const checkoutSection = document.getElementById("checkoutSection");
 
-const backToEventBtn = document.getElementById("backToEventBtn");
 const backToEventBtn2 = document.getElementById("backToEventBtn2");
 const mobileBackLink = document.getElementById("mobileBackLink");
 
 const contestantPhoto = document.getElementById("contestantPhoto");
 const photoWrap = document.getElementById("photoWrap");
-const photoTag = document.getElementById("photoTag");
 const photoName = document.getElementById("photoName");
 
-const checkoutTitle = document.getElementById("checkoutTitle");
-const checkoutSub = document.getElementById("checkoutSub");
-
 const eventStatusDisplay = document.getElementById("eventStatusDisplay");
-const eventCodeDisplay = document.getElementById("eventCodeDisplay");
 const contestantNumberDisplay = document.getElementById("contestantNumberDisplay");
 const categoryDisplay = document.getElementById("categoryDisplay");
-
-const votePriceDisplay = document.getElementById("votePriceDisplay");
-const currentVotesDisplay = document.getElementById("currentVotesDisplay");
-const eventShortName = document.getElementById("eventShortName");
 
 const voteInput = document.getElementById("voteInput");
 const totalAmount = document.getElementById("totalAmount");
@@ -984,14 +757,6 @@ function prettyStatus(status){
   return "Closed";
 }
 
-function shortText(text, max = 18){
-  const value = String(text || "").trim();
-
-  if(value.length <= max) return value || "—";
-
-  return value.slice(0, max) + "...";
-}
-
 function getEventUrl(){
   const basePath = window.location.pathname.replace(/[^/]*$/, "");
   return `${window.location.origin}${basePath}live-event-details.html?eventId=${eventId}`;
@@ -1037,7 +802,7 @@ function updateTotal(){
   const total = count * votePrice;
 
   totalAmount.textContent = "GHS " + total.toFixed(2);
-  priceHint.textContent = `${count.toLocaleString()} vote(s) × GHS ${votePrice.toFixed(2)} = GHS ${total.toFixed(2)}`;
+  priceHint.textContent = `${count.toLocaleString()} vote(s) × GHS ${votePrice.toFixed(2)}`;
 }
 
 function renderPhoto(){
@@ -1143,21 +908,11 @@ async function loadCheckout(){
       ? `Contestant ${contestantNumber} — ${contestantName}`
       : contestantName;
 
-    photoTag.textContent = contestantData.categoryName || "Contestant";
-
-    checkoutTitle.textContent = contestantNumber
-      ? `Vote for Contestant ${contestantNumber}`
-      : `Vote for ${contestantName}`;
-
-    checkoutSub.innerHTML =
-      `You are voting for <b>${contestantName}</b> in <b>${eventName}</b>.`;
-
     eventStatusDisplay.textContent = `Status: ${prettyStatus(eventData.status)}`;
     eventStatusDisplay.className = normalizeStatus(eventData.status) === "active"
-      ? "metaPill ok"
-      : "metaPill danger";
+      ? "photoPill ok"
+      : "photoPill danger";
 
-    eventCodeDisplay.textContent = `Code: ${eventData.eventCode || contestantData.eventCode || "—"}`;
     contestantNumberDisplay.textContent = `Contestant: ${contestantNumber || "—"}`;
 
     if(contestantData.categoryName){
@@ -1167,15 +922,10 @@ async function loadCheckout(){
       categoryDisplay.style.display = "none";
     }
 
-    votePriceDisplay.textContent = `GHS ${votePrice.toFixed(2)}`;
-    currentVotesDisplay.textContent = Number(contestantData.votes || 0).toLocaleString();
-    eventShortName.textContent = shortText(eventName, 18);
-
     voteInput.value = (!isNaN(presetVotes) && presetVotes > 0) ? presetVotes : 1;
 
     const eventLink = `live-event-details.html?eventId=${eventId}`;
 
-    backToEventBtn.href = eventLink;
     backToEventBtn2.href = eventLink;
     mobileBackLink.href = eventLink;
 
