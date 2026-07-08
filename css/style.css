@@ -1,16 +1,16 @@
 :root{
-  --bg:#0b1120;
-  --card:#111827;
-  --text:#f8fafc;
-  --muted:#94a3b8;
-  --stroke:#334155;
-  --accent:#60a5fa;
-  --accent-soft:#1e293b;
-  --accent-dark:#2563eb;
+  --bg:#1b110c;
+  --card:#2d2018;
+  --text:#f7ebd9;
+  --muted:#b7986b;
+  --stroke:rgba(212,175,55,0.18);
+  --accent:#2563eb;
+  --accent-soft:rgba(244,211,87,0.16);
+  --accent-dark:#d4af37;
   --success:#22c55e;
   --warning:#f59e0b;
-  --danger:#fb7185;
-  --shadow:0 18px 40px rgba(15,23,42,0.35);
+  --danger:#ef4444;
+  --shadow:0 20px 45px rgba(15,23,42,0.35);
 }
 
 *{
@@ -21,20 +21,20 @@ html{
   scroll-behavior:smooth;
 }
 
+a{
+  color:var(--accent);
+  text-decoration:none;
+}
+
 body{
   margin:0;
   font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
   min-height:100vh;
   background:
-    radial-gradient(circle at top left, rgba(56,189,248,0.18), transparent 24%),
-    radial-gradient(circle at top right, rgba(59,130,246,0.12), transparent 18%),
-    linear-gradient(180deg, #060918 0%, #0a1225 100%);
+    radial-gradient(circle at top left, rgba(37,99,235,0.22), transparent 26%),
+    radial-gradient(circle at top right, rgba(212,175,55,0.20), transparent 18%),
+    linear-gradient(180deg, #120c07 0%, #271912 100%);
   color:var(--text) !important;
-}
-
-a{
-  color:var(--accent);
-  text-decoration:none;
 }
 
 img{
@@ -77,8 +77,8 @@ img{
 }
 
 .card{
-  background:rgba(15,23,42,0.92);
-  border:1px solid rgba(148,163,184,0.18);
+  background:rgba(33,18,12,0.94);
+  border:1px solid rgba(212,175,55,0.18);
   border-radius:28px;
   box-shadow:var(--shadow);
   padding:26px;
@@ -136,8 +136,8 @@ p{
   gap:6px;
   padding:8px 12px;
   border-radius:999px;
-  border:1px solid #dbe7ff;
-  background:#f8fbff;
+  border:1px solid rgba(212,175,55,0.25);
+  background:rgba(212,175,55,0.12);
   color:var(--accent-dark);
   font-size:13px;
   font-weight:700;
@@ -199,8 +199,8 @@ p{
   align-items:flex-start;
   padding:20px;
   border-radius:24px;
-  border:1px solid rgba(148,163,184,0.16);
-  background:rgba(15,23,42,0.68);
+  border:1px solid rgba(212,175,55,0.22);
+  background:rgba(15,23,42,0.72);
 }
 
 .num{
@@ -254,8 +254,8 @@ p{
   margin:18px 0;
   padding:18px 20px;
   border-radius:22px;
-  border:1px solid rgba(96,165,250,0.18);
-  background:rgba(15,23,42,0.6);
+  border:1px solid rgba(212,175,55,0.18);
+  background:rgba(33,18,12,0.85);
   color:var(--text);
 }
 
@@ -342,7 +342,7 @@ p{
   width:280px;
   height:280px;
   border-radius:50%;
-  background:radial-gradient(circle, rgba(37,99,235,0.18), transparent 70%);
+  background:radial-gradient(circle, rgba(212,175,55,0.22), transparent 70%);
   top:-80px;
   right:-80px;
   pointer-events:none;
@@ -354,7 +354,7 @@ p{
   width:220px;
   height:220px;
   border-radius:50%;
-  background:radial-gradient(circle, rgba(14,165,233,0.16), transparent 70%);
+  background:radial-gradient(circle, rgba(37,99,235,0.18), transparent 70%);
   bottom:-70px;
   left:-70px;
   pointer-events:none;

@@ -13,10 +13,10 @@ html{scroll-behavior:smooth}
 body{
   margin:0;
   overflow-x:hidden;
-  background: radial-gradient(circle at top left, rgba(96,165,250,0.18), transparent 24%),
-              radial-gradient(circle at top right, rgba(59,130,246,0.12), transparent 18%),
-              linear-gradient(180deg, #060918 0%, #0e1726 100%);
-  color:#f8fafc;
+  background: radial-gradient(circle at top left, rgba(37,99,235,0.22), transparent 26%),
+              radial-gradient(circle at top right, rgba(212,175,55,0.20), transparent 18%),
+              linear-gradient(180deg, #100a06 0%, #271912 100%);
+  color:#f7ebd9;
   font-family:Arial, Helvetica, sans-serif;
 }
 
@@ -26,8 +26,8 @@ body{
   position:sticky;
   top:0;
   z-index:100;
-  background:#0b4bea;
-  color:#ffffff;
+  background:linear-gradient(135deg, #d4af37, #b88718);
+  color:#f7ebd9;
 }
 
 .smartHeaderInner{
@@ -48,7 +48,7 @@ body{
 .menuIcon,.searchIcon{
   border:0;
   background:transparent;
-  color:white;
+  color:#f7ebd9;
   cursor:pointer;
   padding:0;
   display:grid;
@@ -58,7 +58,7 @@ body{
 }
 
 .logoLink{
-  color:white;
+  color:#f7ebd9;
   text-decoration:none;
   display:flex;
   align-items:center;
@@ -72,7 +72,7 @@ body{
   width:38px;
   height:38px;
   border-radius:50%;
-  background:white;
+  background:rgba(255,255,255,0.05);
   display:grid;
   place-items:center;
   position:relative;
@@ -91,8 +91,8 @@ body{
 
 .sellBtn{
   border:0;
-  background:#063fc9;
-  color:white;
+  background:linear-gradient(135deg, #d4af37, #b88718);
+  color:#f7ebd9;
   padding:13px 18px;
   border-radius:999px;
   font-weight:800;
@@ -104,8 +104,8 @@ body{
 .mobileMenu{
   display:none;
   padding:14px 18px 18px;
-  background:#073fd0;
-  border-top:1px solid rgba(255,255,255,.16);
+  background:rgba(16,10,6,0.96);
+  border-top:1px solid rgba(212,175,55,0.22);
 }
 
 .mobileMenu.show{display:block}
@@ -121,7 +121,7 @@ body{
   border-radius:14px;
   margin-top:8px;
   font-weight:800;
-  background:white;
+  background:rgba(255,255,255,0.05);
   color:#0b4bea;
 }
 
@@ -159,7 +159,7 @@ body{
 .detailHero{
   position:relative;
   height:245px;
-  background:#071321;
+  background:rgba(18,12,7,0.95);
   overflow:hidden;
 }
 
@@ -176,13 +176,13 @@ body{
   align-items:center;
   justify-content:center;
   padding:20px;
-  color:white;
+  color:#f7ebd9;
   font-family:Georgia, "Times New Roman", serif;
   font-size:34px;
   line-height:1.05;
   font-weight:900;
   text-align:center;
-  background:linear-gradient(135deg,#071321,#0b4bea);
+  background:linear-gradient(135deg, rgba(21,22,24,0.95), rgba(8,24,57,0.96));
 }
 
 .heroOverlay{
@@ -196,7 +196,7 @@ body{
   position:absolute;
   left:16px;
   top:16px;
-  color:white;
+  color:#f7ebd9;
   font-size:15px;
   z-index:2;
   display:flex;
@@ -205,7 +205,7 @@ body{
 }
 
 .breadcrumb a{
-  color:white;
+  color:#f7ebd9;
   text-decoration:none;
 }
 
@@ -225,8 +225,8 @@ body{
   top:76px;
   z-index:80;
   height:60px;
-  background:white;
-  border-bottom:1px solid #eeeeee;
+  background:rgba(16,10,6,0.94);
+  border-bottom:1px solid rgba(212,175,55,0.20);
   display:flex;
   align-items:center;
   justify-content:space-between;
@@ -247,7 +247,7 @@ body{
   display:flex;
   align-items:center;
   text-decoration:none;
-  color:#111;
+  color:#f7ebd9;
   font-size:15px;
   font-weight:500;
   border-bottom:3px solid transparent;
@@ -256,7 +256,7 @@ body{
 
 .tabLink.active{
   font-weight:900;
-  border-bottom-color:#111;
+  border-bottom-color:#d4af37;
 }
 
 .tabsActions{
@@ -269,8 +269,9 @@ body{
   width:42px;
   height:42px;
   border-radius:50%;
-  border:1px solid #e1e1e1;
-  background:white;
+  border:1px solid rgba(212,175,55,0.24);
+  background:rgba(255,255,255,0.05);
+  color:#f7ebd9;
   display:grid;
   place-items:center;
   font-size:22px;
@@ -315,9 +316,9 @@ body{
 }
 
 .statusPill{
-  border:1px solid #0b4bea;
-  color:#0b4bea;
-  background:white;
+  border:1px solid rgba(212,175,55,0.9);
+  color:#f4e2a5;
+  background:rgba(212,175,55,0.12);
   border-radius:999px;
   padding:10px 14px;
   font-weight:700;
@@ -325,9 +326,9 @@ body{
 }
 
 .typePill{
-  border:1px solid #111;
-  color:#111;
-  background:#f7f7f7;
+  border:1px solid rgba(255,255,255,0.18);
+  color:#f7ebd9;
+  background:rgba(255,255,255,0.05);
   border-radius:999px;
   padding:10px 14px;
   font-weight:800;
@@ -335,7 +336,7 @@ body{
 }
 
 .aboutText{
-  color:#333;
+  color:#e7d8ae;
   line-height:1.65;
   font-size:15px;
   margin:0 0 26px;
@@ -357,7 +358,7 @@ body{
   display:flex;
   align-items:flex-start;
   gap:12px;
-  color:#222;
+  color:#f7ebd9;
   font-size:16px;
   line-height:1.45;
   margin-bottom:16px;
@@ -375,8 +376,8 @@ body{
   gap:10px;
   margin-top:14px;
   text-decoration:none;
-  background:#000;
-  color:white;
+  background:linear-gradient(135deg, #d4af37, #b88718);
+  color:#1b1008;
   padding:18px 22px;
   border-radius:999px;
   font-weight:900;
@@ -384,16 +385,16 @@ body{
 }
 
 .blueInlineBtn{
-  background:#eef2ff;
-  color:#0b4bea;
+  background:rgba(212,175,55,0.16);
+  color:#f7ebd9;
 }
 
 /* TICKET BOX */
 .ticketBox{
   margin-top:14px;
-  border:1px solid #eeeeee;
+  border:1px solid rgba(212,175,55,0.18);
   border-radius:18px;
-  background:#fafafa;
+  background:rgba(255,255,255,0.04);
   padding:18px;
 }
 
@@ -409,12 +410,14 @@ body{
   margin:0 0 5px;
   font-family:Georgia, "Times New Roman", serif;
   font-size:24px;
+  color:#f7ebd9;
 }
 
 .ticketPrice{
   font-size:27px;
   font-weight:900;
   white-space:nowrap;
+  color:#f7ebd9;
 }
 
 .ticketMeta{
@@ -425,15 +428,15 @@ body{
 }
 
 .ticketMetaCard{
-  border:1px solid #e5e5e5;
+  border:1px solid rgba(212,175,55,0.18);
   border-radius:14px;
-  background:white;
+  background:rgba(16,10,6,0.85);
   padding:13px;
 }
 
 .ticketMetaCard span{
   display:block;
-  color:#777;
+  color:#d7c07a;
   font-size:12px;
   font-weight:800;
 }
@@ -442,6 +445,7 @@ body{
   display:block;
   margin-top:5px;
   font-size:17px;
+  color:#f7ebd9;
 }
 
 @media(max-width:700px){
@@ -457,7 +461,7 @@ body{
 
 .categoryIntro{
   margin:0 0 16px;
-  color:#444;
+  color:#e7d8ae;
   font-size:15px;
 }
 
@@ -469,17 +473,17 @@ body{
 
 .categoryBtn{
   text-align:left;
-  border:1px solid #e5e5e5;
-  background:white;
+  border:1px solid rgba(212,175,55,0.18);
+  background:rgba(255,255,255,0.06);
   border-radius:10px;
   padding:16px;
   cursor:pointer;
-  color:#111;
+  color:#f7ebd9;
 }
 
 .categoryBtn.active{
-  background:#050505;
-  color:white;
+  background:rgba(212,175,55,0.18);
+  color:#f7ebd9;
 }
 
 .categoryBtn b{
@@ -491,17 +495,17 @@ body{
 .categoryBtn span{
   display:block;
   font-size:12px;
-  color:#777;
+  color:#d7c07a;
 }
 
-.categoryBtn.active span{color:#d4d4d4}
+.categoryBtn.active span{color:#f4e2a5}
 
 .seeMoreBtn{
   display:none;
   margin:18px auto 0;
-  border:1px dashed #111;
-  background:white;
-  color:#111;
+  border:1px dashed rgba(212,175,55,0.24);
+  background:rgba(255,255,255,0.06);
+  color:#f7ebd9;
   padding:13px 28px;
   border-radius:999px;
   font-weight:700;
@@ -511,7 +515,7 @@ body{
 /* CONTESTANTS */
 .contestantSection{
   margin-top:36px;
-  background:#f4f5f7;
+  background:rgba(16,10,6,0.9);
   border-radius:12px;
   padding:18px 12px 24px;
 }
@@ -521,27 +525,30 @@ body{
   font-family:Georgia, "Times New Roman", serif;
   font-size:23px;
   font-weight:900;
+  color:#f7ebd9;
 }
 
 .contestantSummary{
-  color:#777;
+  color:#d7c07a;
   font-size:13px;
   margin-bottom:18px;
 }
 
 .searchInput{
   width:100%;
-  border:1px solid #dddddd;
+  border:1px solid rgba(212,175,55,0.18);
   border-radius:14px;
   padding:13px 14px;
   font-size:15px;
   outline:none;
   margin-bottom:18px;
+  background:rgba(255,255,255,0.05);
+  color:#f7ebd9;
 }
 
 .searchInput:focus{
-  border-color:#0b4bea;
-  box-shadow:0 0 0 4px rgba(11,75,234,.12);
+  border-color:rgba(212,175,55,0.95);
+  box-shadow:0 0 0 4px rgba(212,175,55,0.16);
 }
 
 .contestantGrid{
@@ -559,7 +566,7 @@ body{
   height:112px;
   border-radius:50%;
   overflow:hidden;
-  background:#071321;
+  background:rgba(18,12,7,0.95);
   margin:0 auto 10px;
 }
 
@@ -576,10 +583,10 @@ body{
   display:grid;
   place-items:center;
   padding:10px;
-  color:white;
+  color:#f7ebd9;
   font-size:13px;
   font-weight:900;
-  background:linear-gradient(135deg,#071321,#0b4bea);
+  background:linear-gradient(135deg, rgba(21,22,24,0.95), rgba(8,24,57,0.96));
 }
 
 .contestantName{
@@ -590,15 +597,15 @@ body{
 }
 
 .voteCount{
-  color:#777;
+  color:#d7c07a;
   font-size:12px;
   margin-bottom:8px;
 }
 
 .voteMini{
   border:0;
-  background:white;
-  color:#111;
+  background:rgba(255,255,255,0.05);
+  color:#f7ebd9;
   border-radius:999px;
   padding:8px 11px;
   font-size:11px;
@@ -606,17 +613,17 @@ body{
 }
 
 .voteMini:hover{
-  background:#0b4bea;
-  color:white;
+  background:linear-gradient(135deg, #d4af37, #b88718);
+  color:#1b1008;
 }
 
 .emptyBox,.loadingBox{
-  border:1px dashed #d7d7d7;
+  border:1px dashed rgba(212,175,55,0.24);
   border-radius:18px;
   padding:26px;
   text-align:center;
-  color:#777;
-  background:white;
+  color:#d7c07a;
+  background:rgba(255,255,255,0.04);
 }
 
 /* BOTTOM BAR */
@@ -627,9 +634,9 @@ body{
   bottom:10px;
   z-index:150;
   min-height:72px;
-  background:white;
-  box-shadow:0 6px 28px rgba(0,0,0,.25);
-  border:1px solid #e8e8e8;
+  background:rgba(16,10,6,0.95);
+  box-shadow:0 6px 28px rgba(0,0,0,.35);
+  border:1px solid rgba(212,175,55,0.18);
   border-radius:8px;
   display:flex;
   align-items:center;
@@ -645,7 +652,7 @@ body{
 }
 
 .bottomSub{
-  color:#999;
+  color:#d7c07a;
   font-size:14px;
   margin-top:3px;
 }
@@ -661,7 +668,7 @@ body{
 .buyBtn,.voteBtn{
   border:0;
   background:#000;
-  color:white;
+  color:#f7ebd9;
   padding:15px 20px;
   border-radius:999px;
   font-weight:900;
@@ -671,7 +678,7 @@ body{
 }
 
 .voteBtn{
-  background:#0b4bea;
+  background:linear-gradient(135deg, #d4af37, #b88718);
 }
 
 /* SEARCH / TOAST */
@@ -689,7 +696,7 @@ body{
 .searchBox{
   width:min(680px,100%);
   margin:0 auto;
-  background:white;
+  background:rgba(255,255,255,0.05);
   border-radius:22px;
   padding:18px;
 }
@@ -713,7 +720,7 @@ body{
   border-radius:15px;
   padding:0 18px;
   background:#111;
-  color:white;
+  color:#f7ebd9;
   font-weight:800;
 }
 
@@ -723,7 +730,7 @@ body{
   bottom:96px;
   transform:translateX(-50%) translateY(20px);
   background:#111;
-  color:white;
+  color:#f7ebd9;
   padding:12px 16px;
   border-radius:999px;
   font-size:13px;

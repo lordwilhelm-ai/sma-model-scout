@@ -18,10 +18,10 @@ html{
 body{
   margin:0;
   overflow-x:hidden;
-  background: radial-gradient(circle at top left, rgba(96,165,250,0.18), transparent 24%),
-              radial-gradient(circle at top right, rgba(59,130,246,0.12), transparent 18%),
-              linear-gradient(180deg, #060918 0%, #0e1726 100%);
-  color:#f8fafc;
+  background: radial-gradient(circle at top left, rgba(37,99,235,0.24), transparent 24%),
+              radial-gradient(circle at top right, rgba(212,175,55,0.22), transparent 18%),
+              linear-gradient(180deg, #100a06 0%, #271912 100%);
+  color:#f7ebd9;
   font-family:Arial, Helvetica, sans-serif;
 }
 
@@ -34,8 +34,8 @@ body{
   position:sticky;
   top:0;
   z-index:100;
-  background:#0b4bea;
-  color:#ffffff;
+  background:rgba(16,10,6,0.92);
+  color:#f7e3a0;
 }
 
 .smartHeaderInner{
@@ -58,7 +58,7 @@ body{
 .searchIcon{
   border:0;
   background:transparent;
-  color:white;
+  color:#f7e3a0;
   cursor:pointer;
   padding:0;
   display:grid;
@@ -76,7 +76,7 @@ body{
 }
 
 .logoLink{
-  color:white;
+  color:#f7e3a0;
   text-decoration:none;
   display:flex;
   align-items:center;
@@ -90,7 +90,7 @@ body{
   width:44px;
   height:44px;
   border-radius:50%;
-  background:white;
+  background:linear-gradient(135deg, #d4af37, #b88718);
   display:grid;
   place-items:center;
   position:relative;
@@ -101,16 +101,16 @@ body{
   content:"";
   width:22px;
   height:13px;
-  border-left:7px solid #0b4bea;
-  border-bottom:7px solid #0b4bea;
+  border-left:7px solid #120c07;
+  border-bottom:7px solid #120c07;
   transform:rotate(-45deg);
   margin-top:-3px;
 }
 
 .sellBtn{
   border:0;
-  background:#063fc9;
-  color:white;
+  background:linear-gradient(135deg, #d4af37, #b88718);
+  color:#1b1008;
   padding:15px 25px;
   border-radius:999px;
   font-weight:800;
@@ -122,8 +122,8 @@ body{
 .mobileMenu{
   display:none;
   padding:14px 18px 18px;
-  background:#073fd0;
-  border-top:1px solid rgba(255,255,255,.16);
+  background:rgba(15,9,5,0.96);
+  border-top:1px solid rgba(212,175,55,0.22);
 }
 
 .mobileMenu.show{
@@ -141,7 +141,7 @@ body{
   border-radius:14px;
   margin-top:8px;
   font-weight:800;
-  background:white;
+  background:rgba(255,255,255,0.05);
   color:#0b4bea;
 }
 
@@ -194,8 +194,9 @@ body{
 
 .hero{
   min-height:580px;
-  background:#071321;
-  color:white;
+  background:radial-gradient(circle at top left, rgba(212,175,55,0.18), transparent 32%),
+              linear-gradient(180deg, rgba(18,12,7,0.95), rgba(21,30,70,0.98));
+  color:#f7ebd9;
   display:grid;
   place-items:center;
   text-align:center;
@@ -212,13 +213,14 @@ body{
   font-size:52px;
   line-height:1.05;
   font-weight:900;
-  letter-spacing:-1.5px;
+  letter-spacing:-0.8px;
+  color:#f4e2a5;
 }
 
 .hero p{
   margin:28px auto 0;
   max-width:590px;
-  color:#f1f5f9;
+  color:#e7d39e;
   font-size:22px;
   line-height:1.45;
   font-weight:500;
@@ -244,14 +246,14 @@ body{
 }
 
 .heroPrimary{
-  background:#0b4bea;
-  color:white;
+  background:linear-gradient(135deg, #d4af37, #b88718);
+  color:#18110c;
 }
 
 .heroGhost{
-  border:1.5px solid rgba(255,255,255,.82);
-  color:white;
-  background:transparent;
+  border:1.5px solid rgba(212,175,55,0.8);
+  color:#f4e2a5;
+  background:rgba(255,255,255,0.04);
 }
 
 @media(max-width:680px){
@@ -307,7 +309,7 @@ body{
 
 .sectionTop h2{
   margin:0;
-  color:#191919;
+  color:#f4e2a5;
   font-family:Georgia, "Times New Roman", serif;
   font-size:38px;
   line-height:1.1;
@@ -317,13 +319,13 @@ body{
 
 .seeAllBtn{
   text-decoration:none;
-  color:#111;
-  border:1px solid #dddddd;
-  background:white;
+  color:#f4e2a5;
+  border:1px solid rgba(212,175,55,0.28);
+  background:rgba(16,10,6,0.88);
   border-radius:999px;
   padding:18px 33px;
   font-size:18px;
-  font-weight:500;
+  font-weight:700;
   white-space:nowrap;
 }
 
@@ -348,11 +350,12 @@ body{
 
 .loadingBox,
 .emptyBox{
-  border:1px dashed #d7d7d7;
+  border:1px dashed rgba(212,175,55,0.24);
   border-radius:18px;
   padding:26px;
   text-align:center;
-  color:#777;
+  color:#d7c07a;
+  background:rgba(255,255,255,0.02);
 }
 
 .popularScroller{
@@ -373,7 +376,7 @@ body{
   max-width:310px;
   scroll-snap-align:start;
   text-decoration:none;
-  color:#111;
+  color:#f7ebd9;
 }
 
 .posterWrap{
@@ -381,7 +384,7 @@ body{
   height:150px;
   border-radius:9px;
   overflow:hidden;
-  background:#081427;
+  background:rgba(8,20,39,0.95);
 }
 
 .posterWrap img{
@@ -398,20 +401,10 @@ body{
   justify-content:center;
   padding:18px;
   text-align:center;
-  color:white;
+  color:#f4e2a5;
   font-weight:900;
   font-size:24px;
-  background:linear-gradient(135deg,#071321,#0b4bea);
-}
-
-.cardStatus{
-  position:absolute;
-  left:10px;
-  top:10px;
-  background:rgba(0,0,0,.70);
-  color:white;
-  border-radius:999px;
-  padding:7px 10px;
+  background:linear-gradient(135deg, rgba(21,22,24,0.95), rgba(8,24,57,0.96));
   font-size:11px;
   font-weight:900;
   backdrop-filter:blur(8px);
@@ -421,8 +414,8 @@ body{
   position:absolute;
   right:10px;
   top:10px;
-  background:rgba(255,255,255,.92);
-  color:#111;
+  background:rgba(255,255,255,0.04);
+  color:#f4e2a5;
   border-radius:999px;
   padding:7px 10px;
   font-size:11px;
@@ -456,7 +449,7 @@ body{
 }
 
 .perVote{
-  color:#999;
+  color:#d7c07a;
   font-weight:500;
   margin-left:4px;
 }
@@ -465,7 +458,7 @@ body{
   display:flex;
   align-items:center;
   gap:8px;
-  color:#606060;
+  color:#b79e60;
   margin-top:16px;
   font-size:15px;
 }
@@ -530,6 +523,8 @@ body{
 .organizerCta{
   padding:90px 18px 110px;
   text-align:center;
+  background:rgba(16,10,6,0.92);
+  border-top:1px solid rgba(212,175,55,0.16);
 }
 
 .organizerCta h2{
@@ -540,11 +535,12 @@ body{
   line-height:1.13;
   font-weight:900;
   letter-spacing:-1px;
+  color:#f4e2a5;
 }
 
 .organizerCta p{
   margin:20px 0 0;
-  color:#333;
+  color:#d7c48c;
   font-size:18px;
 }
 
@@ -552,8 +548,8 @@ body{
   margin-top:28px;
   display:inline-flex;
   text-decoration:none;
-  color:white;
-  background:#0b4bea;
+  color:#1b1008;
+  background:linear-gradient(135deg, #d4af37, #b88718);
   border-radius:999px;
   padding:18px 31px;
   font-size:17px;
@@ -579,8 +575,8 @@ body{
 ========================= */
 
 .smartFooter{
-  background:#171717;
-  color:white;
+  background:#0d0906;
+  color:#e7d8aa;
   padding:55px 32px 70px;
 }
 
@@ -623,7 +619,7 @@ body{
 
 .footerBlock p,
 .footerBlock a{
-  color:white;
+  color:#e7d8aa;
   text-decoration:none;
   display:block;
   margin:0 0 22px;
@@ -688,7 +684,7 @@ body{
 .searchBox{
   width:min(680px,100%);
   margin:0 auto;
-  background:white;
+  background:rgba(16,10,6,0.96);
   border-radius:22px;
   padding:18px;
 }
@@ -700,25 +696,27 @@ body{
 
 .searchBox input{
   flex:1;
-  border:1px solid #ddd;
+  border:1px solid rgba(212,175,55,0.24);
   border-radius:15px;
   padding:15px;
   font-size:16px;
   outline:none;
+  background:rgba(255,255,255,0.05);
+  color:#f7ebd9;
 }
 
 .closeSearch{
   border:0;
   border-radius:15px;
   padding:0 18px;
-  background:#111;
-  color:white;
+  background:linear-gradient(135deg, #d4af37, #b88718);
+  color:#1b1008;
   font-weight:800;
 }
 
 .searchHint{
   margin:14px 0 0;
-  color:#666;
+  color:#d7c07a;
   font-size:14px;
 }
 </style>
@@ -765,11 +763,9 @@ body{
   <section class="hero">
     <div class="heroContent">
       <h1>Vote. Buy tickets.<br>Support events.</h1>
-      <p>Discover voting competitions, ticketed events, and live campaigns from organisers on Lumina Vote.</p>
-
       <div class="heroActions">
-        <a class="heroPrimary" href="event-registration.html">Create event</a>
-        <a class="heroGhost" href="voting-home.html">See all events</a>
+        <a class="heroPrimary" href="voting-home.html">Browse events</a>
+        <a class="heroGhost" href="event-registration.html">Host an event</a>
       </div>
     </div>
   </section>
