@@ -983,11 +983,14 @@ payBtn.addEventListener("click", async () => {
       body: JSON.stringify({
         amount: amount,
         phone: "", // optional. Add voter phone if you collect it
-        metadata: {
-          reference: `vote_${eventId}_${contestantId}_${votesBought}_${Date.now()}`, // IMPORTANT: parsed by hubtel-callback.js
-          description: `Vote for ${contestantName}`,
-          name: "Anonymous Voter"
-        }
+        eventId: eventId,
+        contestantId: contestantId,
+        contestantName: contestantName,
+        votes: votesBought
+        // NOTE: no client-built reference here anymore. Hubtel caps
+        // clientReference at 32 characters, and eventId + contestantId
+        // alone blow past that. The backend now generates a short
+        // reference and stores these details in Firestore keyed by it.
       })
     });
 

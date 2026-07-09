@@ -40,7 +40,7 @@ export default async function handler(req, res) {
       return res.status(200).json({ error: 'Missing ClientReference' });
     }
 
-    // 2. Prevent duplicate processing - check all relevant collections
+    // 2. Prevent duplicate processing
     const voteDoc = await db.collection('votes').doc(ClientReference).get();
     const ticketDoc = await db.collection('ticket_orders').doc(ClientReference).get();
 
@@ -49,32 +49,49 @@ export default async function handler(req, res) {
       return res.status(200).json({ status: 'already_saved' });
     }
 
-    // 3. Determine type from ClientReference
+    // 3. Determine type from ClientReference.
+    // NOTE: don't rely on split('_')[0] alone — "ussd_vote_sessionId" splits
+    // to ["ussd","vote","sessionId"], so parts[0] is "ussd", not "ussd_vote".
+    // Match on the actual prefix instead.
     const parts = ClientReference.split('_');
-    const type = parts[0];
+    let type;
+    if (ClientReference.startsWith('ussd_vote_')) {
+      type = 'ussd_vote';
+    } else if (ClientReference.startsWith('vote_')) {
+      type = 'vote';
+    } else if (ClientReference.startsWith('ticket_')) {
+      type = 'ticket';
+    } else {
+      type = parts[0];
+    }
 
     await db.runTransaction(async (transaction) => {
       if (type === 'vote') {
-        // Format: vote_eventId_contestantId_votes_timestamp
-        if (parts.length < 4) throw new Error('Invalid vote ClientReference format');
+        // Reference is a short random string (e.g. "vote_ab12cd34"), not
+        // eventId/contestantId/votes embedded directly — those are looked
+        // up from the pending_payments doc created in pay/initialize.js.
+        const pendingRef = db.collection('pending_payments').doc(ClientReference);
 
-        const eventId = parts[1];
-        const contestantId = parts[2];
+        // Reads before writes
+        const pendingSnap = await transaction.get(pendingRef);
+        if (!pendingSnap.exists) throw new Error('No pending payment found for reference: ' + ClientReference);
+        const pendingData = pendingSnap.data();
+
+        const { eventId, contestantId } = pendingData;
+        if (!eventId || !contestantId) throw new Error('Pending payment missing eventId/contestantId');
 
         const voteRef = db.collection('votes').doc(ClientReference);
         const contestantRef = db.collection('eventContestants').doc(contestantId);
         const eventRef = db.collection('events').doc(eventId);
-        const pendingRef = db.collection('pending_payments').doc(ClientReference);
 
-        // Reads must happen before writes inside a Firestore transaction
         const eventSnap = await transaction.get(eventRef);
         if (!eventSnap.exists) throw new Error('Event not found: ' + eventId);
 
         let votePrice = Number(eventSnap.data().votePrice || 1);
         if (isNaN(votePrice) || votePrice < 1) votePrice = 1;
 
-        // Trust the amount Hubtel confirms was paid, never the number embedded
-        // in the client-supplied reference string.
+        // Trust the amount Hubtel confirms was paid, never a number supplied
+        // by the client.
         const votes = Math.floor(Amount / votePrice);
         if (votes < 1) throw new Error('Confirmed amount too small to credit any votes');
 
@@ -111,7 +128,7 @@ export default async function handler(req, res) {
         // Format: ussd_vote_sessionId
         if (parts.length < 3) throw new Error('Invalid ussd_vote ClientReference format');
 
-        const sessionId = parts[2];
+        const sessionId = parts.slice(2).join('_');
         const pendingRef = db.collection('pending_votes').doc(sessionId);
 
         // Reads before writes
