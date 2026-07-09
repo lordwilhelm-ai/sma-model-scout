@@ -60,7 +60,6 @@ export default async function handler(req, res) {
 
     const siteUrl = getSiteUrl(req);
     const callbackUrl = process.env.HUBTEL_CALLBACK_URL || `${siteUrl}/api/hubtel-callback`;
-    const returnUrl = process.env.HUBTEL_RETURN_URL || `${siteUrl}/success.html`;
     const cancellationUrl = process.env.HUBTEL_CANCELLATION_URL || `${siteUrl}/voting-home.html`;
     const merchantAccountNumber = String(process.env.HUBTEL_MERCHANT_ACCOUNT || '').trim();
 
@@ -77,6 +76,17 @@ export default async function handler(req, res) {
     const clientReference = isVote
       ? shortRef('vote')
       : (metadata?.reference ? String(metadata.reference).slice(0, 32) : shortRef('pay'));
+
+    // Carry eventId/contestantName through to the success page so it knows
+    // what to display and where "Back to Competition" should point. Hubtel
+    // appends its own params (e.g. checkoutid) on top of whatever is here.
+    const returnBase = process.env.HUBTEL_RETURN_URL || `${siteUrl}/vote-success.html`;
+    let returnUrl = returnBase;
+    if (isVote) {
+      const sep = returnBase.includes('?') ? '&' : '?';
+      returnUrl = `${returnBase}${sep}eventId=${encodeURIComponent(eventId)}` +
+        (contestantName ? `&name=${encodeURIComponent(contestantName)}` : '');
+    }
 
     const payload = {
       totalAmount,

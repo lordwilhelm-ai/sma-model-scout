@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vote Successful | Lumina Vote</title>
+<link rel="stylesheet" href="css/style.css">
+
+<style>
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  overflow-x:hidden;
+  background: radial-gradient(circle at top left, rgba(37,99,235,0.22), transparent 26%),
+              radial-gradient(circle at top right, rgba(212,175,55,0.20), transparent 18%),
+              linear-gradient(180deg, #100a06 0%, #271912 100%);
+  color:#f7ebd9;
+  font-family:Arial, Helvetica, sans-serif;
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+}
+
+.successCard{
+  width:min(480px,100%);
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(212,175,55,0.18);
+  border-radius:20px;
+  padding:36px 28px;
+  text-align:center;
+  box-shadow:0 12px 28px rgba(0,0,0,.25);
+}
+
+.checkMark{
+  width:72px;
+  height:72px;
+  margin:0 auto 20px;
+  border-radius:50%;
+  background:rgba(34,197,94,.16);
+  border:1px solid rgba(34,197,94,.4);
+  display:grid;
+  place-items:center;
+}
+
+.checkMark svg{
+  width:36px;
+  height:36px;
+}
+
+h1{
+  font-family:Georgia, "Times New Roman", serif;
+  font-size:26px;
+  margin:0 0 10px;
+}
+
+p{
+  color:#e2d6c2;
+  font-size:15px;
+  line-height:1.6;
+  margin:0 0 6px;
+}
+
+.contestantLine{
+  color:#f7ebd9;
+  font-weight:800;
+  margin-bottom:18px;
+}
+
+.redirectNote{
+  margin-top:22px;
+  font-size:13px;
+  color:#d7c07a;
+}
+
+.actions{
+  margin-top:22px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.actions a{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:50px;
+  border-radius:999px;
+  text-decoration:none;
+  font-weight:900;
+  font-size:15px;
+}
+
+.primaryBtn{
+  background:#000000;
+  color:#f7ebd9;
+}
+
+.secondaryBtn{
+  border:1px solid rgba(212,175,55,0.18);
+  color:#f7ebd9;
+  background:rgba(255,255,255,0.05);
+}
+
+.footer{
+  margin-top:24px;
+  text-align:center;
+  color:#d7c07a;
+  font-size:12px;
+  line-height:1.6;
+}
+</style>
+</head>
+
+<body>
+
+<div class="successCard">
+  <div class="checkMark">
+    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M5 13l4 4L19 7" stroke="#4ade80" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
+
+  <h1>Payment Successful</h1>
+  <p id="contestantLine" class="contestantLine" style="display:none;"></p>
+  <p>Thank you for voting. Your votes are being added now and should reflect shortly.</p>
+
+  <div class="actions">
+    <a href="voting-home.html" id="backBtn" class="primaryBtn">Back to Competition</a>
+    <a href="voting-home.html" class="secondaryBtn">All Competitions</a>
+  </div>
+
+  <div class="redirectNote" id="redirectNote"></div>
+
+  <div class="footer">
+    Site created by <b>Lord Wilhelm</b> (0593410452)
+  </div>
+</div>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const eventId = params.get("eventId");
+const name = params.get("name");
+
+const contestantLine = document.getElementById("contestantLine");
+const backBtn = document.getElementById("backBtn");
+const redirectNote = document.getElementById("redirectNote");
+
+if(name){
+  contestantLine.textContent = `You voted for ${name}`;
+  contestantLine.style.display = "block";
+}
+
+let redirectTarget = "voting-home.html";
+
+if(eventId){
+  redirectTarget = `live-event-details.html?eventId=${encodeURIComponent(eventId)}`;
+  backBtn.href = redirectTarget;
+}
+
+let secondsLeft = 6;
+
+function updateNote(){
+  redirectNote.textContent = `Returning to the competition in ${secondsLeft}s...`;
+}
+
+updateNote();
+
+const countdown = setInterval(() => {
+  secondsLeft -= 1;
+
+  if(secondsLeft <= 0){
+    clearInterval(countdown);
+    window.location.href = redirectTarget;
+    return;
+  }
+
+  updateNote();
+}, 1000);
+</script>
+
+</body>
+</html>
