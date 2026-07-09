@@ -3,87 +3,57 @@ const fetch = globalThis.fetch;
 
 function initFirebaseAdmin() {
   if (admin.apps.length) return;
-
   const base64 = process.env.FIREBASE_SERVICE_ACCOUNT_BASE64;
-  if (!base64) {
-    throw new Error('FIREBASE_SERVICE_ACCOUNT_BASE64 is missing');
-  }
-
-  const serviceAccount = JSON.parse(
-    Buffer.from(base64, 'base64').toString('utf8')
-  );
-
+  if (!base64) throw new Error('FIREBASE_SERVICE_ACCOUNT_BASE64 is missing');
+  const serviceAccount = JSON.parse(Buffer.from(base64, 'base64').toString('utf8'));
   admin.initializeApp({ credential: admin.credential.cert(serviceAccount) });
 }
 
 function normalizeHubtelStatus(status) {
   const s = String(status || '').toLowerCase();
-  return (
-    s === 'success' ||
-    s === 'successful' ||
-    s === 'completed' ||
-    s === 'paid' ||
-    s === '0000' ||
-    s === '000'
-  );
+  return s === 'success' || s === 'successful' || s === 'completed' || s === 'paid' || s === '0000' || s === '000';
 }
 
 function extractHubtelMetadata(payload) {
-  if (!payload || typeof payload !== 'object') return {};
-
+  if (!payload || typeof payload!== 'object') return {};
   const candidates = [
-    payload.metadata,
-    payload.Metadata,
-    payload.data?.metadata,
-    payload.data?.Metadata,
-    payload.Data?.metadata,
-    payload.Data?.Metadata,
+    payload.metadata, payload.Metadata, payload.data?.metadata,
+    payload.data?.Metadata, payload.Data?.metadata, payload.Data?.Metadata,
   ];
-
   for (const candidate of candidates) {
-    if (candidate && typeof candidate === 'object') {
-      return candidate;
-    }
+    if (candidate && typeof candidate === 'object') return candidate;
   }
-
   return {};
 }
 
 function hasTickets(eventData) {
-  return (
-    eventData?.ticketsEnabled === true ||
-    eventData?.type === 'tickets' ||
-    eventData?.type === 'voting_tickets'
-  );
+  return eventData?.ticketsEnabled === true || eventData?.type === 'tickets' || eventData?.type === 'voting_tickets';
 }
 
 export default async function handler(req, res) {
-  if (req.method !== 'GET') {
-    res.status(405).json({ status: false, message: 'Method not allowed' });
-    return;
+  if (req.method!== 'GET') {
+    return res.status(405).json({ status: false, message: 'Method not allowed' });
   }
 
   try {
     initFirebaseAdmin();
-
     const db = admin.firestore();
     const reference = String(req.query.reference || '').trim();
 
     if (!reference) {
-      res.status(400).json({ status: false, message: 'Missing payment reference' });
-      return;
+      return res.status(400).json({ status: false, message: 'Missing payment reference' });
     }
 
     const clientId = process.env.HUBTEL_CLIENT_ID;
     const clientSecret = process.env.HUBTEL_CLIENT_SECRET;
 
-    if (!clientId || !clientSecret) {
-      res.status(500).json({ status: false, message: 'HUBTEL_CLIENT_ID or HUBTEL_CLIENT_SECRET missing' });
-      return;
+    if (!clientId ||!clientSecret) {
+      return res.status(500).json({ status: false, message: 'HUBTEL_CLIENT_ID or HUBTEL_CLIENT_SECRET missing' });
     }
 
+    // FIX 1: Use correct Hubtel verify endpoint
     const response = await fetch(
-      `https://api-txnverify.hubtel.com/v1/transactions/${encodeURIComponent(reference)}`,
+      `https://payproxyapi.hubtel.com/transactions/${encodeURIComponent(reference)}/status`,
       {
         method: 'GET',
         headers: {
@@ -93,26 +63,41 @@ export default async function handler(req, res) {
       }
     );
 
-    const hubtelJson = await response.json();
+    const text = await response.text();
+    let hubtelJson = null;
+    try { hubtelJson = JSON.parse(text) } catch(e) {
+      return res.status(500).json({ status: false, message: 'Invalid response from Hubtel', raw: text });
+    }
+
     const paymentData = hubtelJson.data || hubtelJson.Data || hubtelJson;
     const paymentStatus = paymentData?.status || paymentData?.Status || hubtelJson?.responseCode || hubtelJson?.ResponseCode;
+    const clientReference = paymentData?.clientReference || paymentData?.ClientReference || reference;
 
-    if (!response.ok || !normalizeHubtelStatus(paymentStatus)) {
-      res.status(response.status || 400).json({
+    if (!response.ok ||!normalizeHubtelStatus(paymentStatus)) {
+      return res.status(response.status || 400).json({
         status: false,
         message: hubtelJson.description || hubtelJson.message || 'Could not verify ticket payment',
         hubtel: hubtelJson,
       });
-      return;
     }
 
-    const metadata = extractHubtelMetadata(hubtelJson) || extractHubtelMetadata(paymentData) || {};
+    // FIX 2: Fallback parse metadata from ClientReference if missing
+    let metadata = extractHubtelMetadata(hubtelJson) || extractHubtelMetadata(paymentData) || {};
+    if (!metadata.eventId && clientReference.startsWith('ticket_')) {
+      const parts = clientReference.split('_');
+      if (parts.length >= 3) {
+        metadata = {
+          eventId: parts[1],
+          quantity: Number(parts[2]),
+        }
+      }
+    }
+
     const eventId = String(metadata.eventId || '').trim();
     const quantity = Number(metadata.quantity || 0);
 
-    if (!eventId || !quantity || quantity < 1) {
-      res.status(400).json({ status: false, message: 'Payment verified, but ticket details are missing' });
-      return;
+    if (!eventId ||!quantity || quantity < 1) {
+      return res.status(400).json({ status: false, message: 'Payment verified, but ticket details are missing' });
     }
 
     const result = await db.runTransaction(async (transaction) => {
@@ -126,89 +111,64 @@ export default async function handler(req, res) {
 
       if (paymentSnap.exists) {
         const existing = paymentSnap.data() || {};
-
         return {
           alreadyProcessed: true,
           eventId: existing.eventId || eventId,
           eventName: existing.eventName || metadata.eventName || '',
-          eventCode: existing.eventCode || metadata.eventCode || '',
-          ticketName: existing.ticketName || metadata.ticketName || 'Regular Ticket',
-          ticketPrice: Number(existing.ticketPrice || metadata.ticketPrice || 0),
           quantity: Number(existing.quantity || quantity),
-          location: existing.location || metadata.location || '',
-          eventDate: existing.eventDate || metadata.eventDate || '',
-          contactPhone: existing.contactPhone || metadata.contactPhone || '',
         };
       }
 
-      if (!eventSnap.exists) {
-        throw new Error('Event not found');
-      }
-
+      if (!eventSnap.exists) throw new Error('Event not found');
       const eventData = eventSnap.data() || {};
 
-      if (!hasTickets(eventData)) {
-        throw new Error('Tickets are not enabled for this event');
-      }
-
-      if (normalizeHubtelStatus(eventData.status) !== 'active') {
-        throw new Error('This event is not active for ticket sales');
-      }
+      if (!hasTickets(eventData)) throw new Error('Tickets are not enabled for this event');
+      if (String(eventData.status).toLowerCase()!== 'active') throw new Error('This event is not active for ticket sales');
 
       const ticketQuantity = Number(eventData.ticketQuantity || 0);
       const ticketsSold = Number(eventData.ticketsSold || 0);
       const availableTickets = Math.max(ticketQuantity - ticketsSold, 0);
 
-      if (quantity > availableTickets) {
-        throw new Error('Not enough tickets available');
-      }
+      if (quantity > availableTickets) throw new Error('Not enough tickets available');
 
-      let ticketPrice = Number(eventData.ticketPrice || metadata.ticketPrice || 0);
+      let ticketPrice = Number(eventData.ticketPrice || metadata.ticketPrice || 1);
+      if (isNaN(ticketPrice) || ticketPrice < 1) ticketPrice = 1;
 
-      if (isNaN(ticketPrice) || ticketPrice < 1) {
-        ticketPrice = 1;
-      }
-
-      const expectedAmount = Math.round(quantity * ticketPrice * 100);
-      const paidAmount = Number(paymentData.amount || paymentData.totalAmount || paymentData.TotalAmount || paymentData.Amount || 0);
+      // FIX 3: Hubtel returns amount in GHS, not pesewas
+      const expectedAmount = Number((quantity * ticketPrice).toFixed(2));
+      const paidAmount = Number(paymentData.amount || paymentData.totalAmount || 0);
 
       if (paidAmount < expectedAmount) {
-        throw new Error('Paid amount is lower than expected ticket amount');
+        throw new Error(`Paid amount GHS ${paidAmount} is lower than expected GHS ${expectedAmount}`);
       }
 
-      const safeEventCode = metadata.eventCode || eventData.eventCode || '';
       const safeEventName = metadata.eventName || eventData.eventName || '';
-      const safeTicketName = metadata.ticketName || eventData.ticketName || 'Regular Ticket';
-      const safeLocation = metadata.location || eventData.location || '';
-      const safeEventDate = metadata.eventDate || eventData.eventDate || '';
-      const safeContactPhone = metadata.contactPhone || eventData.contactPhone || '';
+      const safeTicketName = metadata.ticketName || 'Regular Ticket';
 
       transaction.set(paymentRef, {
         reference,
+        clientReference,
         eventId,
-        eventCode: safeEventCode,
         eventName: safeEventName,
         ticketName: safeTicketName,
         ticketPrice,
         quantity,
         amount: paidAmount,
         expectedAmount,
-        currency: paymentData.currency || paymentData.Currency || 'GHS',
-        status: paymentStatus,
-        paidAt: paymentData.paidAt || paymentData.PaidAt || paymentData.paid_at || null,
-        channel: paymentData.channel || paymentData.Channel || '',
-        customerEmail: paymentData.customer?.email || paymentData.CustomerEmail || '',
-        location: safeLocation,
-        eventDate: safeEventDate,
-        contactPhone: safeContactPhone,
-        source: metadata.source || 'lumina_ticket_checkout',
+        currency: paymentData.currency || 'GHS',
+        status: 'paid',
+        paidAt: paymentData.paidAt || admin.firestore.FieldValue.serverTimestamp(),
+        channel: paymentData.channel || '',
+        customerEmail: paymentData.customer?.email || '',
+        source: metadata.source || 'verify_ticket_endpoint',
         processedBy: 'vercel_verify_ticket_payment',
         createdAt: admin.firestore.FieldValue.serverTimestamp(),
       });
 
+      // FIX 3: Increment by GHS amount, not pesewas
       transaction.update(eventRef, {
         ticketsSold: admin.firestore.FieldValue.increment(quantity),
-        ticketSalesAmount: admin.firestore.FieldValue.increment(paidAmount / 100),
+        ticketSalesAmount: admin.firestore.FieldValue.increment(paidAmount),
         updatedAt: admin.firestore.FieldValue.serverTimestamp(),
       });
 
@@ -216,24 +176,19 @@ export default async function handler(req, res) {
         alreadyProcessed: false,
         eventId,
         eventName: safeEventName,
-        eventCode: safeEventCode,
         ticketName: safeTicketName,
         ticketPrice,
         quantity,
-        location: safeLocation,
-        eventDate: safeEventDate,
-        contactPhone: safeContactPhone,
       };
     });
 
     res.status(200).json({
       status: true,
-      message: result.alreadyProcessed
-        ? 'Ticket payment already processed'
-        : 'Ticket payment verified and tickets added',
+      message: result.alreadyProcessed? 'Ticket payment already processed' : 'Ticket payment verified and tickets added',
       alreadyProcessed: result.alreadyProcessed,
       data: result,
     });
+
   } catch (error) {
     console.error('Verify ticket payment error:', error);
     res.status(500).json({ status: false, message: error.message || 'Ticket payment verification failed' });

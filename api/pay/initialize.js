@@ -12,132 +12,107 @@ function getSiteUrl(req) {
   return `${proto}://${host.replace(/\/$/, '')}`;
 }
 
+function formatPhone(phone) {
+  if (!phone) return '';
+  let p = String(phone).replace(/\D/g, '');
+  if (p.startsWith('0')) p = '233' + p.substring(1);
+  if (!p.startsWith('233')) p = '233' + p;
+  return p;
+}
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
-    res.status(405).json({ message: 'Method not allowed' });
-    return;
+    return res.status(405).json({ message: 'Method not allowed' });
   }
 
   try {
     const { phone, amount, metadata } = req.body || {};
 
-    if (!amount || isNaN(Number(amount))) {
-      res.status(400).json({ message: 'Amount is required' });
-      return;
+    if (!amount || isNaN(Number(amount)) || Number(amount) <= 0) {
+      return res.status(400).json({ message: 'Valid amount is required' });
     }
 
     const clientId = process.env.HUBTEL_CLIENT_ID;
     const clientSecret = process.env.HUBTEL_CLIENT_SECRET;
 
     if (!clientId || !clientSecret) {
-      res.status(500).json({ message: 'HUBTEL_CLIENT_ID or HUBTEL_CLIENT_SECRET missing' });
-      return;
+      return res.status(500).json({ message: 'HUBTEL_CLIENT_ID or HUBTEL_CLIENT_SECRET missing' });
     }
 
     const siteUrl = getSiteUrl(req);
     const callbackUrl = process.env.HUBTEL_CALLBACK_URL || `${siteUrl}/api/hubtel-callback`;
     const returnUrl = process.env.HUBTEL_RETURN_URL || `${siteUrl}/success.html`;
     const cancellationUrl = process.env.HUBTEL_CANCELLATION_URL || `${siteUrl}/voting-home.html`;
-    const merchantAccountNumber = String(process.env.HUBTEL_MERCHANT_ACCOUNT_NUMBER || '').trim();
+    const merchantAccountNumber = String(process.env.HUBTEL_MERCHANT_ACCOUNT || '').trim();
+
+    if (!merchantAccountNumber) {
+      return res.status(500).json({ message: 'HUBTEL_MERCHANT_ACCOUNT missing' });
+    }
+
+    const formattedPhone = formatPhone(phone);
+    const totalAmount = Number(Number(amount).toFixed(2));
 
     const payload = {
-      totalAmount: Number(amount),
-      description: metadata?.description || 'Payment',
+      totalAmount,
+      description: metadata?.description || 'Model Scout Vote Payment',
       callbackUrl,
       returnUrl,
       cancellationUrl,
-      ...(phone ? { customerPhoneNumber: String(phone) } : {}),
-      clientReference: metadata?.reference || `pay_${Date.now()}`,
-      ...(merchantAccountNumber ? { merchantAccountNumber } : {}),
+      merchantAccountNumber,
+      clientReference: metadata?.reference || `vote_${Date.now()}`,
+      ...(formattedPhone ? { payeeMobileNumber: formattedPhone } : {}),
+      ...(metadata?.name ? { payeeName: String(metadata.name) } : {}),
     };
 
-    const endpoints = [
-      'https://payproxyapi.hubtel.com/items/initiate'
-    ];
-
     const auth = Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
-    let response = null;
-    let text = '';
+
+    const response = await fetch('https://payproxyapi.hubtel.com/items/initiate', {
+      method: 'POST',
+      headers: {
+        Authorization: 'Basic ' + auth,
+        'Content-Type': 'application/json',
+        'Cache-Control': 'no-cache',
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const text = await response.text();
     let data = null;
-
-    for (const url of endpoints) {
-      try {
-        response = await fetch(url, {
-          method: 'POST',
-          headers: {
-            Authorization: 'Basic ' + auth,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(payload),
-        });
-
-        text = await response.text();
-        try {
-          data = JSON.parse(text);
-        } catch (err) {
-          console.error('Hubtel init parse error for', url, err, 'text:', text);
-          data = null;
-        }
-
-        if (response.ok) break;
-      } catch (err) {
-        console.error('Error calling Hubtel endpoint', url, err);
-      }
-    }
-
-    if (!response) {
-      res.status(500).json({ message: 'No response from Hubtel' });
-      return;
+    try {
+      data = JSON.parse(text);
+    } catch (err) {
+      console.error('Hubtel init parse error', err, 'text:', text);
+      return res.status(500).json({ message: 'Invalid response from Hubtel', raw: text });
     }
 
     if (!response.ok) {
-      const message = data?.message || data?.description || data?.error || text || 'Hubtel initialization failed';
-      const debug = {
-        status: response.status,
-        raw: data || text,
-      };
+      const message = data?.message || data?.description || 'Hubtel initialization failed';
+      const debug = { status: response.status, raw: data };
       if (response.status === 401) {
-        debug.note = 'Unauthorized. Verify HUBTEL_CLIENT_ID, HUBTEL_CLIENT_SECRET, and Merchant Account API access.';
+        debug.note = 'Unauthorized. Verify HUBTEL_CLIENT_ID, HUBTEL_CLIENT_SECRET, and Merchant Account API access for 2039825.';
       }
-      res.status(response.status || 500).json({ message, ...debug });
-      return;
+      if (response.status === 400) {
+        debug.note = 'Validation error. Check amount, merchantAccountNumber, and required fields.';
+      }
+      return res.status(response.status).json({ message, ...debug });
     }
 
-    // Try to extract payment link
-    const candidates = [
-      data?.paymentUrl,
-      data?.payment_url,
-      data?.authorizationUrl,
-      data?.authorization_url,
-      data?.redirectUrl,
-      data?.redirect_url,
-      data?.url,
-      data?.checkoutUrl,
-      data?.checkout_url,
-      data?.link,
-      data?.data?.paymentUrl,
-      data?.data?.payment_url,
-      data?.data?.authorizationUrl,
-      data?.data?.authorization_url,
-      data?.data?.redirectUrl,
-      data?.data?.redirect_url,
-      data?.data?.url,
-      data?.data?.checkoutUrl,
-      data?.data?.checkout_url,
-      data?.data?.link,
-    ];
-
-    const checkoutUrl = candidates.find(item => typeof item === 'string' && item.trim());
+    const checkoutUrl = data?.data?.checkoutUrl || data?.checkoutUrl;
 
     if (!checkoutUrl) {
-      // Return full response so caller can inspect
-      res.status(200).json({ raw: data, message: 'No explicit checkout URL in Hubtel response' });
-      return;
+      return res.status(500).json({ raw: data, message: 'No checkoutUrl in Hubtel response' });
     }
 
-    res.status(200).json({ checkoutUrl: checkoutUrl.trim(), raw: data });
+    return res.status(200).json({ 
+      success: true,
+      checkoutUrl: checkoutUrl.trim(), 
+      checkoutId: data?.data?.checkoutId,
+      clientReference: data?.data?.clientReference,
+      raw: data 
+    });
+
   } catch (error) {
     console.error('pay/initialize error:', error);
-    res.status(500).json({ message: error.message || 'Internal server error' });
+    return res.status(500).json({ message: error.message || 'Internal server error' });
   }
 }

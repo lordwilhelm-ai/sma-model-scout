@@ -10,84 +10,104 @@ if (!admin.apps.length) {
 }
 
 export default async function handler(req, res) {
-  if (req.method!== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   try {
-    const { contestantId, contestantName, eventId, amount, votes } = req.body;
+    const { contestantId, contestantName, eventId, amount, votes, phone } = req.body;
     
-    const auth = Buffer.from(`${process.env.HUBTEL_CLIENT_ID}:${process.env.HUBTEL_CLIENT_SECRET}`).toString('base64');
+    if (!amount || Number(amount) <= 0) {
+      return res.status(400).json({ error: 'Valid amount is required' });
+    }
+
+    const clientId = process.env.HUBTEL_CLIENT_ID;
+    const clientSecret = process.env.HUBTEL_CLIENT_SECRET;
+    const merchantAccountNumber = String(process.env.HUBTEL_MERCHANT_ACCOUNT || '').trim(); // FIX 1
+
+    if (!clientId || !clientSecret) {
+      return res.status(500).json({ error: 'HUBTEL_CLIENT_ID or HUBTEL_CLIENT_SECRET missing' });
+    }
+    if (!merchantAccountNumber) {
+      return res.status(500).json({ error: 'HUBTEL_MERCHANT_ACCOUNT missing' });
+    }
+
+    const auth = Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
     
+    const siteUrl = process.env.HUBTEL_SITE_URL || `https://${req.headers.host}`;
+    const callbackUrl = process.env.HUBTEL_CALLBACK_URL || `${siteUrl}/api/hubtel-callback`;
+    const returnUrl = process.env.HUBTEL_RETURN_URL || `${siteUrl}/success.html`;
+    const cancellationUrl = process.env.HUBTEL_CANCELLATION_URL || `${siteUrl}/voting-home.html`;
+
+    const clientReference = `vote_${eventId}_${contestantId}_${votes}_${Date.now()}`.slice(0, 32); // Hubtel max 32 chars
+
     const payload = {
-      totalAmount: amount,
+      totalAmount: Number(Number(amount).toFixed(2)), // FIX 2: 2 decimals required
       description: `Vote for ${contestantName} - ${votes} votes`,
-      merchantAccountNumber: process.env.HUBTEL_MERCHANT_ACCOUNT_NUMBER,
-      callbackUrl: process.env.HUBTEL_CALLBACK_URL,
-      returnUrl: process.env.HUBTEL_RETURN_URL,
-      cancellationUrl: process.env.HUBTEL_CANCELLATION_URL,
-      clientReference: `vote_${eventId}_${contestantId}_${votes}_${Date.now()}`
+      merchantAccountNumber, // FIX 1: correct env name
+      callbackUrl,
+      returnUrl,
+      cancellationUrl,
+      clientReference,
+      ...(phone ? { payeeMobileNumber: String(phone) } : {}), // FIX 3: Hubtel uses payeeMobileNumber
+      payeeName: contestantName,
     };
 
-    const endpoints = [
-      'https://payproxyapi.hubtel.com/items/initiate'
-    ];
+    const response = await fetch('https://payproxyapi.hubtel.com/items/initiate', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Basic ${auth}`,
+        'Content-Type': 'application/json',
+        'Cache-Control': 'no-cache'
+      },
+      body: JSON.stringify(payload)
+    });
 
-    let response = null;
-    let text = '';
+    const text = await response.text();
     let data = null;
 
-    for (const url of endpoints) {
-      try {
-        response = await fetch(url, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Basic ${auth}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(payload)
-        });
-
-        text = await response.text();
-
-        try {
-          data = JSON.parse(text);
-        } catch (parseError) {
-          console.error('Hubtel response parse error for', url, parseError, 'response text:', text);
-          data = null;
-        }
-
-        if (response.ok && (data?.data?.checkoutUrl || data?.checkoutUrl || data?.paymentUrl || data?.url)) {
-          break; // success
-        }
-
-      } catch (e) {
-        console.error('Error contacting Hubtel at', url, e);
-      }
+    try {
+      data = JSON.parse(text);
+    } catch (parseError) {
+      console.error('Hubtel response parse error', parseError, 'response text:', text);
+      return res.status(500).json({ error: 'Invalid response from Hubtel', raw: text });
     }
 
-    if(!response){
-      return res.status(500).json({ error: 'No response from Hubtel endpoints' });
-    }
-
-    if(!response.ok){
-      const message = data?.message || data?.description || data?.error || text || 'Hubtel error';
-      const debug = {
-        status: response.status,
-        raw: data || text,
-      };
+    if (!response.ok) {
+      const message = data?.message || data?.description || 'Hubtel error';
+      const debug = { status: response.status, raw: data };
       if (response.status === 401) {
-        debug.note = 'Unauthorized. Verify HUBTEL_CLIENT_ID, HUBTEL_CLIENT_SECRET, and Merchant Account API access.';
+        debug.note = 'Unauthorized. Verify keys belong to merchant 2039825.';
       }
-      return res.status(response.status || 500).json({ error: message, ...debug });
+      if (response.status === 400) {
+        debug.note = 'Validation error. Check amount and merchantAccountNumber.';
+      }
+      return res.status(response.status).json({ error: message, ...debug });
     }
 
-    const checkoutUrl = data?.data?.checkoutUrl || data?.checkoutUrl || data?.paymentUrl || data?.url || null;
+    const checkoutUrl = data?.data?.checkoutUrl || data?.checkoutUrl;
 
     if (!checkoutUrl) {
-      console.error('Unexpected Hubtel response (no url):', text);
-      return res.status(500).json({ error: 'No checkout URL returned by Hubtel', raw: text });
+      console.error('Unexpected Hubtel response:', data);
+      return res.status(500).json({ error: 'No checkout URL returned by Hubtel', raw: data });
     }
 
-    res.status(200).json({ checkoutUrl });
+    // Optional: Save pending vote to Firestore before redirect
+    const db = admin.firestore();
+    await db.collection('pending_payments').doc(clientReference).set({
+      eventId,
+      contestantId,
+      contestantName,
+      votes,
+      amount: Number(amount),
+      status: 'pending',
+      createdAt: admin.firestore.FieldValue.serverTimestamp()
+    });
+
+    res.status(200).json({ 
+      success: true,
+      checkoutUrl,
+      checkoutId: data?.data?.checkoutId,
+      clientReference
+    });
 
   } catch (err) {
     console.error(err);

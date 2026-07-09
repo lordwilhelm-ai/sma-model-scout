@@ -5,25 +5,17 @@ function initFirebaseAdmin() {
   if (admin.apps.length) return;
 
   const base64 = process.env.FIREBASE_SERVICE_ACCOUNT_BASE64;
+  if (!base64) throw new Error('FIREBASE_SERVICE_ACCOUNT_BASE64 is missing');
 
-  if (!base64) {
-    throw new Error('FIREBASE_SERVICE_ACCOUNT_BASE64 is missing');
-  }
-
-  const serviceAccount = JSON.parse(
-    Buffer.from(base64, 'base64').toString('utf8')
-  );
-
+  const serviceAccount = JSON.parse(Buffer.from(base64, 'base64').toString('utf8'));
   admin.initializeApp({ credential: admin.credential.cert(serviceAccount) });
 }
 
 function normalizeStatus(status) {
   const s = String(status || '').toLowerCase();
-
   if (s === 'active' || s === 'live') return 'active';
   if (s === 'upcoming') return 'upcoming';
   if (s === 'paused') return 'paused';
-
   return 'closed';
 }
 
@@ -40,106 +32,50 @@ function getSiteUrl(req) {
   if (override && typeof override === 'string' && override.trim()) {
     return override.trim().replace(/\/$/, '');
   }
-
   const host = req.headers?.host || '';
-  const proto =
-    req.headers?.['x-forwarded-proto'] || req.headers?.['x-forwarded-protocol'] || 'https';
+  const proto = req.headers?.['x-forwarded-proto'] || req.headers?.['x-forwarded-protocol'] || 'https';
   if (!host) return 'https://example.com';
   return `${proto}://${host.replace(/\/$/, '')}`;
 }
 
-function extractHubtelPaymentUrl(data) {
-  if (!data || typeof data !== 'object') return '';
-
-  const candidates = [
-    data.paymentUrl,
-    data.payment_url,
-    data.authorizationUrl,
-    data.authorization_url,
-    data.redirectUrl,
-    data.redirect_url,
-    data.url,
-    data.checkoutUrl,
-    data.checkout_url,
-    data.link,
-    data.paymentLink,
-    data.payment_link,
-    data?.data?.paymentUrl,
-    data?.data?.payment_url,
-    data?.data?.authorizationUrl,
-    data?.data?.authorization_url,
-    data?.data?.redirectUrl,
-    data?.data?.redirect_url,
-    data?.data?.url,
-    data?.data?.checkoutUrl,
-    data?.data?.checkout_url,
-    data?.data?.link,
-    data?.data?.paymentLink,
-    data?.data?.payment_link,
-  ];
-
-  for (const candidate of candidates) {
-    if (typeof candidate === 'string' && candidate.trim()) {
-      return candidate.trim();
-    }
-  }
-
-  return '';
-}
-
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
-    res.status(405).json({ message: 'Method not allowed' });
-    return;
+    return res.status(405).json({ message: 'Method not allowed' });
   }
 
   try {
     initFirebaseAdmin();
-
     const db = admin.firestore();
     const body = req.body || {};
 
     const email = String(body.email || '').trim();
     const metadata = body.metadata || {};
-
     const eventId = String(metadata.eventId || '').trim();
     const quantity = Number(metadata.quantity || 0);
 
-    if (!email) {
-      res.status(400).json({ message: 'Email is required' });
-      return;
-    }
-
+    if (!email) return res.status(400).json({ message: 'Email is required' });
     if (!eventId || !quantity || quantity < 1) {
-      res.status(400).json({ message: 'Ticket details are missing or invalid' });
-      return;
+      return res.status(400).json({ message: 'Ticket details are missing or invalid' });
     }
 
     const clientId = process.env.HUBTEL_CLIENT_ID;
     const clientSecret = process.env.HUBTEL_CLIENT_SECRET;
+    const merchantAccountNumber = String(process.env.HUBTEL_MERCHANT_ACCOUNT || '').trim(); // FIX 1
 
     if (!clientId || !clientSecret) {
-      res.status(500).json({ message: 'HUBTEL_CLIENT_ID or HUBTEL_CLIENT_SECRET is missing' });
-      return;
+      return res.status(500).json({ message: 'HUBTEL_CLIENT_ID or HUBTEL_CLIENT_SECRET is missing' });
+    }
+    if (!merchantAccountNumber) {
+      return res.status(500).json({ message: 'HUBTEL_MERCHANT_ACCOUNT is missing' });
     }
 
     const eventSnap = await db.collection('events').doc(eventId).get();
-
-    if (!eventSnap.exists) {
-      res.status(404).json({ message: 'Event not found' });
-      return;
-    }
+    if (!eventSnap.exists) return res.status(404).json({ message: 'Event not found' });
 
     const eventData = eventSnap.data() || {};
-
-    if (!hasTickets(eventData)) {
-      res.status(400).json({ message: 'Tickets are not enabled for this event' });
-      return;
-    }
-
+    if (!hasTickets(eventData)) return res.status(400).json({ message: 'Tickets are not enabled for this event' });
     if (normalizeStatus(eventData.status) !== 'active') {
-      res.status(400).json({ message: 'This event is not active for ticket sales' });
-      return;
+      return res.status(400).json({ message: 'This event is not active for ticket sales' });
     }
 
     const ticketQuantity = Number(eventData.ticketQuantity || 0);
@@ -147,103 +83,93 @@ export default async function handler(req, res) {
     const availableTickets = Math.max(ticketQuantity - ticketsSold, 0);
 
     if (quantity > availableTickets) {
-      res.status(400).json({ message: 'Not enough tickets available' });
-      return;
+      return res.status(400).json({ message: 'Not enough tickets available' });
     }
 
     let ticketPrice = Number(eventData.ticketPrice || 0);
+    if (isNaN(ticketPrice) || ticketPrice < 1) ticketPrice = 1;
 
-    if (isNaN(ticketPrice) || ticketPrice < 1) {
-      ticketPrice = 1;
-    }
+    const amount = Number((quantity * ticketPrice).toFixed(2)); // FIX 3: GHS with 2 decimals
 
-    const amount = Math.round(quantity * ticketPrice * 100);
-
-    if (!amount || amount < 100) {
-      res.status(400).json({ message: 'Amount is invalid. Minimum is GHS 1.00' });
-      return;
+    if (amount < 1) {
+      return res.status(400).json({ message: 'Amount is invalid. Minimum is GHS 1.00' });
     }
 
     const siteUrl = getSiteUrl(req);
-    const callbackUrl =
-      process.env.HUBTEL_CALLBACK_URL || `${siteUrl}/api/hubtel-callback`;
-    const returnUrl =
-      process.env.HUBTEL_RETURN_URL || `${siteUrl}/success.html`;
-    const cancellationUrl =
-      process.env.HUBTEL_CANCELLATION_URL || `${siteUrl}/voting-home.html`;
-    const merchantAccountNumber = String(process.env.HUBTEL_MERCHANT_ACCOUNT_NUMBER || '').trim();
+    const callbackUrl = process.env.HUBTEL_CALLBACK_URL || `${siteUrl}/api/hubtel-callback`;
+    const returnUrl = process.env.HUBTEL_RETURN_URL || `${siteUrl}/success.html`;
+    const cancellationUrl = process.env.HUBTEL_CANCELLATION_URL || `${siteUrl}/voting-home.html`;
 
     const phone = String(metadata.phone || '').trim();
-    const amountInGhanaCedis = amount / 100;
+    const clientReference = `ticket_${eventId}_${quantity}_${Date.now()}`.slice(0, 32); // max 32 chars
 
     const payload = {
-      totalAmount: amountInGhanaCedis,
-      description: metadata.description || 'Ticket Payment',
+      totalAmount: amount,
+      description: `Tickets for ${eventData.name || 'Event'} - Qty: ${quantity}`,
       callbackUrl,
       returnUrl,
       cancellationUrl,
-      ...(phone ? { customerPhoneNumber: phone } : {}),
-      clientReference: metadata.reference || `ticket-${Date.now()}`,
-      ...(merchantAccountNumber ? { merchantAccountNumber } : {}),
+      merchantAccountNumber, // FIX 1
+      clientReference,
+      ...(phone ? { payeeMobileNumber: phone } : {}), // FIX 2
+      payeeName: email,
     };
 
-    const endpoints = [
-      'https://payproxyapi.hubtel.com/items/initiate'
-    ];
-
     const auth = Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
-    let response = null;
-    let text = '';
+
+    const response = await fetch('https://payproxyapi.hubtel.com/items/initiate', {
+      method: 'POST',
+      headers: {
+        Authorization: `Basic ${auth}`,
+        'Content-Type': 'application/json',
+        'Cache-Control': 'no-cache',
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const text = await response.text();
     let data = null;
-
-    for (const url of endpoints) {
-      try {
-        response = await fetch(url, {
-          method: 'POST',
-          headers: {
-            Authorization: `Basic ${auth}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(payload),
-        });
-
-        text = await response.text();
-        try { data = JSON.parse(text); } catch (e) { console.error('Hubtel init parse error for', url, e, 'text:', text); data = null; }
-
-        if (response.ok && extractHubtelPaymentUrl(data)) break;
-      } catch (e) {
-        console.error('Error contacting Hubtel at', url, e);
-      }
+    try { data = JSON.parse(text); } catch (e) { 
+      console.error('Hubtel init parse error', e, 'text:', text); 
+      return res.status(500).json({ message: 'Invalid response from Hubtel', raw: text });
     }
 
-    if (!response) {
-      res.status(500).json({ message: 'No response from Hubtel' });
-      return;
+    if (!response.ok) {
+      const message = data?.message || data?.description || 'Hubtel ticket initialization failed';
+      const debug = { status: response.status, raw: data };
+      if (response.status === 401) debug.note = 'Unauthorized. Verify keys for merchant 2039825';
+      if (response.status === 400) debug.note = 'Validation error. Check amount and merchantAccountNumber';
+      return res.status(response.status).json({ message, ...debug });
     }
 
-    const paymentUrl = extractHubtelPaymentUrl(data);
+    const paymentUrl = data?.data?.checkoutUrl || data?.checkoutUrl;
 
-    if (!response.ok || !paymentUrl) {
-      const message = data?.description || data?.message || data?.error || text || 'Hubtel ticket initialization failed';
-      const debug = {
-        status: response.status,
-        hubtel: data || text,
-      };
-      if (response.status === 401) {
-        debug.note = 'Unauthorized. Verify HUBTEL_CLIENT_ID, HUBTEL_CLIENT_SECRET, and Merchant Account API access.';
-      }
-      res.status(response.status || 400).json({ message, ...debug });
-      return;
+    if (!paymentUrl) {
+      return res.status(500).json({ message: 'No checkout URL returned by Hubtel', raw: data });
     }
+
+    // Save pending ticket order to Firestore
+    await db.collection('pending_ticket_orders').doc(clientReference).set({
+      eventId,
+      email,
+      quantity,
+      amount,
+      ticketPrice,
+      status: 'pending',
+      createdAt: admin.firestore.FieldValue.serverTimestamp()
+    });
 
     res.status(200).json({
-      status: true,
+      success: true,
       message: 'Ticket payment initialized successfully',
       data: {
         authorization_url: paymentUrl,
+        checkoutId: data?.data?.checkoutId,
+        clientReference,
         raw: data,
       },
     });
+
   } catch (error) {
     console.error('Initialize ticket payment error:', error);
     res.status(500).json({ message: error.message || 'Ticket payment initialization failed' });

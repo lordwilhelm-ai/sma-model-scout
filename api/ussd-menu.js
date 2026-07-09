@@ -10,22 +10,42 @@ if (!admin.apps.length) {
 }
 const db = admin.firestore();
 
+function formatPhone(phone) {
+  // Convert 0551234567 or +233551234567 to 233551234567
+  let p = String(phone).replace(/\D/g, '');
+  if (p.startsWith('0')) p = '233' + p.substring(1);
+  if (p.startsWith('233')) return p;
+  return '233' + p; // fallback
+}
+
 export default async function handler(req, res) {
   try {
     if (req.method!== 'POST') return res.status(405).end();
-    
+
     const { sessionId, serviceCode, phoneNumber, text } = req.body;
     let response = '';
 
+    const clientId = process.env.HUBTEL_CLIENT_ID;
+    const clientSecret = process.env.HUBTEL_CLIENT_SECRET;
+    const merchantAccountNumber = String(process.env.HUBTEL_MERCHANT_ACCOUNT || '').trim(); // FIX 1
+    const callbackUrl = process.env.HUBTEL_CALLBACK_URL;
+
+    if (!clientId ||!clientSecret ||!merchantAccountNumber) {
+      console.error('Missing Hubtel env vars');
+      response = `END System error. Please try later.`;
+      res.setHeader('Content-Type', 'text/plain');
+      return res.status(200).send(response);
+    }
+
     if (text === '') {
       response = `CON Welcome to Lumina Vote\n1. Vote Now\n2. Check Results`;
-    } 
+    }
     else if (text === '1') {
       response = `CON Enter Contestant Code:`;
-    } 
+    }
     else if (text.split('*').length === 2) {
       response = `CON Enter amount:\n1. GHS 1\n2. GHS 5\n3. GHS 10`;
-    } 
+    }
     else if (text.split('*').length === 3) {
       const parts = text.split('*');
       const contestantCode = parts[1];
@@ -34,27 +54,46 @@ export default async function handler(req, res) {
 
       // Save pending vote to Firebase
       await db.collection('pending_votes').doc(sessionId).set({
-        phoneNumber, contestantCode, amount, status: 'pending', createdAt: new Date()
+        phoneNumber,
+        contestantCode,
+        amount,
+        status: 'pending',
+        createdAt: admin.firestore.FieldValue.serverTimestamp()
       });
 
       // Call Hubtel to charge MoMo
-      const auth = Buffer.from(`${process.env.HUBTEL_CLIENT_ID}:${process.env.HUBTEL_CLIENT_SECRET}`).toString('base64');
-      await fetch('https://api.hubtel.com/items/v1/receive/mobilemoney', {
+      const auth = Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
+
+      const hubtelPayload = {
+        CustomerPhoneNumber: formatPhone(phoneNumber), // FIX 3: 233XXXXXXXXX
+        CustomerName: 'Lumina Voter',
+        Amount: Number(amount.toFixed(2)),
+        Description: `Vote for ${contestantCode}`,
+        MerchantAccountNumber: merchantAccountNumber, // FIX 1
+        CallbackUrl: callbackUrl,
+        ClientReference: `ussd_vote_${sessionId}`
+      };
+
+      const hubtelRes = await fetch('https://payproxyapi.hubtel.com/items/v1/receive/mobilemoney', { // FIX 2
         method: 'POST',
-        headers: { 'Authorization': `Basic ${auth}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          CustomerPhoneNumber: phoneNumber,
-          CustomerName: 'Lumina Voter',
-          Amount: amount,
-          Description: `Vote for ${contestantCode}`,
-          MerchantAccountNumber: process.env.HUBTEL_MERCHANT_ACCOUNT_NUMBER,
-          CallbackUrl: process.env.HUBTEL_CALLBACK_URL,
-          CancellationUrl: process.env.HUBTEL_CANCELLATION_URL
-        })
+        headers: {
+          'Authorization': `Basic ${auth}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(hubtelPayload)
       });
 
-      response = `END You will receive a MoMo prompt to approve GHS ${amount}.00`;
-    } 
+      const hubtelText = await hubtelRes.text();
+      let hubtelData = null;
+      try { hubtelData = JSON.parse(hubtelText) } catch(e) { console.error(hubtelText) }
+
+      if (!hubtelRes.ok) {
+        console.error('Hubtel USSD error:', hubtelData);
+        response = `END Payment failed. Please try again.`;
+      } else {
+        response = `END You will receive a MoMo prompt on ${formatPhone(phoneNumber)} to approve GHS ${amount}.00`;
+      }
+    }
     else {
       response = `END Invalid option`;
     }
@@ -63,8 +102,8 @@ export default async function handler(req, res) {
     res.status(200).send(response);
 
   } catch (err) {
-    console.error(err);
+    console.error('USSD error:', err);
     res.setHeader('Content-Type', 'text/plain');
-    res.status(500).send(`END Error: ${err.message}`);
+    res.status(200).send(`END System error. Please try again.`);
   }
 }

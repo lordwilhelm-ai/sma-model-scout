@@ -977,16 +977,17 @@ payBtn.addEventListener("click", async () => {
   const contestantName = contestantData.fullName || "Contestant";
 
   try{
-    const resp = await fetch("/api/create-checkout", {
+    const resp = await fetch("/api/pay/initialize", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        contestantId: contestantId,
-        contestantName: contestantName,
-        eventId: eventId,
         amount: amount,
-        votes: votesBought,
-        voterEmail: `vote_${Date.now()}@luminavote.com`
+        phone: "", // optional. Add voter phone if you collect it
+        metadata: {
+          reference: `vote_${eventId}_${contestantId}_${votesBought}_${Date.now()}`, // IMPORTANT: parsed by hubtel-callback.js
+          description: `Vote for ${contestantName}`,
+          name: "Anonymous Voter"
+        }
       })
     });
 
@@ -995,8 +996,8 @@ payBtn.addEventListener("click", async () => {
     try { data = JSON.parse(respText); } catch (e) { data = null; }
 
     if(!resp.ok){
-      const msg = data?.note || data?.error || data?.message || respText || "Failed to create checkout";
-      throw new Error(msg);
+      const errMsg = data?.note || data?.error || data?.message || respText || "Failed to create checkout";
+      throw new Error(errMsg);
     }
 
     const checkoutUrl = (data && (data.checkoutUrl || data.data?.checkoutUrl || data.data?.paymentUrl || data.paymentUrl)) || null;
