@@ -911,11 +911,6 @@ body{
           <span class="infoIcon">💳</span>
           <span id="votePriceText">GHS 1.00 per vote</span>
         </div>
-
-        <div class="infoLine">
-          <span class="infoIcon">🗳️</span>
-          <span id="votesText">0 total votes</span>
-        </div>
       </div>
     </section>
 
@@ -1049,7 +1044,6 @@ const mainActionBtn = document.getElementById("mainActionBtn");
 const votingInfoBlock = document.getElementById("votingInfoBlock");
 const eventCodeText = document.getElementById("eventCodeText");
 const votePriceText = document.getElementById("votePriceText");
-const votesText = document.getElementById("votesText");
 
 const ticketsSection = document.getElementById("tickets");
 const ticketsTab = document.getElementById("ticketsTab");
@@ -1227,11 +1221,10 @@ function getContestantVotesTotal(){
   }, 0);
 }
 
-function getVoteTotal(){
-  return Math.max(
-    Number(currentEvent?.totalVotes || 0),
-    getContestantVotesTotal()
-  );
+function getContestantVotePercentage(item){
+  const total = getContestantVotesTotal();
+  if(total <= 0) return 0;
+  return (Number(item.votes || 0) / total) * 100;
 }
 
 function getEventUrl(){
@@ -1297,7 +1290,6 @@ function renderEvent(){
 
   const title = currentEvent.eventName || "Untitled Event";
   const votePrice = Number(currentEvent.votePrice || 0);
-  const totalVotes = getVoteTotal();
 
   crumbTitle.textContent = title;
   eventTitle.textContent = title;
@@ -1324,7 +1316,6 @@ function renderEvent(){
 
   eventCodeText.textContent = `Event Code: ${currentEvent.eventCode || "—"}`;
   votePriceText.textContent = `${money(votePrice)} per vote`;
-  votesText.textContent = `${numberFormat(totalVotes)} total votes`;
 
   ticketNameText.textContent = currentEvent.ticketName || "Regular Ticket";
   ticketPriceText.textContent = money(currentEvent.ticketPrice || 0);
@@ -1508,10 +1499,12 @@ function createContestantCard(item){
     ? `<img src="${image}" alt="${item.fullName || "Contestant"}">`
     : `<div class="contestantFallback">${item.fullName || "Contestant"}</div>`;
 
+  const pctText = getContestantVotePercentage(item).toFixed(1);
+
   card.innerHTML = `
     <div class="contestantPhoto">${photoHtml}</div>
     <div class="contestantName">${item.fullName || "Unnamed Contestant"}</div>
-    <div class="voteCount">${numberFormat(item.votes || 0)} votes</div>
+    <div class="voteCount">${pctText}%</div>
     <button class="voteMini" type="button">Proceed to vote</button>
   `;
 
