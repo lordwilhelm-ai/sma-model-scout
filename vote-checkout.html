@@ -4,104 +4,89 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Vote Checkout | Lumina Vote</title>
-<link rel="stylesheet" href="css/style.css">
 
 <style>
-*{
-  box-sizing:border-box;
-}
-
-html{
-  scroll-behavior:smooth;
-}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
 
 body{
   margin:0;
   overflow-x:hidden;
-  background: radial-gradient(circle at top left, rgba(37,99,235,0.22), transparent 26%),
-              radial-gradient(circle at top right, rgba(212,175,55,0.20), transparent 18%),
-              linear-gradient(180deg, #100a06 0%, #271912 100%);
-  color:#f7ebd9;
+  background:#faf7f0;
+  color:#161311;
   font-family:Arial, Helvetica, sans-serif;
 }
 
-/* =========================
-   HEADER
-========================= */
+a{color:inherit}
 
-.smartHeader{
+/* HEADER */
+.siteHeader{
   position:sticky;
   top:0;
   z-index:100;
-  background:linear-gradient(135deg, #d4af37, #b88718);
-  color:#f7ebd9;
+  background:#ffffff;
+  border-bottom:1px solid #eee4d3;
 }
 
-.smartHeaderInner{
+.siteHeaderInner{
+  max-width:1180px;
+  margin:0 auto;
   height:76px;
   display:flex;
   align-items:center;
   justify-content:space-between;
   gap:16px;
-  padding:0 18px;
+  padding:0 22px;
 }
 
-.headerLeft,
-.headerRight{
+.headerLeft,.headerRight{
   display:flex;
   align-items:center;
-  gap:14px;
+  gap:16px;
 }
 
 .menuIcon{
   border:0;
   background:transparent;
-  color:#f7ebd9;
+  color:#161311;
   cursor:pointer;
   padding:0;
   display:grid;
   place-items:center;
-  font-size:31px;
+  font-size:26px;
   line-height:1;
 }
 
 .logoLink{
-  color:#f7ebd9;
-  text-decoration:none;
   display:flex;
   align-items:center;
-  gap:8px;
+  gap:9px;
+  text-decoration:none;
+  color:#161311;
   font-weight:900;
-  font-size:22px;
-  letter-spacing:-1px;
+  font-size:21px;
+  letter-spacing:-0.5px;
 }
 
 .logoMark{
-  width:38px;
-  height:38px;
-  border-radius:50%;
-  background:rgba(255,255,255,0.05);
+  width:34px;
+  height:34px;
+  border-radius:9px;
+  background:linear-gradient(135deg,#d4af37,#b88718);
   display:grid;
   place-items:center;
-  position:relative;
+  color:#fff;
+  font-weight:900;
+  font-size:17px;
+  font-style:italic;
   flex:0 0 auto;
-}
-
-.logoMark::after{
-  content:"";
-  width:18px;
-  height:11px;
-  border-left:6px solid #0b4bea;
-  border-bottom:6px solid #0b4bea;
-  transform:rotate(-45deg);
-  margin-top:-3px;
 }
 
 .sellBtn{
   border:0;
-  background:linear-gradient(135deg, #d4af37, #b88718);
-  color:#f7ebd9;
-  padding:13px 18px;
+  background:#161311;
+  color:#fff;
+  padding:12px 20px;
   border-radius:999px;
   font-weight:800;
   font-size:14px;
@@ -112,13 +97,11 @@ body{
 .mobileMenu{
   display:none;
   padding:14px 18px 18px;
-  background:rgba(16,10,6,0.96);
-  border-top:1px solid rgba(212,175,55,0.22);
+  background:#fff;
+  border-top:1px solid #eee4d3;
 }
 
-.mobileMenu.show{
-  display:block;
-}
+.mobileMenu.show{display:block}
 
 .mobileMenu a{
   width:100%;
@@ -126,70 +109,34 @@ body{
   justify-content:center;
   text-decoration:none;
   padding:13px;
-  border-radius:14px;
+  border-radius:12px;
   margin-top:8px;
   font-weight:800;
-  background:rgba(255,255,255,0.05);
-  color:#0b4bea;
+  background:#f6f0e2;
+  color:#161311;
+  font-size:14px;
 }
 
-@media(min-width:900px){
-  .smartHeaderInner{
-    height:86px;
-    padding:0 28px;
-  }
-
-  .logoLink{
-    font-size:27px;
-  }
-
-  .logoMark{
-    width:44px;
-    height:44px;
-  }
-
-  .logoMark::after{
-    width:22px;
-    height:13px;
-    border-left-width:7px;
-    border-bottom-width:7px;
-  }
-
-  .sellBtn{
-    padding:15px 25px;
-    font-size:16px;
-  }
-
-  .menuIcon{
-    font-size:34px;
-  }
-}
-
-/* =========================
-   LAYOUT
-========================= */
-
+/* LAYOUT */
 .checkoutPage{
   width:min(560px,100%);
   margin:0 auto;
-  padding:24px 18px 60px;
+  padding:28px 18px 60px;
 }
 
-/* =========================
-   PHOTO CARD
-========================= */
-
+/* PHOTO CARD */
 .photoCard{
   border-radius:18px;
   overflow:hidden;
-  background:rgba(18,12,7,0.95);
-  box-shadow:0 12px 28px rgba(0,0,0,.25);
+  background:#fff;
+  border:1px solid #efe7d8;
+  box-shadow:0 12px 30px rgba(60,45,10,0.07);
 }
 
 .photoWrap{
   position:relative;
-  height:460px;
-  background:linear-gradient(135deg, rgba(21,22,24,0.95), rgba(8,24,57,0.96));
+  height:440px;
+  background:linear-gradient(135deg,#f6e6c8,#f2ead9);
 }
 
 .contestantPhoto{
@@ -207,9 +154,9 @@ body{
   justify-content:center;
   text-align:center;
   padding:22px;
-  color:#f7ebd9;
+  color:#161311;
   font-family:Georgia, "Times New Roman", serif;
-  font-size:34px;
+  font-size:30px;
   line-height:1.1;
   font-weight:900;
 }
@@ -217,7 +164,7 @@ body{
 .photoOverlay{
   position:absolute;
   inset:0;
-  background:linear-gradient(180deg,rgba(0,0,0,.10),rgba(0,0,0,.80));
+  background:linear-gradient(180deg,rgba(0,0,0,.02),rgba(0,0,0,.62));
   pointer-events:none;
 }
 
@@ -232,26 +179,25 @@ body{
 }
 
 .photoPill{
-  background:rgba(0,0,0,.65);
-  color:#f7ebd9;
-  border:1px solid rgba(255,255,255,.22);
+  background:rgba(255,255,255,.92);
+  color:#161311;
+  border:1px solid rgba(0,0,0,.06);
   border-radius:999px;
   padding:8px 12px;
-  font-size:12px;
+  font-size:11.5px;
   font-weight:900;
-  backdrop-filter:blur(10px);
 }
 
 .photoPill.ok{
-  background:rgba(34,197,94,.22);
-  border-color:rgba(34,197,94,.4);
-  color:#bbf7d0;
+  background:#dff5e3;
+  color:#1f7a3a;
+  border-color:rgba(31,122,58,.2);
 }
 
 .photoPill.danger{
-  background:rgba(239,68,68,.22);
-  border-color:rgba(239,68,68,.4);
-  color:#fecaca;
+  background:#fbe3e2;
+  color:#a3231e;
+  border-color:rgba(163,35,30,.2);
 }
 
 .photoBottom{
@@ -259,52 +205,47 @@ body{
   left:16px;
   right:16px;
   bottom:16px;
-  color:#f7ebd9;
+  color:#fff;
 }
 
 .photoBottom span{
   display:block;
-  color:#e2d6c2;
-  font-size:13px;
-  margin-bottom:7px;
+  color:#f0e8d4;
+  font-size:12.5px;
+  margin-bottom:6px;
+  font-weight:600;
 }
 
 .photoBottom b{
   display:block;
   font-family:Georgia, "Times New Roman", serif;
-  font-size:28px;
+  font-size:26px;
   line-height:1.15;
 }
 
 @media(max-width:600px){
-  .photoWrap{
-    height:340px;
-  }
-
-  .photoBottom b{
-    font-size:23px;
-  }
+  .photoWrap{height:320px}
+  .photoBottom b{font-size:21px}
 }
 
-/* =========================
-   ACTION CARD
-========================= */
-
+/* ACTION CARD */
 .actionCard{
   margin-top:14px;
-  background:rgba(255,255,255,0.05);
-  border:1px solid rgba(212,175,55,0.18);
+  background:#fff;
+  border:1px solid #efe7d8;
   border-radius:18px;
   padding:18px;
-  box-shadow:0 12px 28px rgba(0,0,0,.15);
+  box-shadow:0 12px 30px rgba(60,45,10,0.05);
 }
 
 .voteLabel{
   display:block;
   margin-bottom:10px;
-  font-size:14px;
-  font-weight:900;
-  color:#f7ebd9;
+  font-size:12px;
+  font-weight:800;
+  color:#6b6156;
+  text-transform:uppercase;
+  letter-spacing:.04em;
 }
 
 .voteInputWrap{
@@ -315,11 +256,11 @@ body{
 
 .voteAdjustBtn{
   height:50px;
-  border:0;
+  border:1px solid #ece2cd;
   border-radius:14px;
-  background:#eef3ff;
-  color:#0b4bea;
-  font-size:25px;
+  background:#f6f0e2;
+  color:#161311;
+  font-size:22px;
   font-weight:900;
   cursor:pointer;
 }
@@ -327,19 +268,19 @@ body{
 .voteInput{
   height:50px;
   width:100%;
-  border:1px solid rgba(212,175,55,0.18);
+  border:1px solid #ece2cd;
   border-radius:14px;
   text-align:center;
   font-size:18px;
   font-weight:900;
   outline:none;
-  color:#161616;
-  background:#ffffff;
+  color:#161311;
+  background:#fff;
 }
 
 .voteInput:focus{
-  border-color:#0b4bea;
-  box-shadow:0 0 0 4px rgba(11,75,234,.12);
+  border-color:#d4af37;
+  box-shadow:0 0 0 4px rgba(212,175,55,.14);
 }
 
 .quickVotes{
@@ -350,9 +291,9 @@ body{
 }
 
 .quickVoteBtn{
-  border:1px solid rgba(212,175,55,0.25);
-  background:rgba(255,255,255,0.05);
-  color:#f7ebd9;
+  border:1px solid #e6dabd;
+  background:#fff;
+  color:#161311;
   border-radius:14px;
   padding:11px 8px;
   font-weight:900;
@@ -360,9 +301,9 @@ body{
 }
 
 .quickVoteBtn:hover{
-  background:linear-gradient(135deg, #d4af37, #b88718);
-  border-color:#0b4bea;
-  color:#f7ebd9;
+  background:linear-gradient(135deg,#d4af37,#b88718);
+  border-color:#b88718;
+  color:#1b1008;
 }
 
 .totalRow{
@@ -374,25 +315,24 @@ body{
 }
 
 .totalRow span{
-  color:#d7c07a;
-  font-size:13px;
+  color:#a99a80;
+  font-size:12.5px;
   font-weight:800;
 }
 
 .totalMoney{
   font-family:Georgia, "Times New Roman", serif;
-  font-size:28px;
+  font-size:26px;
   line-height:1;
   font-weight:900;
-  color:#f7ebd9;
 }
 
 .warningBox{
   margin-top:14px;
   display:none;
-  border:1px solid rgba(239,68,68,.24);
-  background:rgba(239,68,68,.06);
-  color:#fca5a5;
+  border:1px solid #f3c9c7;
+  background:#fbe9e8;
+  color:#a3231e;
   border-radius:16px;
   padding:14px;
   font-size:13px;
@@ -405,15 +345,15 @@ body{
   min-height:58px;
   border:0;
   border-radius:999px;
-  background:#000000;
-  color:#f7ebd9;
-  font-size:17px;
+  background:#161311;
+  color:#fff;
+  font-size:16px;
   font-weight:900;
   cursor:pointer;
 }
 
 .voteBtn:disabled{
-  opacity:.55;
+  opacity:.5;
   cursor:not-allowed;
 }
 
@@ -424,54 +364,49 @@ body{
   margin-top:10px;
 }
 
-.secondaryActions a,
-.secondaryActions button{
+.secondaryActions a,.secondaryActions button{
   min-height:46px;
   border-radius:999px;
   display:flex;
   align-items:center;
   justify-content:center;
   text-decoration:none;
-  font-size:14px;
-  font-weight:900;
+  font-size:13.5px;
+  font-weight:800;
 }
 
 .backBtn{
-  border:1px solid rgba(212,175,55,0.18);
-  color:#f7ebd9;
-  background:rgba(255,255,255,0.05);
+  border:1px solid #ece2cd;
+  color:#161311;
+  background:#f6f0e2;
 }
 
 .shareBtn{
-  border:1px solid rgba(212,175,55,0.18);
-  color:#0b4bea;
-  background:rgba(255,255,255,0.05);
+  border:1px solid #ece2cd;
+  color:#161311;
+  background:#fff;
   cursor:pointer;
 }
 
 .msg{
   margin-top:12px;
   font-size:13px;
-  font-weight:900;
+  font-weight:800;
   line-height:1.45;
 }
 
-.msg.success{
-  color:#4ade80;
-}
-
-.msg.error{
-  color:#f87171;
-}
+.msg.success{color:#1f7a3a}
+.msg.error{color:#a3231e}
 
 .loadingBox{
   width:min(560px,calc(100% - 28px));
   margin:22px auto;
-  border:1px dashed #d7d7d7;
+  border:1px dashed #e6dabd;
   border-radius:18px;
   padding:26px;
   text-align:center;
-  color:#d7c07a;
+  color:#a99a80;
+  font-weight:600;
 }
 
 .toast{
@@ -479,12 +414,12 @@ body{
   left:50%;
   bottom:20px;
   transform:translateX(-50%) translateY(20px);
-  background:#111;
-  color:#f7ebd9;
+  background:#161311;
+  color:#fff;
   padding:12px 16px;
   border-radius:999px;
   font-size:13px;
-  font-weight:900;
+  font-weight:800;
   opacity:0;
   pointer-events:none;
   transition:.25s;
@@ -499,28 +434,26 @@ body{
 .footer{
   margin-top:28px;
   text-align:center;
-  color:#d7c07a;
-  font-size:13px;
+  color:#a99a80;
+  font-size:12.5px;
   line-height:1.6;
 }
 
 @media(max-width:600px){
-  .secondaryActions{
-    grid-template-columns:1fr;
-  }
+  .secondaryActions{grid-template-columns:1fr}
 }
 </style>
 </head>
 
 <body>
 
-<header class="smartHeader">
-  <div class="smartHeaderInner">
+<header class="siteHeader">
+  <div class="siteHeaderInner">
     <div class="headerLeft">
       <button class="menuIcon" id="menuBtn" type="button">☰</button>
 
       <a class="logoLink" href="index.html">
-        <span class="logoMark"></span>
+        <span class="logoMark">V</span>
         <span>Lumina Vote</span>
       </a>
     </div>
