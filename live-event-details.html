@@ -3,8 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Event Details | Lumina Vote</title>
-<link rel="stylesheet" href="css/style.css">
+<title>Live Results | Lumina Vote</title>
 
 <style>
 *{box-sizing:border-box}
@@ -12,26 +11,26 @@ html{scroll-behavior:smooth}
 
 body{
   margin:0;
-  overflow-x:hidden;
-  background: radial-gradient(circle at top left, rgba(37,99,235,0.22), transparent 26%),
-              radial-gradient(circle at top right, rgba(212,175,55,0.20), transparent 18%),
-              linear-gradient(180deg, #100a06 0%, #271912 100%);
-  color:#f7ebd9;
+  background:#faf7f0;
+  color:#161311;
   font-family:Arial, Helvetica, sans-serif;
 }
 
+a{color:inherit}
 
 /* HEADER */
-.smartHeader{
+.siteHeader{
   position:sticky;
   top:0;
   z-index:100;
-  background:linear-gradient(135deg, #d4af37, #b88718);
-  color:#f7ebd9;
+  background:#ffffff;
+  border-bottom:1px solid #eee4d3;
 }
 
-.smartHeaderInner{
-  height:76px;
+.siteHeaderInner{
+  max-width:1180px;
+  margin:0 auto;
+  height:68px;
   display:flex;
   align-items:center;
   justify-content:space-between;
@@ -39,962 +38,525 @@ body{
   padding:0 18px;
 }
 
-.headerLeft,.headerRight{
-  display:flex;
-  align-items:center;
-  gap:14px;
-}
-
-.menuIcon,.searchIcon{
-  border:0;
-  background:transparent;
-  color:#f7ebd9;
-  cursor:pointer;
-  padding:0;
-  display:grid;
-  place-items:center;
-  font-size:31px;
-  line-height:1;
-}
-
 .logoLink{
-  color:#f7ebd9;
-  text-decoration:none;
   display:flex;
   align-items:center;
-  gap:8px;
+  gap:9px;
+  text-decoration:none;
+  color:#161311;
   font-weight:900;
-  font-size:22px;
-  letter-spacing:-1px;
+  font-size:19px;
+  letter-spacing:-0.4px;
 }
 
 .logoMark{
-  width:38px;
-  height:38px;
-  border-radius:50%;
-  background:rgba(255,255,255,0.05);
-  display:grid;
-  place-items:center;
-  position:relative;
-  flex:0 0 auto;
-}
-
-.logoMark::after{
-  content:"";
-  width:18px;
-  height:11px;
-  border-left:6px solid #0b4bea;
-  border-bottom:6px solid #0b4bea;
-  transform:rotate(-45deg);
-  margin-top:-3px;
-}
-
-.sellBtn{
-  border:0;
-  background:linear-gradient(135deg, #d4af37, #b88718);
-  color:#f7ebd9;
-  padding:13px 18px;
-  border-radius:999px;
-  font-weight:800;
-  font-size:14px;
-  text-decoration:none;
-  white-space:nowrap;
-}
-
-.mobileMenu{
-  display:none;
-  padding:14px 18px 18px;
-  background:rgba(16,10,6,0.96);
-  border-top:1px solid rgba(212,175,55,0.22);
-}
-
-.mobileMenu.show{display:block}
-
-.mobileMenu a,
-.mobileMenu button{
-  width:100%;
-  border:0;
-  display:flex;
-  justify-content:center;
-  text-decoration:none;
-  padding:13px;
-  border-radius:14px;
-  margin-top:8px;
-  font-weight:800;
-  background:rgba(255,255,255,0.05);
-  color:#0b4bea;
-}
-
-.mobileMenu button{cursor:pointer}
-
-@media(min-width:900px){
-  .smartHeaderInner{
-    height:86px;
-    padding:0 28px;
-  }
-
-  .logoLink{font-size:27px}
-
-  .logoMark{
-    width:44px;
-    height:44px;
-  }
-
-  .logoMark::after{
-    width:22px;
-    height:13px;
-    border-left-width:7px;
-    border-bottom-width:7px;
-  }
-
-  .sellBtn{
-    padding:15px 25px;
-    font-size:16px;
-  }
-
-  .menuIcon,.searchIcon{font-size:34px}
-}
-
-/* HERO */
-.detailHero{
-  position:relative;
-  height:245px;
-  background:rgba(18,12,7,0.95);
-  overflow:hidden;
-}
-
-.detailHero img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  display:block;
-}
-
-.detailHeroFallback{
-  height:100%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:20px;
-  color:#f7ebd9;
-  font-family:Georgia, "Times New Roman", serif;
-  font-size:34px;
-  line-height:1.05;
-  font-weight:900;
-  text-align:center;
-  background:linear-gradient(135deg, rgba(21,22,24,0.95), rgba(8,24,57,0.96));
-}
-
-.heroOverlay{
-  position:absolute;
-  inset:0;
-  background:linear-gradient(90deg,rgba(0,0,0,.62),rgba(0,0,0,.12));
-  pointer-events:none;
-}
-
-.breadcrumb{
-  position:absolute;
-  left:16px;
-  top:16px;
-  color:#f7ebd9;
-  font-size:15px;
-  z-index:2;
-  display:flex;
-  gap:8px;
-  align-items:center;
-}
-
-.breadcrumb a{
-  color:#f7ebd9;
-  text-decoration:none;
-}
-
-@media(min-width:900px){
-  .detailHero{height:345px}
-
-  .breadcrumb{
-    left:34px;
-    top:24px;
-    font-size:17px;
-  }
-}
-
-/* TABS */
-.tabsBar{
-  position:sticky;
-  top:76px;
-  z-index:80;
-  height:60px;
-  background:rgba(16,10,6,0.94);
-  border-bottom:1px solid rgba(212,175,55,0.20);
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:0 14px;
-  overflow-x:auto;
-}
-
-.tabsLeft{
-  display:flex;
-  align-items:center;
-  gap:24px;
-  height:100%;
-  flex:0 0 auto;
-}
-
-.tabLink{
-  height:100%;
-  display:flex;
-  align-items:center;
-  text-decoration:none;
-  color:#f7ebd9;
-  font-size:15px;
-  font-weight:500;
-  border-bottom:3px solid transparent;
-  white-space:nowrap;
-}
-
-.tabLink.active{
-  font-weight:900;
-  border-bottom-color:#d4af37;
-}
-
-.tabsActions{
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
-
-.circleBtn{
-  width:42px;
-  height:42px;
-  border-radius:50%;
-  border:1px solid rgba(212,175,55,0.24);
-  background:rgba(255,255,255,0.05);
-  color:#f7ebd9;
-  display:grid;
-  place-items:center;
-  font-size:22px;
-  cursor:pointer;
-}
-
-@media(min-width:900px){
-  .tabsBar{
-    top:86px;
-    padding:0 34px;
-  }
-}
-
-/* MAIN */
-.mainWrap{
-  width:min(1180px,100%);
-  margin:0 auto;
-  padding:22px 18px 60px;
-}
-
-.contentTitle{
-  margin:0 0 22px;
-  font-family:Georgia, "Times New Roman", serif;
-  font-size:30px;
-  line-height:1.1;
-  font-weight:900;
-}
-
-.eventNameLine{
-  display:flex;
-  align-items:center;
-  flex-wrap:wrap;
-  gap:12px;
-  margin-bottom:28px;
-}
-
-.eventNameLine h2{
-  margin:0;
-  font-family:Georgia, "Times New Roman", serif;
-  font-size:21px;
-  font-weight:900;
-}
-
-.statusPill{
-  border:1px solid rgba(212,175,55,0.9);
-  color:#f4e2a5;
-  background:rgba(212,175,55,0.12);
-  border-radius:999px;
-  padding:10px 14px;
-  font-weight:700;
-  font-size:14px;
-}
-
-.typePill{
-  border:1px solid rgba(255,255,255,0.18);
-  color:#f7ebd9;
-  background:rgba(255,255,255,0.05);
-  border-radius:999px;
-  padding:10px 14px;
-  font-weight:800;
-  font-size:14px;
-}
-
-.aboutText{
-  color:#e7d8ae;
-  line-height:1.65;
-  font-size:15px;
-  margin:0 0 26px;
-}
-
-.infoBlock{
-  margin-top:44px;
-}
-
-.infoBlock h2{
-  margin:0 0 22px;
-  font-family:Georgia, "Times New Roman", serif;
-  font-size:30px;
-  line-height:1.1;
-  font-weight:900;
-}
-
-.infoLine{
-  display:flex;
-  align-items:flex-start;
-  gap:12px;
-  color:#f7ebd9;
-  font-size:16px;
-  line-height:1.45;
-  margin-bottom:16px;
-}
-
-.infoIcon{
-  font-size:20px;
-  width:22px;
-  flex:0 0 auto;
-}
-
-.primaryInlineBtn{
-  display:inline-flex;
-  align-items:center;
-  gap:10px;
-  margin-top:14px;
-  text-decoration:none;
-  background:linear-gradient(135deg, #d4af37, #b88718);
-  color:#1b1008;
-  padding:18px 22px;
-  border-radius:999px;
-  font-weight:900;
-  font-size:16px;
-}
-
-.blueInlineBtn{
-  background:rgba(212,175,55,0.16);
-  color:#f7ebd9;
-}
-
-/* TICKET BOX */
-.ticketBox{
-  margin-top:14px;
-  border:1px solid rgba(212,175,55,0.18);
-  border-radius:18px;
-  background:rgba(255,255,255,0.04);
-  padding:18px;
-}
-
-.ticketTop{
-  display:flex;
-  align-items:flex-start;
-  justify-content:space-between;
-  gap:14px;
-  flex-wrap:wrap;
-}
-
-.ticketTop h3{
-  margin:0 0 5px;
-  font-family:Georgia, "Times New Roman", serif;
-  font-size:24px;
-  color:#f7ebd9;
-}
-
-.ticketPrice{
-  font-size:27px;
-  font-weight:900;
-  white-space:nowrap;
-  color:#f7ebd9;
-}
-
-.ticketMeta{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:10px;
-  margin-top:16px;
-}
-
-.ticketMetaCard{
-  border:1px solid rgba(212,175,55,0.18);
-  border-radius:14px;
-  background:rgba(16,10,6,0.85);
-  padding:13px;
-}
-
-.ticketMetaCard span{
-  display:block;
-  color:#d7c07a;
-  font-size:12px;
-  font-weight:800;
-}
-
-.ticketMetaCard b{
-  display:block;
-  margin-top:5px;
-  font-size:17px;
-  color:#f7ebd9;
-}
-
-@media(max-width:700px){
-  .ticketMeta{
-    grid-template-columns:1fr;
-  }
-}
-
-/* CATEGORY */
-.categorySection{
-  margin-top:44px;
-}
-
-.categoryIntro{
-  margin:0 0 16px;
-  color:#e7d8ae;
-  font-size:15px;
-}
-
-.categoryList{
-  display:grid;
-  grid-template-columns:1fr;
-  gap:8px;
-}
-
-.categoryBtn{
-  text-align:left;
-  border:1px solid rgba(212,175,55,0.18);
-  background:rgba(255,255,255,0.06);
-  border-radius:10px;
-  padding:16px;
-  cursor:pointer;
-  color:#f7ebd9;
-}
-
-.categoryBtn.active{
-  background:rgba(212,175,55,0.18);
-  color:#f7ebd9;
-}
-
-.categoryBtn b{
-  display:block;
-  font-size:15px;
-  margin-bottom:5px;
-}
-
-.categoryBtn span{
-  display:block;
-  font-size:12px;
-  color:#d7c07a;
-}
-
-.categoryBtn.active span{color:#f4e2a5}
-
-.seeMoreBtn{
-  display:none;
-  margin:18px auto 0;
-  border:1px dashed rgba(212,175,55,0.24);
-  background:rgba(255,255,255,0.06);
-  color:#f7ebd9;
-  padding:13px 28px;
-  border-radius:999px;
-  font-weight:700;
-  cursor:pointer;
-}
-
-/* CONTESTANTS */
-.contestantSection{
-  margin-top:36px;
-  background:rgba(16,10,6,0.9);
-  border-radius:12px;
-  padding:18px 12px 24px;
-}
-
-.contestantSection h2{
-  margin:0 0 4px;
-  font-family:Georgia, "Times New Roman", serif;
-  font-size:23px;
-  font-weight:900;
-  color:#f7ebd9;
-}
-
-.contestantSummary{
-  color:#d7c07a;
-  font-size:13px;
-  margin-bottom:18px;
-}
-
-.searchInput{
-  width:100%;
-  border:1px solid rgba(212,175,55,0.18);
-  border-radius:14px;
-  padding:13px 14px;
-  font-size:15px;
-  outline:none;
-  margin-bottom:18px;
-  background:rgba(255,255,255,0.05);
-  color:#f7ebd9;
-}
-
-.searchInput:focus{
-  border-color:rgba(212,175,55,0.95);
-  box-shadow:0 0 0 4px rgba(212,175,55,0.16);
-}
-
-.contestantGrid{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:28px 18px;
-}
-
-.contestantCard{
-  text-align:center;
-}
-
-.contestantPhoto{
-  width:112px;
-  height:112px;
-  border-radius:50%;
-  overflow:hidden;
-  background:rgba(18,12,7,0.95);
-  margin:0 auto 10px;
-}
-
-.contestantPhoto img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  display:block;
-}
-
-.contestantFallback{
-  width:100%;
-  height:100%;
-  display:grid;
-  place-items:center;
-  padding:10px;
-  color:#f7ebd9;
-  font-size:13px;
-  font-weight:900;
-  background:linear-gradient(135deg, rgba(21,22,24,0.95), rgba(8,24,57,0.96));
-}
-
-.contestantName{
-  font-weight:700;
-  font-size:13px;
-  margin-bottom:8px;
-  line-height:1.25;
-}
-
-.voteCount{
-  color:#d7c07a;
-  font-size:12px;
-  margin-bottom:8px;
-}
-
-.voteMini{
-  border:0;
-  background:rgba(255,255,255,0.05);
-  color:#f7ebd9;
-  border-radius:999px;
-  padding:8px 11px;
-  font-size:11px;
-  cursor:pointer;
-}
-
-.voteMini:hover{
-  background:linear-gradient(135deg, #d4af37, #b88718);
-  color:#1b1008;
-}
-
-.emptyBox,.loadingBox{
-  border:1px dashed rgba(212,175,55,0.24);
-  border-radius:18px;
-  padding:26px;
-  text-align:center;
-  color:#d7c07a;
-  background:rgba(255,255,255,0.04);
-}
-
-/* BOTTOM BAR */
-.bottomBar{
-  position:fixed;
-  left:10px;
-  right:10px;
-  bottom:10px;
-  z-index:150;
-  min-height:72px;
-  background:rgba(16,10,6,0.95);
-  box-shadow:0 6px 28px rgba(0,0,0,.35);
-  border:1px solid rgba(212,175,55,0.18);
+  width:30px;
+  height:30px;
   border-radius:8px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-  padding:13px 14px;
-}
-
-.bottomTitle{
-  font-family:Georgia, "Times New Roman", serif;
-  font-size:21px;
+  background:linear-gradient(135deg,#d4af37,#b88718);
+  display:grid;
+  place-items:center;
+  color:#fff;
   font-weight:900;
+  font-size:16px;
+  font-style:italic;
 }
 
-.bottomSub{
-  color:#d7c07a;
-  font-size:14px;
-  margin-top:3px;
-}
-
-.bottomActions{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  flex-wrap:wrap;
-  justify-content:flex-end;
-}
-
-.buyBtn,.voteBtn{
-  border:0;
-  background:#000;
-  color:#f7ebd9;
-  padding:15px 20px;
-  border-radius:999px;
-  font-weight:900;
-  font-size:14px;
-  white-space:nowrap;
-  cursor:pointer;
-}
-
-.voteBtn{
-  background:linear-gradient(135deg, #d4af37, #b88718);
-}
-
-/* SEARCH / TOAST */
-.searchOverlay{
+.navLinks{
   display:none;
-  position:fixed;
-  inset:0;
-  z-index:220;
-  background:rgba(0,0,0,.66);
-  padding:90px 18px 18px;
+  align-items:center;
+  gap:26px;
+  font-size:14px;
+  font-weight:600;
+  color:#6b6156;
 }
 
-.searchOverlay.show{display:block}
+.navLinks a{text-decoration:none}
+.navLinks a.active{color:#161311}
+
+.headerRight{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
 
 .searchBox{
-  width:min(680px,100%);
-  margin:0 auto;
-  background:rgba(255,255,255,0.05);
-  border-radius:22px;
-  padding:18px;
-}
-
-.searchBoxTop{
-  display:flex;
-  gap:10px;
+  display:none;
+  align-items:center;
+  gap:8px;
+  background:#f4efe4;
+  border-radius:999px;
+  padding:9px 14px;
+  font-size:13px;
+  color:#8a7f6f;
+  min-width:200px;
 }
 
 .searchBox input{
-  flex:1;
-  border:1px solid #ddd;
-  border-radius:15px;
-  padding:15px;
-  font-size:16px;
-  outline:none;
-}
-
-.closeSearch{
   border:0;
-  border-radius:15px;
-  padding:0 18px;
-  background:#111;
-  color:#f7ebd9;
-  font-weight:800;
-}
-
-.toast{
-  position:fixed;
-  left:50%;
-  bottom:96px;
-  transform:translateX(-50%) translateY(20px);
-  background:#111;
-  color:#f7ebd9;
-  padding:12px 16px;
-  border-radius:999px;
+  background:transparent;
+  outline:none;
   font-size:13px;
-  font-weight:900;
-  opacity:0;
-  pointer-events:none;
-  transition:.25s;
-  z-index:250;
+  width:100%;
+  color:#161311;
 }
 
-.toast.show{
-  opacity:1;
-  transform:translateX(-50%) translateY(0);
+.getStartedBtn{
+  border:0;
+  background:#161311;
+  color:#fff;
+  padding:11px 18px;
+  border-radius:999px;
+  font-weight:800;
+  font-size:13px;
+  cursor:pointer;
+  white-space:nowrap;
+}
+
+@media(min-width:860px){
+  .navLinks{display:flex}
+  .searchBox{display:flex}
+}
+
+/* MAIN */
+.pageWrap{
+  max-width:1180px;
+  margin:0 auto;
+  padding:26px 18px 70px;
+}
+
+.breadcrumb{
+  font-size:13px;
+  color:#a99a80;
+  margin-bottom:16px;
+}
+
+.breadcrumb a{text-decoration:none;color:#a99a80}
+.breadcrumb span.current{color:#161311;font-weight:700}
+
+.eyebrow{
+  display:inline-block;
+  background:#f6e6c8;
+  color:#8a5b12;
+  font-weight:800;
+  font-size:11px;
+  letter-spacing:.05em;
+  text-transform:uppercase;
+  padding:7px 12px;
+  border-radius:999px;
+  margin-bottom:14px;
+}
+
+.pageTitle{
+  margin:0 0 8px;
+  font-size:32px;
+  font-weight:900;
+  letter-spacing:-0.5px;
+}
+
+.pageSub{
+  margin:0 0 26px;
+  color:#6b6156;
+  font-size:14.5px;
+  line-height:1.55;
+  max-width:640px;
+}
+
+.selectorRow{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:14px;
+  margin-bottom:22px;
+}
+
+@media(min-width:640px){
+  .selectorRow{grid-template-columns:1fr 1fr}
+}
+
+.selectorField label{
+  display:block;
+  font-size:12px;
+  font-weight:800;
+  color:#6b6156;
+  margin-bottom:7px;
+  text-transform:uppercase;
+  letter-spacing:.04em;
+}
+
+.selectorField select{
+  width:100%;
+  appearance:none;
+  border:1px solid #ece2cd;
+  background:#f6f0e2;
+  border-radius:12px;
+  padding:14px 16px;
+  font-size:14px;
+  font-weight:700;
+  color:#161311;
+  cursor:pointer;
+}
+
+/* DASHBOARD CARD */
+.dashCard{
+  background:#ffffff;
+  border:1px solid #efe7d8;
+  border-radius:18px;
+  padding:22px;
+  box-shadow:0 10px 30px rgba(60,45,10,0.05);
+  margin-bottom:18px;
+  display:flex;
+  flex-wrap:wrap;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:16px;
+}
+
+.dashLeft .dashEyebrow{
+  font-size:11px;
+  font-weight:800;
+  color:#a99a80;
+  text-transform:uppercase;
+  letter-spacing:.05em;
+  margin-bottom:6px;
+}
+
+.dashLeft h2{
+  margin:0;
+  font-size:24px;
+  font-weight:900;
+}
+
+.dashRight{
+  display:flex;
+  align-items:center;
+  gap:28px;
+  flex-wrap:wrap;
+}
+
+.statBlock{
+  text-align:right;
+}
+
+.statBlock b{
+  display:block;
+  font-size:22px;
+  font-weight:900;
+}
+
+.statBlock span{
+  display:block;
+  font-size:11px;
+  color:#8a7f6f;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:.04em;
+}
+
+.refreshBtn{
+  border:0;
+  background:#161311;
+  color:#fff;
+  padding:12px 18px;
+  border-radius:999px;
+  font-weight:800;
+  font-size:13px;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  white-space:nowrap;
+}
+
+.refreshBtn .spin{
+  display:inline-block;
+}
+
+.refreshBtn.loading .spin{
+  animation:spin .8s linear infinite;
+}
+
+@keyframes spin{
+  to{transform:rotate(360deg)}
+}
+
+/* TABS */
+.viewTabs{
+  display:inline-flex;
+  background:#f2ead9;
+  border-radius:999px;
+  padding:4px;
+  margin-bottom:22px;
+}
+
+.viewTabBtn{
+  border:0;
+  background:transparent;
+  padding:10px 20px;
+  border-radius:999px;
+  font-weight:800;
+  font-size:13px;
+  color:#6b6156;
+  cursor:pointer;
+}
+
+.viewTabBtn.active{
+  background:#161311;
+  color:#fff;
+}
+
+/* RESULTS LIST */
+.resultsList{
+  display:flex;
+  flex-direction:column;
+  gap:22px;
+}
+
+.resultRow{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.resultTop{
+  display:flex;
+  align-items:flex-start;
+  gap:12px;
+}
+
+.rankBadge{
+  flex:0 0 auto;
+  width:26px;
+  height:26px;
+  border-radius:7px;
+  display:grid;
+  place-items:center;
+  font-size:12px;
+  font-weight:900;
+  color:#161311;
+}
+
+.resultName{
+  flex:1;
+  min-width:0;
+}
+
+.resultName b{
+  display:block;
+  font-size:14.5px;
+  font-weight:800;
+  font-style:italic;
+}
+
+.resultName span{
+  display:block;
+  font-size:11.5px;
+  color:#a99a80;
+  font-weight:700;
+  margin-top:2px;
+}
+
+.resultStats{
+  flex:0 0 auto;
+  text-align:right;
+}
+
+.resultStats b{
+  display:block;
+  font-size:15px;
+  font-weight:900;
+}
+
+.resultStats span{
+  display:block;
+  font-size:11px;
+  color:#a99a80;
+  font-weight:700;
+  margin-top:2px;
+}
+
+.barTrack{
+  height:9px;
+  background:#f2ead9;
+  border-radius:999px;
+  overflow:hidden;
+}
+
+.barFill{
+  height:100%;
+  border-radius:999px;
+  transition:width .4s ease;
+}
+
+/* RANKINGS TABLE VIEW */
+.rankTable{
+  width:100%;
+  border-collapse:collapse;
+}
+
+.rankTable th{
+  text-align:left;
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:.05em;
+  color:#a99a80;
+  font-weight:800;
+  padding:0 10px 12px;
+  border-bottom:1px solid #efe7d8;
+}
+
+.rankTable th.num,.rankTable td.num{text-align:right}
+
+.rankTable td{
+  padding:14px 10px;
+  border-bottom:1px solid #f4eee0;
+  font-size:14px;
+}
+
+.rankTable td.rankCell{
+  font-weight:900;
+  width:34px;
+}
+
+.rankTable td.nameCell b{
+  display:block;
+  font-weight:800;
+  font-style:italic;
+}
+
+.rankTable td.nameCell span{
+  display:block;
+  font-size:11.5px;
+  color:#a99a80;
+  font-weight:700;
+  margin-top:2px;
+}
+
+.rankTable td.num{
+  font-weight:900;
+  white-space:nowrap;
+}
+
+.viewPane{display:none}
+.viewPane.active{display:block}
+
+/* STATE BOXES */
+.stateBox{
+  border:1px dashed #e6dabd;
+  border-radius:16px;
+  padding:34px 20px;
+  text-align:center;
+  color:#a99a80;
+  font-size:14px;
+  font-weight:600;
 }
 
 .hidden{display:none !important}
-
-@media(min-width:900px){
-  .mainWrap{
-    padding:34px 34px 70px;
-  }
-
-  .contentTitle,.infoBlock h2{
-    font-size:36px;
-  }
-
-  .categoryList{
-    grid-template-columns:repeat(2,1fr);
-  }
-
-  .contestantGrid{
-    grid-template-columns:repeat(4,1fr);
-  }
-
-  .contestantPhoto{
-    width:150px;
-    height:150px;
-  }
-
-  .bottomBar{
-    left:50%;
-    right:auto;
-    width:min(860px,calc(100% - 40px));
-    transform:translateX(-50%);
-    padding:16px 20px;
-  }
-}
-
-@media(max-width:560px){
-  .bottomBar{
-    align-items:flex-start;
-    flex-direction:column;
-  }
-
-  .bottomActions{
-    width:100%;
-    display:grid;
-    grid-template-columns:1fr;
-  }
-
-  .buyBtn,.voteBtn{
-    width:100%;
-  }
-}
 </style>
 </head>
 
 <body>
 
-<header class="smartHeader">
-  <div class="smartHeaderInner">
-    <div class="headerLeft">
-      <button class="menuIcon" id="menuBtn" type="button">☰</button>
+<header class="siteHeader">
+  <div class="siteHeaderInner">
+    <a class="logoLink" href="index.html">
+      <span class="logoMark">V</span>
+      <span>Lumina Vote</span>
+    </a>
 
-      <a class="logoLink" href="index.html">
-        <span class="logoMark"></span>
-        <span>Lumina Vote</span>
-      </a>
-    </div>
+    <nav class="navLinks">
+      <a href="index.html">Home</a>
+      <a href="live-results.html" class="active">Live Results</a>
+      <a href="verify-vote.html">Verify vote</a>
+      <a href="support.html">Support</a>
+    </nav>
 
     <div class="headerRight">
-      <button class="searchIcon" id="searchBtn" type="button">⌕</button>
-      <a class="sellBtn" href="event-registration.html">Sell tickets</a>
+      <label class="searchBox">
+        <span>⌕</span>
+        <input id="eventSearchInput" type="search" placeholder="Search events...">
+      </label>
+      <button class="getStartedBtn" type="button" onclick="window.location.href='index.html'">Get Started</button>
     </div>
-  </div>
-
-  <div class="mobileMenu" id="mobileMenu">
-    <a href="index.html">Home</a>
-    <a href="voting-home.html">Events</a>
-    <button id="shareMobileBtn" type="button">Share Event</button>
   </div>
 </header>
 
-<div class="searchOverlay" id="searchOverlay">
-  <div class="searchBox">
-    <div class="searchBoxTop">
-      <input id="globalSearchInput" type="search" placeholder="Search contestants...">
-      <button class="closeSearch" id="closeSearch" type="button">Close</button>
-    </div>
+<main class="pageWrap">
+
+  <div class="breadcrumb">
+    <a href="index.html">Home</a> / <span class="current">Live Results</span>
   </div>
-</div>
 
-<div id="loadingBox" class="loadingBox" style="margin:20px;">Loading event...</div>
+  <span class="eyebrow">Results Dashboard</span>
+  <h1 class="pageTitle">Live Results</h1>
+  <p class="pageSub">Select an event and category to view nominee standings. Use refresh to load the latest results.</p>
 
-<section id="eventSection" style="display:none;">
-
-  <section class="detailHero">
-    <div class="breadcrumb">
-      <a href="index.html">Home</a>
-      <span>/</span>
-      <a href="voting-home.html">Events</a>
-      <span>/</span>
-      <span id="crumbTitle">Event</span>
+  <div class="selectorRow">
+    <div class="selectorField">
+      <label for="eventSelect">Event</label>
+      <select id="eventSelect"></select>
     </div>
 
-    <div id="heroPosterWrap"></div>
-    <div class="heroOverlay"></div>
-  </section>
-
-  <nav class="tabsBar">
-    <div class="tabsLeft">
-      <a href="#about" class="tabLink active">About</a>
-      <a href="#tickets" class="tabLink" id="ticketsTab">Tickets</a>
-      <a href="#categories" class="tabLink" id="categoriesTab">Categories</a>
-      <a href="#contestants" class="tabLink" id="contestantsTab">Contestants</a>
-    </div>
-
-    <div class="tabsActions">
-      <button class="circleBtn" id="heartBtn" type="button">♡</button>
-      <button class="circleBtn" id="shareTopBtn" type="button">↗</button>
-    </div>
-  </nav>
-
-  <main class="mainWrap">
-
-    <section id="about">
-      <h1 class="contentTitle">About</h1>
-
-      <div class="eventNameLine">
-        <h2 id="eventTitle">Event Title</h2>
-        <span>-</span>
-        <span class="statusPill" id="eventStatusTag">Live</span>
-        <span class="typePill" id="eventTypeTag">Event</span>
-      </div>
-
-      <p class="aboutText" id="eventDescription">Event description goes here.</p>
-
-      <div class="infoBlock">
-        <h2>Date & Time</h2>
-
-        <div class="infoLine">
-          <span class="infoIcon">📅</span>
-          <span id="dateTimeText">Date: —</span>
-        </div>
-
-        <div class="infoLine" id="locationLine">
-          <span class="infoIcon">📍</span>
-          <span id="locationText">Location: —</span>
-        </div>
-
-        <div class="infoLine" id="contactLine">
-          <span class="infoIcon">☎️</span>
-          <span id="contactText">Contact: —</span>
-        </div>
-
-        <a class="primaryInlineBtn blueInlineBtn" id="mainActionBtn" href="#contestants">Proceed</a>
-      </div>
-
-      <div class="infoBlock" id="votingInfoBlock">
-        <h2>Voting Info</h2>
-
-        <div class="infoLine">
-          <span class="infoIcon">🏷️</span>
-          <span id="eventCodeText">Code: —</span>
-        </div>
-
-        <div class="infoLine">
-          <span class="infoIcon">💳</span>
-          <span id="votePriceText">GHS 1.00 per vote</span>
-        </div>
-      </div>
-    </section>
-
-    <section class="infoBlock" id="tickets">
-      <h2>Tickets</h2>
-
-      <div class="ticketBox">
-        <div class="ticketTop">
-          <div>
-            <h3 id="ticketNameText">Ticket</h3>
-            <p class="aboutText" style="margin:0;">Buy your event ticket securely online.</p>
-          </div>
-
-          <div class="ticketPrice" id="ticketPriceText">GHS 0.00</div>
-        </div>
-
-        <div class="ticketMeta">
-          <div class="ticketMetaCard">
-            <span>Available</span>
-            <b id="ticketAvailableText">0</b>
-          </div>
-
-          <div class="ticketMetaCard">
-            <span>Sold</span>
-            <b id="ticketSoldText">0</b>
-          </div>
-
-          <div class="ticketMetaCard">
-            <span>Venue</span>
-            <b id="ticketVenueText">—</b>
-          </div>
-        </div>
-
-        <a class="primaryInlineBtn" id="buyTicketInlineBtn" href="#">Buy ticket now</a>
-      </div>
-    </section>
-
-    <section class="categorySection" id="categories">
-      <h1 class="contentTitle">Categories</h1>
-      <p class="categoryIntro">Pick a category to see only contestants under that category.</p>
-
-      <div id="categoryList" class="categoryList"></div>
-      <button id="seeMoreCategories" class="seeMoreBtn" type="button">See more⌄</button>
-    </section>
-
-    <section class="contestantSection" id="contestants">
-      <h2 id="contestantHeading">Contestants</h2>
-      <div class="contestantSummary" id="contestantSummary">Loading contestants...</div>
-
-      <input class="searchInput" id="contestantSearch" type="search" placeholder="Search contestant name, number, or category...">
-
-      <div id="emptyBox" class="emptyBox" style="display:none;">No contestants found.</div>
-      <div id="contestantGrid" class="contestantGrid"></div>
-    </section>
-
-  </main>
-
-  <div class="bottomBar">
-    <div>
-      <div class="bottomTitle" id="bottomTitle">Tickets</div>
-      <div class="bottomSub" id="bottomSub">Select an action</div>
-    </div>
-
-    <div class="bottomActions">
-      <button class="buyBtn" id="bottomTicketBtn" type="button">Buy ticket</button>
-      <button class="voteBtn" id="bottomVoteBtn" type="button">Vote now</button>
+    <div class="selectorField">
+      <label for="categorySelect">Category</label>
+      <select id="categorySelect"></select>
     </div>
   </div>
 
-</section>
+  <div class="dashCard">
+    <div class="dashLeft">
+      <div class="dashEyebrow" id="dashEventName">—</div>
+      <h2 id="dashCategoryName">—</h2>
+    </div>
 
-<div class="toast" id="toast">Copied</div>
+    <div class="dashRight">
+      <div class="statBlock">
+        <b id="dashNomineeCount">0</b>
+        <span>Nominees</span>
+      </div>
+
+      <button class="refreshBtn" id="refreshBtn" type="button">
+        <span class="spin">↻</span>
+        <span>Refresh results</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="viewTabs">
+    <button class="viewTabBtn active" id="barTabBtn" type="button">Bar Chart</button>
+    <button class="viewTabBtn" id="rankTabBtn" type="button">Rankings</button>
+  </div>
+
+  <div id="loadingState" class="stateBox">Loading results...</div>
+  <div id="emptyState" class="stateBox hidden">No nominees found for this category.</div>
+
+  <div id="barPane" class="viewPane active">
+    <div class="resultsList" id="resultsList"></div>
+  </div>
+
+  <div id="rankPane" class="viewPane">
+    <table class="rankTable">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Nominee</th>
+          <th class="num">Votes</th>
+          <th class="num">Share</th>
+        </tr>
+      </thead>
+      <tbody id="rankTableBody"></tbody>
+    </table>
+  </div>
+
+</main>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 
 import {
   getFirestore,
-  doc,
-  getDoc,
   collection,
   query,
   where,
-  onSnapshot,
   getDocs
 } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
@@ -1011,618 +573,242 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-const params = new URLSearchParams(window.location.search);
-const eventId = params.get("eventId");
+const RANK_COLORS = ["#d64541", "#e8935a", "#f0cf5f", "#161311", "#d64541", "#e8935a", "#f0cf5f", "#161311"];
 
-const menuBtn = document.getElementById("menuBtn");
-const mobileMenu = document.getElementById("mobileMenu");
+const eventSelect = document.getElementById("eventSelect");
+const categorySelect = document.getElementById("categorySelect");
+const eventSearchInput = document.getElementById("eventSearchInput");
 
-const searchBtn = document.getElementById("searchBtn");
-const searchOverlay = document.getElementById("searchOverlay");
-const closeSearch = document.getElementById("closeSearch");
-const globalSearchInput = document.getElementById("globalSearchInput");
+const dashEventName = document.getElementById("dashEventName");
+const dashCategoryName = document.getElementById("dashCategoryName");
+const dashNomineeCount = document.getElementById("dashNomineeCount");
 
-const loadingBox = document.getElementById("loadingBox");
-const eventSection = document.getElementById("eventSection");
+const refreshBtn = document.getElementById("refreshBtn");
 
-const heroPosterWrap = document.getElementById("heroPosterWrap");
-const crumbTitle = document.getElementById("crumbTitle");
+const barTabBtn = document.getElementById("barTabBtn");
+const rankTabBtn = document.getElementById("rankTabBtn");
+const barPane = document.getElementById("barPane");
+const rankPane = document.getElementById("rankPane");
 
-const eventTitle = document.getElementById("eventTitle");
-const eventStatusTag = document.getElementById("eventStatusTag");
-const eventTypeTag = document.getElementById("eventTypeTag");
-const eventDescription = document.getElementById("eventDescription");
+const loadingState = document.getElementById("loadingState");
+const emptyState = document.getElementById("emptyState");
+const resultsList = document.getElementById("resultsList");
+const rankTableBody = document.getElementById("rankTableBody");
 
-const dateTimeText = document.getElementById("dateTimeText");
-const locationLine = document.getElementById("locationLine");
-const locationText = document.getElementById("locationText");
-const contactLine = document.getElementById("contactLine");
-const contactText = document.getElementById("contactText");
-
-const mainActionBtn = document.getElementById("mainActionBtn");
-
-const votingInfoBlock = document.getElementById("votingInfoBlock");
-const eventCodeText = document.getElementById("eventCodeText");
-const votePriceText = document.getElementById("votePriceText");
-
-const ticketsSection = document.getElementById("tickets");
-const ticketsTab = document.getElementById("ticketsTab");
-const ticketNameText = document.getElementById("ticketNameText");
-const ticketPriceText = document.getElementById("ticketPriceText");
-const ticketAvailableText = document.getElementById("ticketAvailableText");
-const ticketSoldText = document.getElementById("ticketSoldText");
-const ticketVenueText = document.getElementById("ticketVenueText");
-const buyTicketInlineBtn = document.getElementById("buyTicketInlineBtn");
-
-const categoriesSection = document.getElementById("categories");
-const categoriesTab = document.getElementById("categoriesTab");
-const categoryList = document.getElementById("categoryList");
-const seeMoreCategories = document.getElementById("seeMoreCategories");
-
-const contestantsSection = document.getElementById("contestants");
-const contestantsTab = document.getElementById("contestantsTab");
-const contestantHeading = document.getElementById("contestantHeading");
-const contestantSearch = document.getElementById("contestantSearch");
-const contestantSummary = document.getElementById("contestantSummary");
-const contestantGrid = document.getElementById("contestantGrid");
-const emptyBox = document.getElementById("emptyBox");
-
-const shareTopBtn = document.getElementById("shareTopBtn");
-const shareMobileBtn = document.getElementById("shareMobileBtn");
-const heartBtn = document.getElementById("heartBtn");
-
-const bottomTitle = document.getElementById("bottomTitle");
-const bottomSub = document.getElementById("bottomSub");
-const bottomTicketBtn = document.getElementById("bottomTicketBtn");
-const bottomVoteBtn = document.getElementById("bottomVoteBtn");
-
-const toast = document.getElementById("toast");
-
-let currentEvent = null;
+let allEvents = [];
 let eventCategories = [];
-let allContestants = [];
-let activeCategory = "all";
-let searchText = "";
-let showAllCategories = false;
-let selectedContestant = null;
-let toastTimer = null;
+let categoryContestants = [];
+let activeView = "bar";
 
-menuBtn.addEventListener("click", () => {
-  mobileMenu.classList.toggle("show");
-});
+const params = new URLSearchParams(window.location.search);
+const preselectEventId = params.get("event") || params.get("eventId");
 
-searchBtn.addEventListener("click", () => {
-  searchOverlay.classList.add("show");
-  setTimeout(() => globalSearchInput.focus(), 80);
-});
-
-closeSearch.addEventListener("click", () => {
-  searchOverlay.classList.remove("show");
-});
-
-searchOverlay.addEventListener("click", (e) => {
-  if(e.target === searchOverlay){
-    searchOverlay.classList.remove("show");
-  }
-});
-
-globalSearchInput.addEventListener("input", () => {
-  searchText = globalSearchInput.value.trim().toLowerCase();
-  contestantSearch.value = globalSearchInput.value;
-  renderContestants();
-});
-
-contestantSearch.addEventListener("input", () => {
-  searchText = contestantSearch.value.trim().toLowerCase();
-  globalSearchInput.value = contestantSearch.value;
-  renderContestants();
-});
-
-shareTopBtn.addEventListener("click", shareEvent);
-shareMobileBtn.addEventListener("click", shareEvent);
-
-heartBtn.addEventListener("click", () => {
-  heartBtn.textContent = heartBtn.textContent === "♡" ? "♥" : "♡";
-});
-
-seeMoreCategories.addEventListener("click", () => {
-  showAllCategories = !showAllCategories;
-  renderCategories();
-});
-
-bottomVoteBtn.addEventListener("click", () => {
-  if(!hasVoting()){
-    showToast("Voting is not enabled for this event.");
-    return;
-  }
-
-  document.getElementById("contestants").scrollIntoView({ behavior:"smooth" });
-});
-
-bottomTicketBtn.addEventListener("click", () => {
-  goToTicketCheckout();
-});
-
-buyTicketInlineBtn.addEventListener("click", (e) => {
-  e.preventDefault();
-  goToTicketCheckout();
-});
-
-function showToast(text){
-  toast.textContent = text;
-  toast.classList.add("show");
-
-  clearTimeout(toastTimer);
-
-  toastTimer = setTimeout(() => {
-    toast.classList.remove("show");
-  }, 1800);
+function hasVoting(ev){
+  return !!ev?.votingEnabled || ev?.type === "voting" || ev?.type === "voting_tickets" || !ev?.type;
 }
 
-function numberFormat(n){
+function money0(n){
   return Number(n || 0).toLocaleString();
 }
 
-function money(n){
-  return `GHS ${Number(n || 0).toFixed(2)}`;
+barTabBtn.addEventListener("click", () => setView("bar"));
+rankTabBtn.addEventListener("click", () => setView("rank"));
+
+function setView(view){
+  activeView = view;
+  barTabBtn.classList.toggle("active", view === "bar");
+  rankTabBtn.classList.toggle("active", view === "rank");
+  barPane.classList.toggle("active", view === "bar");
+  rankPane.classList.toggle("active", view === "rank");
 }
 
-function normalizeStatus(status){
-  const s = String(status || "").toLowerCase();
+eventSelect.addEventListener("change", async () => {
+  await loadCategoriesForSelectedEvent();
+  await loadResults();
+});
 
-  if(s === "active" || s === "live") return "active";
-  if(s === "upcoming") return "upcoming";
-  if(s === "paused") return "paused";
+categorySelect.addEventListener("change", loadResults);
 
-  return "closed";
-}
+refreshBtn.addEventListener("click", loadResults);
 
-function prettyStatus(status){
-  const s = normalizeStatus(status);
+eventSearchInput.addEventListener("input", () => {
+  const term = eventSearchInput.value.trim().toLowerCase();
 
-  if(s === "active") return "Active";
-  if(s === "upcoming") return "Upcoming";
-  if(s === "paused") return "Paused";
+  [...eventSelect.options].forEach(opt => {
+    opt.hidden = term && !opt.textContent.toLowerCase().includes(term);
+  });
+});
 
-  return "Closed";
-}
+async function loadEvents(){
+  const snap = await getDocs(collection(db, "events"));
 
-function hasVoting(){
-  return !!currentEvent?.votingEnabled || currentEvent?.type === "voting" || currentEvent?.type === "voting_tickets" || !currentEvent?.type;
-}
+  allEvents = snap.docs
+    .map(docu => ({ id: docu.id, ...docu.data() }))
+    .filter(hasVoting);
 
-function hasTickets(){
-  return !!currentEvent?.ticketsEnabled || currentEvent?.type === "tickets" || currentEvent?.type === "voting_tickets";
-}
+  eventSelect.innerHTML = "";
 
-function eventTypeLabel(){
-  if(hasVoting() && hasTickets()) return "Voting + Tickets";
-  if(hasTickets()) return "Ticketed Event";
-  return "Voting Competition";
-}
-
-function canVote(){
-  return hasVoting() && normalizeStatus(currentEvent?.status) === "active";
-}
-
-function canBuyTicket(){
-  return hasTickets() && normalizeStatus(currentEvent?.status) === "active" && getAvailableTickets() > 0;
-}
-
-function getAvailableTickets(){
-  const quantity = Number(currentEvent?.ticketQuantity || 0);
-  const sold = Number(currentEvent?.ticketsSold || 0);
-  return Math.max(quantity - sold, 0);
-}
-
-function getContestantVotesTotal(){
-  return allContestants.reduce((sum, item) => {
-    return sum + Number(item.votes || 0);
-  }, 0);
-}
-
-function getContestantVotePercentage(item){
-  const total = getContestantVotesTotal();
-  if(total <= 0) return 0;
-  return (Number(item.votes || 0) / total) * 100;
-}
-
-function getEventUrl(){
-  return window.location.href;
-}
-
-function goToTicketCheckout(){
-  if(!hasTickets()){
-    showToast("Tickets are not enabled for this event.");
+  if(allEvents.length === 0){
+    eventSelect.innerHTML = `<option value="">No events available</option>`;
     return;
   }
 
-  if(!canBuyTicket()){
-    showToast("Tickets are unavailable for this event.");
-    return;
-  }
+  allEvents.forEach(ev => {
+    const opt = document.createElement("option");
+    opt.value = ev.id;
+    opt.textContent = ev.eventName || "Untitled Event";
+    eventSelect.appendChild(opt);
+  });
 
-  window.location.href = `ticket-checkout.html?eventId=${eventId}&qty=1`;
-}
-
-async function shareEvent(){
-  if(!currentEvent){
-    showToast("Event not ready.");
-    return;
-  }
-
-  const title = currentEvent.eventName || "Lumina Vote Event";
-  const text = `Check out ${title} on Lumina Vote.`;
-  const url = getEventUrl();
-
-  try{
-    if(navigator.share){
-      await navigator.share({ title, text, url });
-      return;
-    }
-
-    if(navigator.clipboard && window.isSecureContext){
-      await navigator.clipboard.writeText(url);
-      showToast("Event link copied.");
-      return;
-    }
-
-    window.open(`https://wa.me/?text=${encodeURIComponent(text + " " + url)}`, "_blank");
-
-  }catch(error){
-    console.error(error);
-    showToast("Could not share event.");
+  if(preselectEventId && allEvents.some(ev => ev.id === preselectEventId)){
+    eventSelect.value = preselectEventId;
   }
 }
 
-function renderHeroPoster(){
-  const title = currentEvent?.eventName || "Lumina Vote";
-
-  if(currentEvent?.posterUrl && String(currentEvent.posterUrl).trim() !== ""){
-    heroPosterWrap.innerHTML = `<img src="${currentEvent.posterUrl}" alt="${title} poster">`;
-  }else{
-    heroPosterWrap.innerHTML = `<div class="detailHeroFallback">${title}</div>`;
-  }
-}
-
-function renderEvent(){
-  if(!currentEvent) return;
-
-  const title = currentEvent.eventName || "Untitled Event";
-  const votePrice = Number(currentEvent.votePrice || 0);
-
-  crumbTitle.textContent = title;
-  eventTitle.textContent = title;
-  eventStatusTag.textContent = prettyStatus(currentEvent.status);
-  eventTypeTag.textContent = eventTypeLabel();
-  eventDescription.textContent = currentEvent.description || "No description available.";
-
-  const mainDate = currentEvent.eventDate || currentEvent.endDate || "";
-  dateTimeText.textContent = mainDate ? `Date: ${mainDate}` : "Date: Not set";
-
-  if(currentEvent.location){
-    locationLine.classList.remove("hidden");
-    locationText.textContent = `Location: ${currentEvent.location}`;
-  }else{
-    locationLine.classList.add("hidden");
-  }
-
-  if(currentEvent.contactPhone){
-    contactLine.classList.remove("hidden");
-    contactText.textContent = `Contact: ${currentEvent.contactPhone}`;
-  }else{
-    contactLine.classList.add("hidden");
-  }
-
-  eventCodeText.textContent = `Event Code: ${currentEvent.eventCode || "—"}`;
-  votePriceText.textContent = `${money(votePrice)} per vote`;
-
-  ticketNameText.textContent = currentEvent.ticketName || "Regular Ticket";
-  ticketPriceText.textContent = money(currentEvent.ticketPrice || 0);
-  ticketAvailableText.textContent = numberFormat(getAvailableTickets());
-  ticketSoldText.textContent = numberFormat(currentEvent.ticketsSold || 0);
-  ticketVenueText.textContent = currentEvent.location || "—";
-
-  const ticketLink = `ticket-checkout.html?eventId=${eventId}&qty=1`;
-  buyTicketInlineBtn.href = ticketLink;
-
-  if(hasVoting() && hasTickets()){
-    mainActionBtn.textContent = "Proceed to vote";
-    mainActionBtn.href = "#contestants";
-    bottomTitle.textContent = "Tickets";
-    bottomSub.textContent = selectedContestant
-      ? selectedContestant.fullName || "Contestant selected"
-      : `${money(currentEvent.ticketPrice || 0)} ticket • ${money(votePrice)} per vote`;
-  }else if(hasTickets()){
-    mainActionBtn.textContent = "Buy ticket now";
-    mainActionBtn.href = ticketLink;
-    bottomTitle.textContent = "Tickets";
-    bottomSub.textContent = `${money(currentEvent.ticketPrice || 0)} • ${numberFormat(getAvailableTickets())} available`;
-  }else{
-    mainActionBtn.textContent = "Proceed to vote";
-    mainActionBtn.href = "#contestants";
-    bottomTitle.textContent = "Voting";
-    bottomSub.textContent = selectedContestant
-      ? selectedContestant.fullName || "Contestant selected"
-      : "Select your contestant";
-  }
-
-  ticketsSection.classList.toggle("hidden", !hasTickets());
-  ticketsTab.classList.toggle("hidden", !hasTickets());
-  bottomTicketBtn.classList.toggle("hidden", !hasTickets());
-
-  votingInfoBlock.classList.toggle("hidden", !hasVoting());
-  categoriesSection.classList.toggle("hidden", !hasVoting());
-  categoriesTab.classList.toggle("hidden", !hasVoting());
-  contestantsSection.classList.toggle("hidden", !hasVoting());
-  contestantsTab.classList.toggle("hidden", !hasVoting());
-  bottomVoteBtn.classList.toggle("hidden", !hasVoting());
-
-  document.title = `${title} | Lumina Vote`;
-  renderHeroPoster();
-}
-
-async function loadCategories(){
+async function loadCategoriesForSelectedEvent(){
+  const eventId = eventSelect.value;
   eventCategories = [];
+  categorySelect.innerHTML = "";
 
-  if(!eventId || !hasVoting()) return;
+  if(!eventId) return;
 
-  try{
-    const q = query(
-      collection(db, "eventCategories"),
-      where("eventId", "==", eventId)
-    );
+  const q = query(collection(db, "eventCategories"), where("eventId", "==", eventId));
+  const snap = await getDocs(q);
 
-    const snap = await getDocs(q);
+  eventCategories = snap.docs
+    .map(docu => ({ id: docu.id, ...docu.data() }))
+    .sort((a, b) => Number(a.categoryCode || 0) - Number(b.categoryCode || 0));
 
-    eventCategories = snap.docs.map(docu => ({
-      id: docu.id,
-      ...docu.data()
-    }));
-
-    eventCategories.sort((a, b) => Number(a.categoryCode || 0) - Number(b.categoryCode || 0));
-
-  }catch(error){
-    console.error("Category load error:", error);
-    eventCategories = [];
+  if(eventCategories.length === 0){
+    categorySelect.innerHTML = `<option value="">No categories</option>`;
+    return;
   }
-}
 
-function getContestantsInCategory(cat){
-  return allContestants.filter(item => {
-    if(item.categoryId && item.categoryId === cat.id) return true;
-    if(item.categoryCode && String(item.categoryCode) === String(cat.categoryCode)) return true;
-    if(item.categoryName && String(item.categoryName).toLowerCase() === String(cat.categoryName || "").toLowerCase()) return true;
-    return false;
+  eventCategories.forEach(cat => {
+    const opt = document.createElement("option");
+    opt.value = cat.id;
+    opt.textContent = cat.categoryName || `Category ${cat.categoryCode || ""}`;
+    categorySelect.appendChild(opt);
   });
 }
 
-function renderCategories(){
-  categoryList.innerHTML = "";
-
-  if(!hasVoting()) return;
-
-  const allBtn = document.createElement("button");
-  allBtn.type = "button";
-  allBtn.className = activeCategory === "all" ? "categoryBtn active" : "categoryBtn";
-  allBtn.innerHTML = `
-    <b>All Contestants</b>
-    <span>${allContestants.length} nominees</span>
-  `;
-
-  allBtn.addEventListener("click", () => {
-    activeCategory = "all";
-    selectedContestant = null;
-    renderCategories();
-    renderContestants();
-  });
-
-  categoryList.appendChild(allBtn);
-
-  const cats = showAllCategories ? eventCategories : eventCategories.slice(0, 8);
-
-  cats.forEach(cat => {
-    const count = getContestantsInCategory(cat).length;
-
-    const btn = document.createElement("button");
-    btn.type = "button";
-    btn.className = activeCategory === cat.id ? "categoryBtn active" : "categoryBtn";
-    btn.innerHTML = `
-      <b>${cat.categoryName || `Category ${cat.categoryCode || ""}`}</b>
-      <span>${count} nominees</span>
-    `;
-
-    btn.addEventListener("click", () => {
-      activeCategory = cat.id;
-      selectedContestant = null;
-      renderCategories();
-      renderContestants();
-      document.getElementById("contestants").scrollIntoView({ behavior:"smooth" });
-    });
-
-    categoryList.appendChild(btn);
-  });
-
-  if(eventCategories.length > 8){
-    seeMoreCategories.style.display = "block";
-    seeMoreCategories.textContent = showAllCategories ? "Show less⌃" : "See more⌄";
-  }else{
-    seeMoreCategories.style.display = "none";
-  }
-}
-
-function contestantMatchesCategory(item){
-  if(activeCategory === "all") return true;
-
-  const cat = eventCategories.find(c => c.id === activeCategory);
-
-  if(!cat) return true;
-
+function contestantMatchesCategory(item, cat){
+  if(!cat) return false;
   if(item.categoryId && item.categoryId === cat.id) return true;
   if(item.categoryCode && String(item.categoryCode) === String(cat.categoryCode)) return true;
   if(item.categoryName && String(item.categoryName).toLowerCase() === String(cat.categoryName || "").toLowerCase()) return true;
-
   return false;
 }
 
-function getFilteredContestants(){
-  let items = [...allContestants];
+async function loadResults(){
+  const eventId = eventSelect.value;
+  const categoryId = categorySelect.value;
+  const ev = allEvents.find(e => e.id === eventId);
+  const cat = eventCategories.find(c => c.id === categoryId);
 
-  items = items.filter(contestantMatchesCategory);
+  dashEventName.textContent = ev?.eventName || "—";
+  dashCategoryName.textContent = cat?.categoryName || "—";
 
-  if(searchText){
-    items = items.filter(item =>
-      String(item.fullName || "").toLowerCase().includes(searchText) ||
-      String(item.contestantNumber || "").toLowerCase().includes(searchText) ||
-      String(item.categoryName || "").toLowerCase().includes(searchText)
-    );
-  }
-
-  return items.sort((a, b) => Number(b.votes || 0) - Number(a.votes || 0));
-}
-
-function getActiveCategoryName(){
-  if(activeCategory === "all") return "Contestants";
-
-  const cat = eventCategories.find(c => c.id === activeCategory);
-
-  return cat?.categoryName || "Contestants";
-}
-
-function createContestantCard(item){
-  const card = document.createElement("div");
-  card.className = "contestantCard";
-
-  const image = item.photoUrl && String(item.photoUrl).trim() !== "" ? item.photoUrl : "";
-
-  const photoHtml = image
-    ? `<img src="${image}" alt="${item.fullName || "Contestant"}">`
-    : `<div class="contestantFallback">${item.fullName || "Contestant"}</div>`;
-
-  const pctText = getContestantVotePercentage(item).toFixed(1);
-
-  card.innerHTML = `
-    <div class="contestantPhoto">${photoHtml}</div>
-    <div class="contestantName">${item.fullName || "Unnamed Contestant"}</div>
-    <div class="voteCount">${pctText}%</div>
-    <button class="voteMini" type="button">Proceed to vote</button>
-  `;
-
-  const btn = card.querySelector(".voteMini");
-
-  btn.addEventListener("click", () => {
-    if(String(item.status || "active").toLowerCase() === "eliminated"){
-      alert("This contestant has been eliminated.");
-      return;
-    }
-
-    if(!canVote()){
-      alert("Voting is not active for this event.");
-      return;
-    }
-
-    selectedContestant = item;
-    bottomSub.textContent = item.fullName || "Contestant selected";
-
-    window.location.href = `vote-checkout.html?eventId=${eventId}&contestantId=${item.id}&votes=1`;
-  });
-
-  return card;
-}
-
-function renderContestants(){
-  contestantGrid.innerHTML = "";
-
-  if(!hasVoting()){
+  if(!eventId || !categoryId){
+    categoryContestants = [];
+    renderResults();
     return;
   }
 
-  const items = getFilteredContestants();
-
-  contestantHeading.textContent = getActiveCategoryName();
-
-  contestantSummary.textContent = items.length === 1
-    ? "1 nominee"
-    : `${items.length} nominees`;
-
-  if(items.length === 0){
-    emptyBox.style.display = "block";
-    emptyBox.textContent = searchText
-      ? "No contestant matches your search."
-      : "No contestants found for this category.";
-    return;
-  }
-
-  emptyBox.style.display = "none";
-
-  items.forEach(item => {
-    contestantGrid.appendChild(createContestantCard(item));
-  });
-
-  renderEvent();
-}
-
-async function loadEvent(){
-  if(!eventId){
-    loadingBox.textContent = "Missing event ID.";
-    return;
-  }
+  refreshBtn.classList.add("loading");
+  loadingState.classList.remove("hidden");
+  emptyState.classList.add("hidden");
+  resultsList.innerHTML = "";
+  rankTableBody.innerHTML = "";
 
   try{
-    const eventRef = doc(db, "events", eventId);
-    const eventSnap = await getDoc(eventRef);
+    const q = query(collection(db, "eventContestants"), where("eventId", "==", eventId));
+    const snap = await getDocs(q);
 
-    if(!eventSnap.exists()){
-      loadingBox.textContent = "Event not found.";
-      return;
-    }
+    const all = snap.docs.map(docu => ({ id: docu.id, ...docu.data() }));
 
-    currentEvent = {
-      id: eventSnap.id,
-      ...eventSnap.data()
-    };
+    categoryContestants = all
+      .filter(item => contestantMatchesCategory(item, cat))
+      .sort((a, b) => Number(b.votes || 0) - Number(a.votes || 0));
 
-    await loadCategories();
-
-    renderEvent();
-
-    if(!hasVoting()){
-      loadingBox.style.display = "none";
-      eventSection.style.display = "block";
-      renderEvent();
-      return;
-    }
-
-    const q = query(
-      collection(db, "eventContestants"),
-      where("eventId", "==", eventId)
-    );
-
-    onSnapshot(q, (snapshot) => {
-      allContestants = snapshot.docs.map(docu => ({
-        id: docu.id,
-        ...docu.data()
-      }));
-
-      loadingBox.style.display = "none";
-      eventSection.style.display = "block";
-
-      renderCategories();
-      renderContestants();
-      renderEvent();
-
-    }, (error) => {
-      console.error(error);
-      loadingBox.textContent = "Could not load contestants.";
-    });
+    renderResults();
 
   }catch(error){
     console.error(error);
-    loadingBox.textContent = "Failed to load event.";
+    loadingState.textContent = "Could not load results.";
+    loadingState.classList.remove("hidden");
+  }finally{
+    refreshBtn.classList.remove("loading");
   }
 }
 
-loadEvent();
+function getCategoryVoteTotal(){
+  return categoryContestants.reduce((sum, item) => sum + Number(item.votes || 0), 0);
+}
+
+function renderResults(){
+  loadingState.classList.add("hidden");
+
+  dashNomineeCount.textContent = money0(categoryContestants.length);
+
+  resultsList.innerHTML = "";
+  rankTableBody.innerHTML = "";
+
+  if(categoryContestants.length === 0){
+    emptyState.classList.remove("hidden");
+    return;
+  }
+
+  emptyState.classList.add("hidden");
+
+  const total = getCategoryVoteTotal();
+
+  categoryContestants.forEach((item, index) => {
+    const votes = Number(item.votes || 0);
+    const pct = total > 0 ? (votes / total) * 100 : 0;
+    const color = RANK_COLORS[index % RANK_COLORS.length];
+
+    const row = document.createElement("div");
+    row.className = "resultRow";
+    row.innerHTML = `
+      <div class="resultTop">
+        <div class="rankBadge" style="background:${color};color:${color === '#161311' ? '#fff' : '#161311'}">${index + 1}</div>
+        <div class="resultName">
+          <b>${item.fullName || "Unnamed"}</b>
+          <span>${item.contestantNumber || ""}</span>
+        </div>
+        <div class="resultStats">
+          <b>${pct.toFixed(1)}%</b>
+          <span>${money0(votes)} votes</span>
+        </div>
+      </div>
+      <div class="barTrack">
+        <div class="barFill" style="width:${pct}%;background:${color}"></div>
+      </div>
+    `;
+    resultsList.appendChild(row);
+
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td class="rankCell">${index + 1}</td>
+      <td class="nameCell">
+        <b>${item.fullName || "Unnamed"}</b>
+        <span>${item.contestantNumber || ""}</span>
+      </td>
+      <td class="num">${money0(votes)}</td>
+      <td class="num">${pct.toFixed(1)}%</td>
+    `;
+    rankTableBody.appendChild(tr);
+  });
+}
+
+async function init(){
+  await loadEvents();
+  await loadCategoriesForSelectedEvent();
+  await loadResults();
+}
+
+init();
 </script>
 
 </body>
