@@ -4,106 +4,101 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Events | Lumina Vote</title>
-<link rel="stylesheet" href="css/style.css">
 
 <style>
-*{
-  box-sizing:border-box;
-}
-
-html{
-  scroll-behavior:smooth;
-}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
 
 body{
   margin:0;
   overflow-x:hidden;
-  background: radial-gradient(circle at top left, rgba(37,99,235,0.22), transparent 26%),
-              radial-gradient(circle at top right, rgba(212,175,55,0.20), transparent 18%),
-              linear-gradient(180deg, #100a06 0%, #271912 100%);
-  color:#f7ebd9;
+  background:#faf7f0;
+  color:#161311;
   font-family:Arial, Helvetica, sans-serif;
 }
 
+a{color:inherit}
 
-/* =========================
-   HEADER
-========================= */
-
-.smartHeader{
+/* HEADER */
+.siteHeader{
   position:sticky;
   top:0;
   z-index:100;
-  background:linear-gradient(135deg, #d4af37, #b88718);
-  color:#f7ebd9;
+  background:#ffffff;
+  border-bottom:1px solid #eee4d3;
 }
 
-.smartHeaderInner{
+.siteHeaderInner{
+  max-width:1180px;
+  margin:0 auto;
   height:76px;
   display:flex;
   align-items:center;
   justify-content:space-between;
   gap:16px;
-  padding:0 18px;
+  padding:0 22px;
 }
 
-.headerLeft,
-.headerRight{
+.headerLeft,.headerRight{
   display:flex;
   align-items:center;
-  gap:14px;
+  gap:16px;
 }
 
-.menuIcon,
-.searchIcon{
+.menuIcon,.searchIcon{
   border:0;
   background:transparent;
-  color:#f7ebd9;
+  color:#161311;
   cursor:pointer;
   padding:0;
   display:grid;
   place-items:center;
-  font-size:31px;
+  font-size:26px;
   line-height:1;
 }
 
 .logoLink{
-  color:#f7ebd9;
-  text-decoration:none;
   display:flex;
   align-items:center;
-  gap:8px;
+  gap:9px;
+  text-decoration:none;
+  color:#161311;
   font-weight:900;
-  font-size:22px;
-  letter-spacing:-1px;
+  font-size:21px;
+  letter-spacing:-0.5px;
 }
 
 .logoMark{
-  width:38px;
-  height:38px;
-  border-radius:50%;
-  background:rgba(255,255,255,0.05);
+  width:34px;
+  height:34px;
+  border-radius:9px;
+  background:linear-gradient(135deg,#d4af37,#b88718);
   display:grid;
   place-items:center;
-  position:relative;
+  color:#fff;
+  font-weight:900;
+  font-size:17px;
+  font-style:italic;
   flex:0 0 auto;
 }
 
-.logoMark::after{
-  content:"";
-  width:18px;
-  height:11px;
-  border-left:6px solid #0b4bea;
-  border-bottom:6px solid #0b4bea;
-  transform:rotate(-45deg);
-  margin-top:-3px;
+.navLinks{
+  display:none;
+  align-items:center;
+  gap:26px;
+  font-size:14px;
+  font-weight:700;
+  color:#6b6156;
 }
+
+.navLinks a{text-decoration:none}
+.navLinks a.active{color:#161311}
 
 .sellBtn{
   border:0;
-  background:linear-gradient(135deg, #d4af37, #b88718);
-  color:#f7ebd9;
-  padding:13px 18px;
+  background:#161311;
+  color:#fff;
+  padding:12px 20px;
   border-radius:999px;
   font-weight:800;
   font-size:14px;
@@ -114,137 +109,74 @@ body{
 .mobileMenu{
   display:none;
   padding:14px 18px 18px;
-  background:rgba(16,10,6,0.96);
-  border-top:1px solid rgba(212,175,55,0.22);
+  background:#fff;
+  border-top:1px solid #eee4d3;
 }
 
-.mobileMenu.show{
-  display:block;
-}
+.mobileMenu.show{display:block}
 
-.mobileMenu a,
-.mobileMenu button{
+.mobileMenu a,.mobileMenu button{
   width:100%;
   border:0;
   display:flex;
   justify-content:center;
   text-decoration:none;
   padding:13px;
-  border-radius:14px;
+  border-radius:12px;
   margin-top:8px;
   font-weight:800;
-  background:rgba(255,255,255,0.05);
-  color:#0b4bea;
-}
-
-.mobileMenu button{
+  background:#f6f0e2;
+  color:#161311;
   cursor:pointer;
+  font-size:14px;
 }
 
-@media(min-width:900px){
-  .smartHeaderInner{
-    height:86px;
-    padding:0 28px;
-  }
-
-  .logoLink{
-    font-size:27px;
-  }
-
-  .logoMark{
-    width:44px;
-    height:44px;
-  }
-
-  .logoMark::after{
-    width:22px;
-    height:13px;
-    border-left-width:7px;
-    border-bottom-width:7px;
-  }
-
-  .sellBtn{
-    padding:15px 25px;
-    font-size:16px;
-  }
-
-  .menuIcon,
-  .searchIcon{
-    font-size:34px;
-  }
+@media(min-width:860px){
+  .navLinks{display:flex}
 }
 
-/* =========================
-   PAGE HERO
-========================= */
-
+/* PAGE HERO */
 .pageHero{
-  height:270px;
-  color:#f7ebd9;
-  background:
-    linear-gradient(rgba(0,0,0,.50),rgba(0,0,0,.50)),
-    linear-gradient(135deg,#071321,#0b4bea);
-  background-size:cover;
-  background-position:center;
-  display:flex;
-  align-items:flex-end;
-  padding:20px 18px 42px;
+  padding:44px 22px 30px;
+  background:linear-gradient(180deg,#fff,#faf7f0);
+  border-bottom:1px solid #eee4d3;
 }
 
 .heroInner{
-  width:min(1180px,100%);
+  max-width:1180px;
   margin:0 auto;
 }
 
 .breadcrumb{
-  display:flex;
-  gap:9px;
-  align-items:center;
-  color:#f7ebd9;
-  font-size:16px;
-  margin-bottom:52px;
+  font-size:13px;
+  color:#a99a80;
+  margin-bottom:14px;
 }
 
-.breadcrumb a{
-  color:#f7ebd9;
-  text-decoration:none;
-}
+.breadcrumb a{text-decoration:none;color:#a99a80}
+.breadcrumb span.current{color:#161311;font-weight:700}
 
 .pageHero h1{
   margin:0;
   font-family:Georgia, "Times New Roman", serif;
-  font-size:43px;
-  line-height:1;
+  font-size:38px;
+  line-height:1.1;
   font-weight:900;
-  letter-spacing:-1px;
+  letter-spacing:-0.8px;
 }
 
 @media(max-width:680px){
-  .pageHero{
-    height:168px;
-    padding:17px 16px 28px;
-  }
-
-  .breadcrumb{
-    font-size:16px;
-    margin-bottom:54px;
-  }
-
-  .pageHero h1{
-    font-size:34px;
-  }
+  .pageHero{padding:32px 18px 24px}
+  .pageHero h1{font-size:30px}
 }
 
-/* =========================
-   MAIN
-========================= */
-
+/* MAIN */
 .pageSection{
-  padding:42px 18px 80px;
+  padding:38px 22px 80px;
 }
 
 .sectionInner{
-  width:min(1180px,100%);
+  max-width:1180px;
   margin:0 auto;
 }
 
@@ -253,16 +185,16 @@ body{
   justify-content:space-between;
   align-items:center;
   gap:14px;
-  margin-bottom:15px;
+  margin-bottom:18px;
 }
 
 .sectionTop h2{
   margin:0;
   font-family:Georgia, "Times New Roman", serif;
-  font-size:34px;
+  font-size:26px;
   line-height:1.1;
   font-weight:900;
-  letter-spacing:-1px;
+  letter-spacing:-.5px;
 }
 
 .searchArea{
@@ -271,95 +203,93 @@ body{
 
 .searchInput{
   width:100%;
-  border:1px solid rgba(212,175,55,0.18);
-  border-radius:16px;
+  border:1px solid #ece2cd;
+  background:#fff;
+  border-radius:14px;
   padding:15px 16px;
-  font-size:16px;
+  font-size:15px;
   outline:none;
+  color:#161311;
 }
 
 .searchInput:focus{
-  border-color:#0b4bea;
-  box-shadow:0 0 0 4px rgba(11,75,234,.12);
+  border-color:#d4af37;
+  box-shadow:0 0 0 4px rgba(212,175,55,.14);
 }
 
 .filterRow{
   display:flex;
   gap:8px;
   overflow-x:auto;
-  padding:12px 0 4px;
+  padding:14px 0 4px;
   scrollbar-width:none;
 }
 
-.filterRow::-webkit-scrollbar{
-  display:none;
-}
+.filterRow::-webkit-scrollbar{display:none}
 
 .filterBtn{
-  border:1px solid #e2e2e2;
-  background:rgba(255,255,255,0.05);
-  color:#f7ebd9;
+  border:1px solid #e6dabd;
+  background:#fff;
+  color:#6b6156;
   padding:11px 17px;
   border-radius:999px;
-  font-size:14px;
+  font-size:13px;
   font-weight:800;
   cursor:pointer;
   white-space:nowrap;
 }
 
 .filterBtn.active{
-  background:linear-gradient(135deg, #d4af37, #b88718);
-  border-color:#0b4bea;
-  color:#f7ebd9;
+  background:#161311;
+  border-color:#161311;
+  color:#fff;
 }
 
 .summaryText{
-  color:#d7c07a;
-  font-size:14px;
-  margin-top:9px;
+  color:#a99a80;
+  font-size:13px;
+  font-weight:600;
+  margin-top:11px;
 }
 
 @media(max-width:680px){
-  .pageSection{
-    padding:39px 16px 70px;
-  }
-
-  .sectionTop h2{
-    font-size:29px;
-  }
+  .pageSection{padding:30px 16px 60px}
+  .sectionTop h2{font-size:22px}
 }
 
-/* =========================
-   EVENT LIST
-========================= */
-
-.loadingBox,
-.emptyBox{
-  border:1px dashed #d7d7d7;
-  border-radius:18px;
+/* EVENT LIST */
+.loadingBox,.emptyBox{
+  border:1px dashed #e6dabd;
+  border-radius:16px;
   padding:26px;
   text-align:center;
-  color:#d7c07a;
+  color:#a99a80;
+  font-weight:600;
 }
 
 .competitionList{
   display:grid;
   grid-template-columns:1fr;
-  gap:42px;
+  gap:26px;
 }
 
 .competitionCard{
   display:block;
   text-decoration:none;
-  color:#f7ebd9;
+  color:#161311;
+  background:#fff;
+  border:1px solid #efe7d8;
+  border-radius:16px;
+  padding:10px;
+  box-shadow:0 10px 26px rgba(60,45,10,0.05);
 }
 
 .posterWrap{
   position:relative;
-  height:285px;
-  border-radius:9px;
+  height:200px;
+  border-radius:11px;
   overflow:hidden;
-  background:rgba(18,12,7,0.95);
+  background:#f2ead9;
 }
 
 .posterWrap img{
@@ -376,10 +306,10 @@ body{
   justify-content:center;
   padding:18px;
   text-align:center;
-  color:#f7ebd9;
+  color:#161311;
   font-weight:900;
-  font-size:30px;
-  background:linear-gradient(135deg, rgba(21,22,24,0.95), rgba(8,24,57,0.96));
+  font-size:20px;
+  background:linear-gradient(135deg,#f6e6c8,#f2ead9);
 }
 
 .cardLine{
@@ -387,46 +317,46 @@ body{
   justify-content:space-between;
   gap:12px;
   margin-top:14px;
+  padding:0 4px;
 }
 
 .cardTitle{
   min-width:0;
-  font-size:19px;
-  font-weight:700;
+  font-size:16.5px;
+  font-weight:800;
   white-space:nowrap;
   overflow:hidden;
   text-overflow:ellipsis;
 }
 
 .cardPrice{
-  font-size:19px;
+  font-size:15px;
   font-weight:900;
   white-space:nowrap;
 }
 
-.cardPrice b{
-  font-weight:900;
-}
-
 .perVote{
-  color:#8f8f8f;
-  font-weight:500;
+  color:#a99a80;
+  font-weight:600;
   margin-left:4px;
+  font-size:12px;
 }
 
 .organizerLine{
   display:flex;
   align-items:center;
-  gap:9px;
-  color:#d7c07a;
-  margin-top:16px;
-  font-size:17px;
+  gap:8px;
+  color:#a99a80;
+  margin-top:12px;
+  padding:0 4px 4px;
+  font-size:13px;
+  font-weight:600;
 }
 
 .organizerIcon{
-  width:18px;
-  height:18px;
-  border:1.8px solid #888;
+  width:17px;
+  height:17px;
+  border:1.6px solid #c9bb99;
   border-radius:50%;
   position:relative;
   flex:0 0 auto;
@@ -436,94 +366,70 @@ body{
   content:"";
   position:absolute;
   left:50%;
-  top:15px;
+  top:14px;
   transform:translateX(-50%);
-  width:20px;
-  height:10px;
-  border:1.8px solid #888;
+  width:17px;
+  height:9px;
+  border:1.6px solid #c9bb99;
   border-top:0;
-  border-radius:0 0 10px 10px;
+  border-radius:0 0 9px 9px;
 }
 
 .statusPill{
   position:absolute;
-  top:14px;
-  left:14px;
-  padding:8px 12px;
+  top:12px;
+  left:12px;
+  padding:7px 11px;
   border-radius:999px;
-  background:rgba(0,0,0,.68);
-  color:#f7ebd9;
-  font-size:12px;
+  background:#161311;
+  color:#fff;
+  font-size:11px;
   font-weight:900;
-  backdrop-filter:blur(8px);
 }
 
 .eventTypePill{
   position:absolute;
-  top:14px;
-  right:14px;
-  padding:8px 12px;
+  top:12px;
+  right:12px;
+  padding:7px 11px;
   border-radius:999px;
-  background:rgba(255,255,255,.92);
-  color:#f7ebd9;
-  font-size:12px;
-  font-weight:900;
-  backdrop-filter:blur(8px);
+  background:rgba(255,255,255,.94);
+  color:#161311;
+  font-size:11px;
+  font-weight:800;
 }
 
 @media(min-width:900px){
   .competitionList{
     grid-template-columns:repeat(3,1fr);
-    gap:42px 24px;
-  }
-
-  .posterWrap{
-    height:250px;
+    gap:24px;
   }
 }
 
 @media(max-width:680px){
-  .competitionList{
-    gap:42px;
-  }
-
-  .posterWrap{
-    height:226px;
-  }
-
-  .cardTitle,
-  .cardPrice{
-    font-size:17px;
-  }
-
-  .organizerLine{
-    font-size:16px;
-  }
+  .posterWrap{height:150px}
+  .cardTitle,.cardPrice{font-size:14px}
 }
 
-/* =========================
-   SEARCH OVERLAY
-========================= */
-
+/* SEARCH OVERLAY */
 .searchOverlay{
   display:none;
   position:fixed;
   inset:0;
   z-index:200;
-  background:rgba(0,0,0,.66);
+  background:rgba(22,19,17,0.6);
   padding:90px 18px 18px;
 }
 
-.searchOverlay.show{
-  display:block;
-}
+.searchOverlay.show{display:block}
 
 .searchBox{
   width:min(680px,100%);
   margin:0 auto;
-  background:rgba(255,255,255,0.05);
-  border-radius:22px;
+  background:#fff;
+  border-radius:20px;
   padding:18px;
+  box-shadow:0 20px 60px rgba(0,0,0,0.25);
 }
 
 .searchBoxTop{
@@ -533,99 +439,107 @@ body{
 
 .searchBox input{
   flex:1;
-  border:1px solid #ddd;
-  border-radius:15px;
-  padding:15px;
-  font-size:16px;
+  border:1px solid #e6dabd;
+  border-radius:14px;
+  padding:14px;
+  font-size:15px;
   outline:none;
+  background:#faf7f0;
+  color:#161311;
 }
 
 .closeSearch{
   border:0;
-  border-radius:15px;
+  border-radius:14px;
   padding:0 18px;
-  background:#111;
-  color:#f7ebd9;
+  background:#161311;
+  color:#fff;
   font-weight:800;
+  cursor:pointer;
 }
 
-/* =========================
-   FOOTER
-========================= */
-
+/* FOOTER */
 .smartFooter{
   background:#0d0906;
-  color:#f7ebd9;
-  padding:48px 32px 64px;
+  color:#e7d8aa;
+  padding:55px 22px 60px;
 }
 
 .footerInner{
-  width:min(1180px,100%);
+  max-width:1180px;
   margin:0 auto;
+  display:grid;
+  grid-template-columns:1.4fr 1fr 1fr;
+  gap:36px;
 }
 
 .footerLogo{
   display:flex;
   align-items:center;
-  gap:12px;
+  gap:10px;
   font-weight:900;
-  font-size:31px;
-  letter-spacing:-1.5px;
-  margin-bottom:32px;
+  font-size:20px;
+  letter-spacing:-.5px;
+  margin-bottom:16px;
 }
 
-.footerLogo .logoMark{
-  width:54px;
-  height:54px;
-}
+.footerLogo .logoMark{width:32px;height:32px}
 
-.footerLogo .logoMark::after{
-  width:27px;
-  height:16px;
-  border-left-width:8px;
-  border-bottom-width:8px;
-}
-
-.footerBlock{
-  margin-top:34px;
+.footerBlock p,.footerBlock a{
+  color:#c9bfae;
+  text-decoration:none;
+  display:block;
+  margin:0 0 12px;
+  font-size:14px;
+  line-height:1.55;
 }
 
 .footerBlock h3{
-  margin:0 0 23px;
-  font-size:28px;
-  letter-spacing:-.5px;
-}
-
-.footerBlock p,
-.footerBlock a{
-  color:#f7ebd9;
-  text-decoration:none;
-  display:block;
-  margin:0 0 20px;
-  font-size:16px;
+  margin:0 0 16px;
+  font-size:13px;
+  text-transform:uppercase;
+  letter-spacing:.06em;
+  color:#8a7f6f;
 }
 
 .footerCredit{
-  margin-top:42px;
-  color:#d4d4d4;
-  font-size:14px;
+  max-width:1180px;
+  margin:44px auto 0;
+  padding-top:24px;
+  border-top:1px solid #241d15;
+  color:#7a705f;
+  font-size:12.5px;
   line-height:1.6;
+}
+
+@media(max-width:820px){
+  .footerInner{grid-template-columns:1fr 1fr}
+}
+
+@media(max-width:520px){
+  .footerInner{grid-template-columns:1fr}
 }
 </style>
 </head>
 
 <body>
 
-<header class="smartHeader">
-  <div class="smartHeaderInner">
+<header class="siteHeader">
+  <div class="siteHeaderInner">
     <div class="headerLeft">
       <button class="menuIcon" id="menuBtn" type="button">☰</button>
 
       <a class="logoLink" href="index.html">
-        <span class="logoMark"></span>
+        <span class="logoMark">V</span>
         <span>Lumina Vote</span>
       </a>
     </div>
+
+    <nav class="navLinks">
+      <a href="voting-home.html" class="active">Events</a>
+      <a href="live-results.html">Live Results</a>
+      <a href="verify-vote.html">Verify vote</a>
+    </nav>
 
     <div class="headerRight">
       <button class="searchIcon" id="searchBtn" type="button">⌕</button>
@@ -635,6 +549,7 @@ body{
 
   <div class="mobileMenu" id="mobileMenu">
     <a href="index.html">Home</a>
+    <a href="live-results.html">Live Results</a>
     <button id="mobileDashboardBtn" type="button">Dashboard</button>
     <a href="event-registration.html">Create event</a>
   </div>
@@ -652,9 +567,7 @@ body{
 <section class="pageHero">
   <div class="heroInner">
     <div class="breadcrumb">
-      <a href="index.html">Home</a>
-      <span>/</span>
-      <span>Events</span>
+      <a href="index.html">Home</a> / <span class="current">Events</span>
     </div>
 
     <h1>Events</h1>
@@ -692,27 +605,31 @@ body{
 
 <footer class="smartFooter">
   <div class="footerInner">
-    <div class="footerLogo">
-      <span class="logoMark"></span>
-      <span>Lumina Vote</span>
-    </div>
-
     <div class="footerBlock">
-      <h3>Helpful Links</h3>
-      <a href="index.html">Home</a>
-      <a href="event-registration.html">Create Event</a>
-      <button id="footerDashboardBtn" type="button" style="border:0;background:transparent;color:white;padding:0;margin:0 0 20px;font-size:16px;cursor:pointer;">My Account</button>
-    </div>
-
-    <div class="footerBlock">
-      <h3>About Us</h3>
+      <div class="footerLogo">
+        <span class="logoMark">V</span>
+        <span>Lumina Vote</span>
+      </div>
       <p>Lumina Vote helps organisers run voting competitions, ticketed events, and public event campaigns online.</p>
     </div>
 
-    <div class="footerCredit">
-      © <span id="y"></span> Lumina Creative Co<br>
-      Site created by <b>Lord Wilhelm</b> (0593410452)
+    <div class="footerBlock">
+      <h3>Platform</h3>
+      <a href="index.html">Home</a>
+      <a href="live-results.html">Live Results</a>
+      <a href="event-registration.html">Create Event</a>
+      <button id="footerDashboardBtn" type="button" style="border:0;background:transparent;color:#c9bfae;padding:0;margin:0 0 12px;font-size:14px;cursor:pointer;text-align:left;">My Account</button>
     </div>
+
+    <div class="footerBlock">
+      <h3>Support</h3>
+      <a href="verify-vote.html">Verify vote</a>
+      <a href="support.html">Help Center</a>
+    </div>
+  </div>
+
+  <div class="footerCredit">
+    © <span id="y"></span> Lumina Creative Co · Site created by <b>Lord Wilhelm</b> (0593410452)
   </div>
 </footer>
 

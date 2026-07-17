@@ -169,8 +169,12 @@ a{color:inherit}
   margin-bottom:22px;
 }
 
+.selectorRow.twoCol{
+  grid-template-columns:1fr;
+}
+
 @media(min-width:640px){
-  .selectorRow{grid-template-columns:1fr 1fr}
+  .selectorRow.twoCol{grid-template-columns:1fr 1fr}
 }
 
 .selectorField label{
@@ -338,16 +342,35 @@ a{color:inherit}
 .resultName{
   flex:1;
   min-width:0;
+  cursor:pointer;
+}
+
+.resultNameTop{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap;
 }
 
 .resultName b{
-  display:block;
   font-size:14.5px;
   font-weight:800;
   font-style:italic;
 }
 
-.resultName span{
+.categoryTag{
+  display:inline-block;
+  background:#f2ead9;
+  color:#8a5b12;
+  font-size:10px;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:.03em;
+  padding:3px 8px;
+  border-radius:999px;
+}
+
+.resultName span.numTag{
   display:block;
   font-size:11.5px;
   color:#a99a80;
@@ -372,6 +395,19 @@ a{color:inherit}
   color:#a99a80;
   font-weight:700;
   margin-top:2px;
+}
+
+.voteMiniBtn{
+  flex:0 0 auto;
+  border:0;
+  background:linear-gradient(135deg,#d4af37,#b88718);
+  color:#1b1008;
+  padding:10px 16px;
+  border-radius:999px;
+  font-weight:800;
+  font-size:12px;
+  cursor:pointer;
+  white-space:nowrap;
 }
 
 .barTrack{
@@ -406,6 +442,8 @@ a{color:inherit}
 
 .rankTable th.num,.rankTable td.num{text-align:right}
 
+.rankTable tr.rankRow{cursor:pointer}
+
 .rankTable td{
   padding:14px 10px;
   border-bottom:1px solid #f4eee0;
@@ -418,12 +456,18 @@ a{color:inherit}
 }
 
 .rankTable td.nameCell b{
-  display:block;
   font-weight:800;
   font-style:italic;
 }
 
-.rankTable td.nameCell span{
+.rankTable td.nameCell .nameTop{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+.rankTable td.nameCell span.numTag{
   display:block;
   font-size:11.5px;
   color:#a99a80;
@@ -488,16 +532,16 @@ a{color:inherit}
 
   <span class="eyebrow">Results Dashboard</span>
   <h1 class="pageTitle">Live Results</h1>
-  <p class="pageSub">Select an event and category to view nominee standings. Use refresh to load the latest results.</p>
+  <p class="pageSub">Select an event to view nominee standings. If the event has categories, pick one to narrow the list — or leave it on All Nominees.</p>
 
-  <div class="selectorRow">
+  <div class="selectorRow twoCol" id="selectorRow">
     <div class="selectorField">
       <label for="eventSelect">Event</label>
       <select id="eventSelect"></select>
     </div>
 
-    <div class="selectorField">
-      <label for="categorySelect">Category</label>
+    <div class="selectorField" id="categoryField">
+      <label for="categorySelect">Select category</label>
       <select id="categorySelect"></select>
     </div>
   </div>
@@ -527,7 +571,7 @@ a{color:inherit}
   </div>
 
   <div id="loadingState" class="stateBox">Loading results...</div>
-  <div id="emptyState" class="stateBox hidden">No nominees found for this category.</div>
+  <div id="emptyState" class="stateBox hidden">No nominees found.</div>
 
   <div id="barPane" class="viewPane active">
     <div class="resultsList" id="resultsList"></div>
@@ -574,9 +618,12 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 const RANK_COLORS = ["#d64541", "#e8935a", "#f0cf5f", "#161311", "#d64541", "#e8935a", "#f0cf5f", "#161311"];
+const ALL_VALUE = "all";
 
 const eventSelect = document.getElementById("eventSelect");
 const categorySelect = document.getElementById("categorySelect");
+const categoryField = document.getElementById("categoryField");
+const selectorRow = document.getElementById("selectorRow");
 const eventSearchInput = document.getElementById("eventSearchInput");
 
 const dashEventName = document.getElementById("dashEventName");
@@ -597,8 +644,8 @@ const rankTableBody = document.getElementById("rankTableBody");
 
 let allEvents = [];
 let eventCategories = [];
-let categoryContestants = [];
-let activeView = "bar";
+let allContestantsForEvent = [];
+let displayRows = [];
 
 const params = new URLSearchParams(window.location.search);
 const preselectEventId = params.get("event") || params.get("eventId");
@@ -611,11 +658,20 @@ function money0(n){
   return Number(n || 0).toLocaleString();
 }
 
+function goToCheckout(item){
+  if(String(item.status || "active").toLowerCase() === "eliminated"){
+    alert("This contestant has been eliminated.");
+    return;
+  }
+
+  const eventId = eventSelect.value;
+  window.location.href = `vote-checkout.html?eventId=${eventId}&contestantId=${item.id}&votes=1`;
+}
+
 barTabBtn.addEventListener("click", () => setView("bar"));
 rankTabBtn.addEventListener("click", () => setView("rank"));
 
 function setView(view){
-  activeView = view;
   barTabBtn.classList.toggle("active", view === "bar");
   rankTabBtn.classList.toggle("active", view === "rank");
   barPane.classList.toggle("active", view === "bar");
@@ -627,7 +683,7 @@ eventSelect.addEventListener("change", async () => {
   await loadResults();
 });
 
-categorySelect.addEventListener("change", loadResults);
+categorySelect.addEventListener("change", renderResults);
 
 refreshBtn.addEventListener("click", loadResults);
 
@@ -680,9 +736,18 @@ async function loadCategoriesForSelectedEvent(){
     .sort((a, b) => Number(a.categoryCode || 0) - Number(b.categoryCode || 0));
 
   if(eventCategories.length === 0){
-    categorySelect.innerHTML = `<option value="">No categories</option>`;
+    categoryField.classList.add("hidden");
+    selectorRow.classList.remove("twoCol");
     return;
   }
+
+  categoryField.classList.remove("hidden");
+  selectorRow.classList.add("twoCol");
+
+  const allOpt = document.createElement("option");
+  allOpt.value = ALL_VALUE;
+  allOpt.textContent = "All Nominees";
+  categorySelect.appendChild(allOpt);
 
   eventCategories.forEach(cat => {
     const opt = document.createElement("option");
@@ -690,6 +755,8 @@ async function loadCategoriesForSelectedEvent(){
     opt.textContent = cat.categoryName || `Category ${cat.categoryCode || ""}`;
     categorySelect.appendChild(opt);
   });
+
+  categorySelect.value = ALL_VALUE;
 }
 
 function contestantMatchesCategory(item, cat){
@@ -700,17 +767,18 @@ function contestantMatchesCategory(item, cat){
   return false;
 }
 
+function getCategoryForItem(item){
+  return eventCategories.find(cat => contestantMatchesCategory(item, cat)) || null;
+}
+
 async function loadResults(){
   const eventId = eventSelect.value;
-  const categoryId = categorySelect.value;
   const ev = allEvents.find(e => e.id === eventId);
-  const cat = eventCategories.find(c => c.id === categoryId);
 
   dashEventName.textContent = ev?.eventName || "—";
-  dashCategoryName.textContent = cat?.categoryName || "—";
 
-  if(!eventId || !categoryId){
-    categoryContestants = [];
+  if(!eventId){
+    allContestantsForEvent = [];
     renderResults();
     return;
   }
@@ -725,11 +793,7 @@ async function loadResults(){
     const q = query(collection(db, "eventContestants"), where("eventId", "==", eventId));
     const snap = await getDocs(q);
 
-    const all = snap.docs.map(docu => ({ id: docu.id, ...docu.data() }));
-
-    categoryContestants = all
-      .filter(item => contestantMatchesCategory(item, cat))
-      .sort((a, b) => Number(b.votes || 0) - Number(a.votes || 0));
+    allContestantsForEvent = snap.docs.map(docu => ({ id: docu.id, ...docu.data() }));
 
     renderResults();
 
@@ -742,62 +806,124 @@ async function loadResults(){
   }
 }
 
-function getCategoryVoteTotal(){
-  return categoryContestants.reduce((sum, item) => sum + Number(item.votes || 0), 0);
+function buildDisplayRows(){
+  const hasCategories = eventCategories.length > 0;
+  const selectedCategoryId = hasCategories ? categorySelect.value : ALL_VALUE;
+  const showAll = !hasCategories || selectedCategoryId === ALL_VALUE;
+
+  let items;
+
+  if(showAll){
+    items = allContestantsForEvent;
+  }else{
+    const cat = eventCategories.find(c => c.id === selectedCategoryId);
+    items = allContestantsForEvent.filter(item => contestantMatchesCategory(item, cat));
+  }
+
+  const groupTotals = new Map();
+
+  items.forEach(item => {
+    const cat = getCategoryForItem(item);
+    const key = cat ? cat.id : "none";
+    groupTotals.set(key, (groupTotals.get(key) || 0) + Number(item.votes || 0));
+  });
+
+  const rows = items.map(item => {
+    const cat = getCategoryForItem(item);
+    const key = cat ? cat.id : "none";
+    const total = groupTotals.get(key) || 0;
+    const votes = Number(item.votes || 0);
+    const pct = total > 0 ? (votes / total) * 100 : 0;
+
+    return {
+      item,
+      votes,
+      pct,
+      categoryName: cat?.categoryName || ""
+    };
+  });
+
+  rows.sort((a, b) => b.votes - a.votes);
+
+  const dashLabel = !hasCategories
+    ? "All Nominees"
+    : (selectedCategoryId === ALL_VALUE
+        ? "All Nominees"
+        : (eventCategories.find(c => c.id === selectedCategoryId)?.categoryName || "—"));
+
+  return { rows, showCategoryTag: hasCategories && showAll, dashLabel };
 }
 
 function renderResults(){
   loadingState.classList.add("hidden");
 
-  dashNomineeCount.textContent = money0(categoryContestants.length);
+  const { rows, showCategoryTag, dashLabel } = buildDisplayRows();
+  displayRows = rows;
+
+  dashCategoryName.textContent = dashLabel;
+  dashNomineeCount.textContent = money0(rows.length);
 
   resultsList.innerHTML = "";
   rankTableBody.innerHTML = "";
 
-  if(categoryContestants.length === 0){
+  if(rows.length === 0){
     emptyState.classList.remove("hidden");
     return;
   }
 
   emptyState.classList.add("hidden");
 
-  const total = getCategoryVoteTotal();
-
-  categoryContestants.forEach((item, index) => {
-    const votes = Number(item.votes || 0);
-    const pct = total > 0 ? (votes / total) * 100 : 0;
+  rows.forEach((row, index) => {
+    const { item, votes, pct, categoryName } = row;
     const color = RANK_COLORS[index % RANK_COLORS.length];
+    const textColor = color === "#161311" ? "#fff" : "#161311";
+    const tagHtml = showCategoryTag && categoryName ? `<span class="categoryTag">${categoryName}</span>` : "";
 
-    const row = document.createElement("div");
-    row.className = "resultRow";
-    row.innerHTML = `
+    const rowEl = document.createElement("div");
+    rowEl.className = "resultRow";
+    rowEl.innerHTML = `
       <div class="resultTop">
-        <div class="rankBadge" style="background:${color};color:${color === '#161311' ? '#fff' : '#161311'}">${index + 1}</div>
+        <div class="rankBadge" style="background:${color};color:${textColor}">${index + 1}</div>
         <div class="resultName">
-          <b>${item.fullName || "Unnamed"}</b>
-          <span>${item.contestantNumber || ""}</span>
+          <div class="resultNameTop">
+            <b>${item.fullName || "Unnamed"}</b>
+            ${tagHtml}
+          </div>
+          <span class="numTag">${item.contestantNumber || ""}</span>
         </div>
         <div class="resultStats">
           <b>${pct.toFixed(1)}%</b>
           <span>${money0(votes)} votes</span>
         </div>
+        <button class="voteMiniBtn" type="button">Vote</button>
       </div>
       <div class="barTrack">
         <div class="barFill" style="width:${pct}%;background:${color}"></div>
       </div>
     `;
-    resultsList.appendChild(row);
+
+    rowEl.querySelector(".resultName").addEventListener("click", () => goToCheckout(item));
+    rowEl.querySelector(".voteMiniBtn").addEventListener("click", () => goToCheckout(item));
+
+    resultsList.appendChild(rowEl);
 
     const tr = document.createElement("tr");
+    tr.className = "rankRow";
     tr.innerHTML = `
       <td class="rankCell">${index + 1}</td>
       <td class="nameCell">
-        <b>${item.fullName || "Unnamed"}</b>
-        <span>${item.contestantNumber || ""}</span>
+        <div class="nameTop">
+          <b>${item.fullName || "Unnamed"}</b>
+          ${tagHtml}
+        </div>
+        <span class="numTag">${item.contestantNumber || ""}</span>
       </td>
       <td class="num">${money0(votes)}</td>
       <td class="num">${pct.toFixed(1)}%</td>
     `;
+
+    tr.addEventListener("click", () => goToCheckout(item));
+
     rankTableBody.appendChild(tr);
   });
 }
@@ -813,3 +939,4 @@ init();
 
 </body>
 </html>
+s
