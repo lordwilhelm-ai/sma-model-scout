@@ -282,12 +282,12 @@ a{color:inherit}
   position:relative;
 }
 
-.quickVoteBtn .qvVotes{
+.quickVoteBtn .qvAmount{
   font-size:15px;
   font-weight:900;
 }
 
-.quickVoteBtn .qvPrice{
+.quickVoteBtn .qvVotesSub{
   font-size:11px;
   font-weight:700;
   color:#a99a80;
@@ -299,7 +299,7 @@ a{color:inherit}
   color:#1b1008;
 }
 
-.quickVoteBtn:hover .qvPrice{
+.quickVoteBtn:hover .qvVotesSub{
   color:#3a2a08;
 }
 
@@ -309,7 +309,7 @@ a{color:inherit}
   color:#fff;
 }
 
-.quickVoteBtn.active .qvPrice{
+.quickVoteBtn.active .qvVotesSub{
   color:#d9cdb3;
 }
 
@@ -509,54 +509,44 @@ a{color:inherit}
       <label class="voteLabel">Choose a Vote Package</label>
 
       <div class="quickVotes" id="quickVotes">
-        <button type="button" class="quickVoteBtn" data-votes="25">
-          <span class="qvVotes">25</span>
-          <span class="qvPrice" data-price>—</span>
+        <button type="button" class="quickVoteBtn" data-amount="100" data-votes="25">
+          <span class="qvAmount">GH₵100</span>
+          <span class="qvVotesSub" data-votes-label>25 votes</span>
         </button>
 
-        <button type="button" class="quickVoteBtn" data-votes="50">
-          <span class="qvVotes">50</span>
-          <span class="qvPrice" data-price>—</span>
+        <button type="button" class="quickVoteBtn" data-amount="200" data-votes="50">
+          <span class="qvAmount">GH₵200</span>
+          <span class="qvVotesSub" data-votes-label>50 votes</span>
         </button>
 
-        <button type="button" class="quickVoteBtn" data-votes="75">
-          <span class="qvVotes">75</span>
-          <span class="qvPrice" data-price>—</span>
+        <button type="button" class="quickVoteBtn" data-amount="300" data-votes="75">
+          <span class="qvAmount">GH₵300</span>
+          <span class="qvVotesSub" data-votes-label>75 votes</span>
         </button>
 
-        <button type="button" class="quickVoteBtn" data-votes="100">
-          <span class="qvVotes">100</span>
-          <span class="qvPrice" data-price>—</span>
+        <button type="button" class="quickVoteBtn" data-amount="400" data-votes="100">
+          <span class="qvAmount">GH₵400</span>
+          <span class="qvVotesSub" data-votes-label>100 votes</span>
         </button>
 
-        <button type="button" class="quickVoteBtn" data-votes="250">
-          <span class="qvVotes">250</span>
-          <span class="qvPrice" data-price>—</span>
+        <button type="button" class="quickVoteBtn" data-amount="1000" data-votes="250">
+          <span class="qvAmount">GH₵1K</span>
+          <span class="qvVotesSub" data-votes-label>250 votes</span>
         </button>
 
-        <button type="button" class="quickVoteBtn" data-votes="500">
-          <span class="qvVotes">500</span>
-          <span class="qvPrice" data-price>—</span>
+        <button type="button" class="quickVoteBtn" data-amount="3000" data-votes="750">
+          <span class="qvAmount">GH₵3K</span>
+          <span class="qvVotesSub" data-votes-label>750 votes</span>
         </button>
 
-        <button type="button" class="quickVoteBtn" data-votes="1000">
-          <span class="qvVotes">1K</span>
-          <span class="qvPrice" data-price>—</span>
-        </button>
-
-        <button type="button" class="quickVoteBtn" data-votes="3000">
-          <span class="qvVotes">3K</span>
-          <span class="qvPrice" data-price>—</span>
-        </button>
-
-        <button type="button" class="quickVoteBtn" data-votes="10000">
-          <span class="qvVotes">10K</span>
-          <span class="qvPrice" data-price>—</span>
+        <button type="button" class="quickVoteBtn" data-amount="10000" data-votes="2500">
+          <span class="qvAmount">GH₵10K</span>
+          <span class="qvVotesSub" data-votes-label>2,500 votes</span>
         </button>
       </div>
 
       <div class="totalRow">
-        <span id="priceHint">25 votes × GHS 4.00</span>
+        <span id="priceHint">25 votes</span>
         <div class="totalMoney" id="totalAmount">GHS 100.00</div>
       </div>
 
@@ -637,17 +627,20 @@ const msg = document.getElementById("msg");
 
 const quickVoteButtons = document.querySelectorAll(".quickVoteBtn");
 
-// The list of vote packages voters are allowed to choose from.
-// Pulled straight from the buttons in the markup, so it stays
-// in sync automatically if you add/remove a package there.
-const AVAILABLE_PACKAGES = Array.from(quickVoteButtons)
-  .map(btn => parseInt(btn.dataset.votes || "0", 10))
-  .filter(v => v > 0);
+// The fixed list of packages voters are allowed to choose from,
+// each one an exact {amount, votes} pair pulled straight from the
+// buttons in the markup — e.g. GHS 100 = 25 votes, GHS 1,000 = 250
+// votes. There is no formula/rate; every package's price is fixed
+// and matches exactly what gets charged.
+const AVAILABLE_PACKAGES = Array.from(quickVoteButtons).map(btn => ({
+  amount: parseInt(btn.dataset.amount || "0", 10),
+  votes: parseInt(btn.dataset.votes || "0", 10)
+})).filter(p => p.amount > 0 && p.votes > 0);
 
 // Voters can ONLY select one of AVAILABLE_PACKAGES — there is no
 // free-text or +/- input. This is the single source of truth for
-// how many votes will be charged.
-let selectedVotes = AVAILABLE_PACKAGES[0] || 25;
+// what gets charged and how many votes are bought.
+let selectedPackage = AVAILABLE_PACKAGES[0] || { amount: 100, votes: 25 };
 
 const warningBox = document.getElementById("warningBox");
 const shareBtn = document.getElementById("shareBtn");
@@ -655,33 +648,29 @@ const toast = document.getElementById("toast");
 
 let eventData = null;
 let contestantData = null;
-
-// Default rate: GHS 100 = 25 votes, GHS 200 = 50 votes, etc.
-// That works out to GHS 4.00 per vote. This is overridden by
-// eventData.votePrice from Firestore if it's set there.
-let votePrice = 4;
 let toastTimer = null;
 
 menuBtn.addEventListener("click", () => {
   mobileMenu.classList.toggle("show");
 });
 
-quickVoteButtons.forEach(btn => {
+quickVoteButtons.forEach((btn, index) => {
   btn.addEventListener("click", () => {
-    const amount = parseInt(btn.dataset.votes || "0", 10);
+    const candidate = AVAILABLE_PACKAGES[index];
 
-    // Guard: only ever accept a value that's in the fixed package
-    // list. This blocks any attempt to select outside the offered
-    // packages, even if the DOM were tampered with.
-    if(!AVAILABLE_PACKAGES.includes(amount)) return;
+    // Guard: only ever accept a package that's actually in the
+    // fixed list. This blocks any attempt to select outside the
+    // offered packages, even if the DOM were tampered with.
+    if(!candidate) return;
 
-    selectedVotes = amount;
+    selectedPackage = candidate;
     updateTotal();
     syncActiveQuickVote();
   });
 });
 
 shareBtn.addEventListener("click", shareEvent);
+
 
 function showToast(text){
   toast.textContent = text;
@@ -758,32 +747,17 @@ function formatMoney(n){
 }
 
 function updateTotal(){
-  const total = selectedVotes * votePrice;
-
-  totalAmount.textContent = formatMoney(total);
-  priceHint.textContent = `${selectedVotes.toLocaleString()} votes × GHS ${votePrice.toFixed(2)}`;
-}
-
-// Fills in the GHS price under each bulk-vote button based on
-// the current votePrice, and keeps the buttons in sync if the
-// rate changes after Firestore loads.
-function updateQuickVotePrices(){
-  quickVoteButtons.forEach(btn => {
-    const v = parseInt(btn.dataset.votes || "0", 10);
-    const priceEl = btn.querySelector("[data-price]");
-
-    if(priceEl && !isNaN(v)){
-      priceEl.textContent = formatMoney(v * votePrice);
-    }
-  });
+  totalAmount.textContent = formatMoney(selectedPackage.amount);
+  priceHint.textContent = `${selectedPackage.votes.toLocaleString()} votes`;
 }
 
 // Highlights whichever package button matches the currently
 // selected package.
 function syncActiveQuickVote(){
-  quickVoteButtons.forEach(btn => {
-    const v = parseInt(btn.dataset.votes || "0", 10);
-    btn.classList.toggle("active", v === selectedVotes);
+  quickVoteButtons.forEach((btn, index) => {
+    const pkg = AVAILABLE_PACKAGES[index];
+    const isActive = pkg && pkg.amount === selectedPackage.amount && pkg.votes === selectedPackage.votes;
+    btn.classList.toggle("active", !!isActive);
   });
 }
 
@@ -874,12 +848,6 @@ async function loadCheckout(){
       ...contestantSnap.data()
     };
 
-    // Only override the default GHS 4.00/vote rate if Firestore
-    // explicitly sets one.
-    if(eventData.votePrice && Number(eventData.votePrice) > 0){
-      votePrice = Number(eventData.votePrice);
-    }
-
     const eventName = eventData.eventName || "Competition";
     const contestantName = contestantData.fullName || "Contestant";
     const contestantNumber = contestantData.contestantNumber || "";
@@ -904,10 +872,12 @@ async function loadCheckout(){
       categoryDisplay.style.display = "none";
     }
 
-    // Only honor a "votes" URL param if it's one of the fixed
-    // packages. Otherwise fall back to the smallest package.
-    if(AVAILABLE_PACKAGES.includes(presetVotesRaw)){
-      selectedVotes = presetVotesRaw;
+    // Only honor a "votes" URL param if it exactly matches the vote
+    // count of one of the fixed packages. Otherwise fall back to
+    // the smallest package.
+    const matchedPackage = AVAILABLE_PACKAGES.find(p => p.votes === presetVotesRaw);
+    if(matchedPackage){
+      selectedPackage = matchedPackage;
     }
 
     const eventLink = `live-event-details.html?eventId=${eventId}`;
@@ -915,7 +885,6 @@ async function loadCheckout(){
     backToEventBtn2.href = eventLink;
     mobileBackLink.href = eventLink;
 
-    updateQuickVotePrices();
     updateTotal();
     syncActiveQuickVote();
     updateAvailability();
@@ -932,14 +901,19 @@ async function loadCheckout(){
 }
 
 payBtn.addEventListener("click", async () => {
-  const votesBought = selectedVotes;
-
   // Hard guard: the amount charged can only ever be one of the
   // published packages, never an arbitrary number.
-  if(!AVAILABLE_PACKAGES.includes(votesBought)){
+  const isValidPackage = AVAILABLE_PACKAGES.some(
+    p => p.amount === selectedPackage.amount && p.votes === selectedPackage.votes
+  );
+
+  if(!isValidPackage){
     setMsg("Please select a valid vote package.", "error");
     return;
   }
+
+  const votesBought = selectedPackage.votes;
+  const amount = selectedPackage.amount; // GHS — fixed by the package, not computed
 
   if(!eventData || !contestantData){
     setMsg("Checkout data is not ready.", "error");
@@ -963,7 +937,6 @@ payBtn.addEventListener("click", async () => {
   payBtn.textContent = "Redirecting to Hubtel...";
   setMsg("", "success");
 
-  const amount = votesBought * votePrice; // GHS
   const contestantName = contestantData.fullName || "Contestant";
 
   try{
