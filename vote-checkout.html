@@ -248,44 +248,9 @@ a{color:inherit}
   letter-spacing:.04em;
 }
 
-.voteInputWrap{
-  display:grid;
-  grid-template-columns:52px 1fr 52px;
-  gap:9px;
-}
-
-.voteAdjustBtn{
-  height:50px;
-  border:1px solid #ece2cd;
-  border-radius:14px;
-  background:#f6f0e2;
-  color:#161311;
-  font-size:22px;
-  font-weight:900;
-  cursor:pointer;
-}
-
-.voteInput{
-  height:50px;
-  width:100%;
-  border:1px solid #ece2cd;
-  border-radius:14px;
-  text-align:center;
-  font-size:18px;
-  font-weight:900;
-  outline:none;
-  color:#161311;
-  background:#fff;
-}
-
-.voteInput:focus{
-  border-color:#d4af37;
-  box-shadow:0 0 0 4px rgba(212,175,55,.14);
-}
-
 .quickVotesLabel{
   display:block;
-  margin-top:16px;
+  margin-top:0;
   margin-bottom:8px;
   font-size:11.5px;
   font-weight:800;
@@ -301,11 +266,11 @@ a{color:inherit}
 }
 
 .quickVoteBtn{
-  border:1px solid #e6dabd;
+  border:2px solid #e6dabd;
   background:#fff;
   color:#161311;
   border-radius:14px;
-  padding:10px 6px;
+  padding:12px 6px;
   font-weight:900;
   cursor:pointer;
   display:flex;
@@ -314,6 +279,7 @@ a{color:inherit}
   justify-content:center;
   gap:2px;
   line-height:1.2;
+  position:relative;
 }
 
 .quickVoteBtn .qvVotes{
@@ -540,24 +506,7 @@ a{color:inherit}
   <div class="actionCard">
     <form onsubmit="return false;">
 
-      <label class="voteLabel">Number of Votes</label>
-
-      <div class="voteInputWrap">
-        <button type="button" class="voteAdjustBtn" id="minusBtn">−</button>
-
-        <input
-          type="number"
-          id="voteInput"
-          class="voteInput"
-          min="1"
-          value="25"
-          inputmode="numeric"
-        >
-
-        <button type="button" class="voteAdjustBtn" id="plusBtn">+</button>
-      </div>
-
-      <span class="quickVotesLabel">Bulk vote packages</span>
+      <label class="voteLabel">Choose a Vote Package</label>
 
       <div class="quickVotes" id="quickVotes">
         <button type="button" class="quickVoteBtn" data-votes="25">
@@ -607,7 +556,7 @@ a{color:inherit}
       </div>
 
       <div class="totalRow">
-        <span id="priceHint">25 vote(s) × GHS 4.00</span>
+        <span id="priceHint">25 votes × GHS 4.00</span>
         <div class="totalMoney" id="totalAmount">GHS 100.00</div>
       </div>
 
@@ -662,7 +611,7 @@ document.getElementById("y").textContent = new Date().getFullYear();
 const urlParams = new URLSearchParams(window.location.search);
 const eventId = urlParams.get("eventId");
 const contestantId = urlParams.get("contestantId");
-const presetVotes = parseInt(urlParams.get("votes") || "25", 10);
+const presetVotesRaw = parseInt(urlParams.get("votes") || "0", 10);
 
 const menuBtn = document.getElementById("menuBtn");
 const mobileMenu = document.getElementById("mobileMenu");
@@ -681,15 +630,24 @@ const eventStatusDisplay = document.getElementById("eventStatusDisplay");
 const contestantNumberDisplay = document.getElementById("contestantNumberDisplay");
 const categoryDisplay = document.getElementById("categoryDisplay");
 
-const voteInput = document.getElementById("voteInput");
 const totalAmount = document.getElementById("totalAmount");
 const priceHint = document.getElementById("priceHint");
 const payBtn = document.getElementById("payBtn");
 const msg = document.getElementById("msg");
 
-const minusBtn = document.getElementById("minusBtn");
-const plusBtn = document.getElementById("plusBtn");
 const quickVoteButtons = document.querySelectorAll(".quickVoteBtn");
+
+// The list of vote packages voters are allowed to choose from.
+// Pulled straight from the buttons in the markup, so it stays
+// in sync automatically if you add/remove a package there.
+const AVAILABLE_PACKAGES = Array.from(quickVoteButtons)
+  .map(btn => parseInt(btn.dataset.votes || "0", 10))
+  .filter(v => v > 0);
+
+// Voters can ONLY select one of AVAILABLE_PACKAGES — there is no
+// free-text or +/- input. This is the single source of truth for
+// how many votes will be charged.
+let selectedVotes = AVAILABLE_PACKAGES[0] || 25;
 
 const warningBox = document.getElementById("warningBox");
 const shareBtn = document.getElementById("shareBtn");
@@ -708,37 +666,16 @@ menuBtn.addEventListener("click", () => {
   mobileMenu.classList.toggle("show");
 });
 
-document.addEventListener("input", (e) => {
-  if(e.target && e.target.id === "voteInput"){
-    updateTotal();
-    syncActiveQuickVote();
-  }
-});
-
-minusBtn.addEventListener("click", () => {
-  let count = parseInt(voteInput.value || "1", 10);
-  count = isNaN(count) ? 1 : count;
-
-  if(count > 1){
-    voteInput.value = count - 1;
-    updateTotal();
-    syncActiveQuickVote();
-  }
-});
-
-plusBtn.addEventListener("click", () => {
-  let count = parseInt(voteInput.value || "1", 10);
-  count = isNaN(count) ? 1 : count;
-
-  voteInput.value = count + 1;
-  updateTotal();
-  syncActiveQuickVote();
-});
-
 quickVoteButtons.forEach(btn => {
   btn.addEventListener("click", () => {
-    const amount = parseInt(btn.dataset.votes || "1", 10);
-    voteInput.value = amount;
+    const amount = parseInt(btn.dataset.votes || "0", 10);
+
+    // Guard: only ever accept a value that's in the fixed package
+    // list. This blocks any attempt to select outside the offered
+    // packages, even if the DOM were tampered with.
+    if(!AVAILABLE_PACKAGES.includes(amount)) return;
+
+    selectedVotes = amount;
     updateTotal();
     syncActiveQuickVote();
   });
@@ -821,17 +758,10 @@ function formatMoney(n){
 }
 
 function updateTotal(){
-  let count = parseInt(voteInput.value || "1", 10);
-
-  if(isNaN(count) || count < 1){
-    count = 1;
-    voteInput.value = 1;
-  }
-
-  const total = count * votePrice;
+  const total = selectedVotes * votePrice;
 
   totalAmount.textContent = formatMoney(total);
-  priceHint.textContent = `${count.toLocaleString()} vote(s) × GHS ${votePrice.toFixed(2)}`;
+  priceHint.textContent = `${selectedVotes.toLocaleString()} votes × GHS ${votePrice.toFixed(2)}`;
 }
 
 // Fills in the GHS price under each bulk-vote button based on
@@ -848,14 +778,12 @@ function updateQuickVotePrices(){
   });
 }
 
-// Highlights whichever bulk-vote button matches the current
-// vote count typed into the input, if any.
+// Highlights whichever package button matches the currently
+// selected package.
 function syncActiveQuickVote(){
-  const count = parseInt(voteInput.value || "0", 10);
-
   quickVoteButtons.forEach(btn => {
     const v = parseInt(btn.dataset.votes || "0", 10);
-    btn.classList.toggle("active", v === count);
+    btn.classList.toggle("active", v === selectedVotes);
   });
 }
 
@@ -976,7 +904,11 @@ async function loadCheckout(){
       categoryDisplay.style.display = "none";
     }
 
-    voteInput.value = (!isNaN(presetVotes) && presetVotes > 0) ? presetVotes : 25;
+    // Only honor a "votes" URL param if it's one of the fixed
+    // packages. Otherwise fall back to the smallest package.
+    if(AVAILABLE_PACKAGES.includes(presetVotesRaw)){
+      selectedVotes = presetVotesRaw;
+    }
 
     const eventLink = `live-event-details.html?eventId=${eventId}`;
 
@@ -1000,10 +932,12 @@ async function loadCheckout(){
 }
 
 payBtn.addEventListener("click", async () => {
-  const votesBought = parseInt(voteInput.value || "0", 10);
+  const votesBought = selectedVotes;
 
-  if(!votesBought || votesBought < 1){
-    setMsg("Enter valid votes.", "error");
+  // Hard guard: the amount charged can only ever be one of the
+  // published packages, never an arbitrary number.
+  if(!AVAILABLE_PACKAGES.includes(votesBought)){
+    setMsg("Please select a valid vote package.", "error");
     return;
   }
 
