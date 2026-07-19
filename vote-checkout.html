@@ -283,11 +283,21 @@ a{color:inherit}
   box-shadow:0 0 0 4px rgba(212,175,55,.14);
 }
 
+.quickVotesLabel{
+  display:block;
+  margin-top:16px;
+  margin-bottom:8px;
+  font-size:11.5px;
+  font-weight:800;
+  color:#a99a80;
+  text-transform:uppercase;
+  letter-spacing:.04em;
+}
+
 .quickVotes{
   display:grid;
-  grid-template-columns:repeat(4,1fr);
+  grid-template-columns:repeat(3,1fr);
   gap:8px;
-  margin-top:10px;
 }
 
 .quickVoteBtn{
@@ -295,15 +305,46 @@ a{color:inherit}
   background:#fff;
   color:#161311;
   border-radius:14px;
-  padding:11px 8px;
+  padding:10px 6px;
   font-weight:900;
   cursor:pointer;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:2px;
+  line-height:1.2;
+}
+
+.quickVoteBtn .qvVotes{
+  font-size:15px;
+  font-weight:900;
+}
+
+.quickVoteBtn .qvPrice{
+  font-size:11px;
+  font-weight:700;
+  color:#a99a80;
 }
 
 .quickVoteBtn:hover{
   background:linear-gradient(135deg,#d4af37,#b88718);
   border-color:#b88718;
   color:#1b1008;
+}
+
+.quickVoteBtn:hover .qvPrice{
+  color:#3a2a08;
+}
+
+.quickVoteBtn.active{
+  background:#161311;
+  border-color:#161311;
+  color:#fff;
+}
+
+.quickVoteBtn.active .qvPrice{
+  color:#d9cdb3;
 }
 
 .totalRow{
@@ -441,6 +482,7 @@ a{color:inherit}
 
 @media(max-width:600px){
   .secondaryActions{grid-template-columns:1fr}
+  .quickVotes{grid-template-columns:repeat(3,1fr)}
 }
 </style>
 </head>
@@ -508,23 +550,65 @@ a{color:inherit}
           id="voteInput"
           class="voteInput"
           min="1"
-          value="1"
+          value="25"
           inputmode="numeric"
         >
 
         <button type="button" class="voteAdjustBtn" id="plusBtn">+</button>
       </div>
 
-      <div class="quickVotes">
-        <button type="button" class="quickVoteBtn" data-votes="5">5</button>
-        <button type="button" class="quickVoteBtn" data-votes="10">10</button>
-        <button type="button" class="quickVoteBtn" data-votes="20">20</button>
-        <button type="button" class="quickVoteBtn" data-votes="50">50</button>
+      <span class="quickVotesLabel">Bulk vote packages</span>
+
+      <div class="quickVotes" id="quickVotes">
+        <button type="button" class="quickVoteBtn" data-votes="25">
+          <span class="qvVotes">25</span>
+          <span class="qvPrice" data-price>—</span>
+        </button>
+
+        <button type="button" class="quickVoteBtn" data-votes="50">
+          <span class="qvVotes">50</span>
+          <span class="qvPrice" data-price>—</span>
+        </button>
+
+        <button type="button" class="quickVoteBtn" data-votes="75">
+          <span class="qvVotes">75</span>
+          <span class="qvPrice" data-price>—</span>
+        </button>
+
+        <button type="button" class="quickVoteBtn" data-votes="100">
+          <span class="qvVotes">100</span>
+          <span class="qvPrice" data-price>—</span>
+        </button>
+
+        <button type="button" class="quickVoteBtn" data-votes="250">
+          <span class="qvVotes">250</span>
+          <span class="qvPrice" data-price>—</span>
+        </button>
+
+        <button type="button" class="quickVoteBtn" data-votes="500">
+          <span class="qvVotes">500</span>
+          <span class="qvPrice" data-price>—</span>
+        </button>
+
+        <button type="button" class="quickVoteBtn" data-votes="1000">
+          <span class="qvVotes">1K</span>
+          <span class="qvPrice" data-price>—</span>
+        </button>
+
+        <button type="button" class="quickVoteBtn" data-votes="3000">
+          <span class="qvVotes">3K</span>
+          <span class="qvPrice" data-price>—</span>
+        </button>
+
+        <button type="button" class="quickVoteBtn" data-votes="10000">
+          <span class="qvVotes">10K</span>
+          <span class="qvPrice" data-price>—</span>
+        </button>
       </div>
 
       <div class="totalRow">
-        <span id="priceHint">1 vote = GHS 1.00</span>
-        <div class="totalMoney" id="totalAmount">GHS 1.00</div>
+        <span id="priceHint">25 vote(s) × GHS 4.00</span>
+        <div class="totalMoney" id="totalAmount">GHS 100.00</div>
       </div>
 
       <div class="warningBox" id="warningBox">
@@ -578,7 +662,7 @@ document.getElementById("y").textContent = new Date().getFullYear();
 const urlParams = new URLSearchParams(window.location.search);
 const eventId = urlParams.get("eventId");
 const contestantId = urlParams.get("contestantId");
-const presetVotes = parseInt(urlParams.get("votes") || "1", 10);
+const presetVotes = parseInt(urlParams.get("votes") || "25", 10);
 
 const menuBtn = document.getElementById("menuBtn");
 const mobileMenu = document.getElementById("mobileMenu");
@@ -613,7 +697,11 @@ const toast = document.getElementById("toast");
 
 let eventData = null;
 let contestantData = null;
-let votePrice = 1;
+
+// Default rate: GHS 100 = 25 votes, GHS 200 = 50 votes, etc.
+// That works out to GHS 4.00 per vote. This is overridden by
+// eventData.votePrice from Firestore if it's set there.
+let votePrice = 4;
 let toastTimer = null;
 
 menuBtn.addEventListener("click", () => {
@@ -623,6 +711,7 @@ menuBtn.addEventListener("click", () => {
 document.addEventListener("input", (e) => {
   if(e.target && e.target.id === "voteInput"){
     updateTotal();
+    syncActiveQuickVote();
   }
 });
 
@@ -633,6 +722,7 @@ minusBtn.addEventListener("click", () => {
   if(count > 1){
     voteInput.value = count - 1;
     updateTotal();
+    syncActiveQuickVote();
   }
 });
 
@@ -642,6 +732,7 @@ plusBtn.addEventListener("click", () => {
 
   voteInput.value = count + 1;
   updateTotal();
+  syncActiveQuickVote();
 });
 
 quickVoteButtons.forEach(btn => {
@@ -649,6 +740,7 @@ quickVoteButtons.forEach(btn => {
     const amount = parseInt(btn.dataset.votes || "1", 10);
     voteInput.value = amount;
     updateTotal();
+    syncActiveQuickVote();
   });
 });
 
@@ -724,6 +816,10 @@ async function shareEvent(){
   }
 }
 
+function formatMoney(n){
+  return "GHS " + n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
 function updateTotal(){
   let count = parseInt(voteInput.value || "1", 10);
 
@@ -734,8 +830,33 @@ function updateTotal(){
 
   const total = count * votePrice;
 
-  totalAmount.textContent = "GHS " + total.toFixed(2);
+  totalAmount.textContent = formatMoney(total);
   priceHint.textContent = `${count.toLocaleString()} vote(s) × GHS ${votePrice.toFixed(2)}`;
+}
+
+// Fills in the GHS price under each bulk-vote button based on
+// the current votePrice, and keeps the buttons in sync if the
+// rate changes after Firestore loads.
+function updateQuickVotePrices(){
+  quickVoteButtons.forEach(btn => {
+    const v = parseInt(btn.dataset.votes || "0", 10);
+    const priceEl = btn.querySelector("[data-price]");
+
+    if(priceEl && !isNaN(v)){
+      priceEl.textContent = formatMoney(v * votePrice);
+    }
+  });
+}
+
+// Highlights whichever bulk-vote button matches the current
+// vote count typed into the input, if any.
+function syncActiveQuickVote(){
+  const count = parseInt(voteInput.value || "0", 10);
+
+  quickVoteButtons.forEach(btn => {
+    const v = parseInt(btn.dataset.votes || "0", 10);
+    btn.classList.toggle("active", v === count);
+  });
 }
 
 function renderPhoto(){
@@ -825,10 +946,10 @@ async function loadCheckout(){
       ...contestantSnap.data()
     };
 
-    votePrice = Number(eventData.votePrice || 1);
-
-    if(isNaN(votePrice) || votePrice < 1){
-      votePrice = 1;
+    // Only override the default GHS 4.00/vote rate if Firestore
+    // explicitly sets one.
+    if(eventData.votePrice && Number(eventData.votePrice) > 0){
+      votePrice = Number(eventData.votePrice);
     }
 
     const eventName = eventData.eventName || "Competition";
@@ -855,14 +976,16 @@ async function loadCheckout(){
       categoryDisplay.style.display = "none";
     }
 
-    voteInput.value = (!isNaN(presetVotes) && presetVotes > 0) ? presetVotes : 1;
+    voteInput.value = (!isNaN(presetVotes) && presetVotes > 0) ? presetVotes : 25;
 
     const eventLink = `live-event-details.html?eventId=${eventId}`;
 
     backToEventBtn2.href = eventLink;
     mobileBackLink.href = eventLink;
 
+    updateQuickVotePrices();
     updateTotal();
+    syncActiveQuickVote();
     updateAvailability();
 
     document.title = `Vote for ${contestantName} | Lumina Vote`;
