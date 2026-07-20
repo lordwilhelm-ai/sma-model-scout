@@ -248,69 +248,62 @@ a{color:inherit}
   letter-spacing:.04em;
 }
 
-.quickVotesLabel{
-  display:block;
-  margin-top:0;
-  margin-bottom:8px;
-  font-size:11.5px;
-  font-weight:800;
-  color:#a99a80;
-  text-transform:uppercase;
-  letter-spacing:.04em;
+.voteInputWrap{
+  display:grid;
+  grid-template-columns:52px 1fr 52px;
+  gap:9px;
+}
+
+.voteAdjustBtn{
+  height:50px;
+  border:1px solid #ece2cd;
+  border-radius:14px;
+  background:#f6f0e2;
+  color:#161311;
+  font-size:22px;
+  font-weight:900;
+  cursor:pointer;
+}
+
+.voteInput{
+  height:50px;
+  width:100%;
+  border:1px solid #ece2cd;
+  border-radius:14px;
+  text-align:center;
+  font-size:18px;
+  font-weight:900;
+  outline:none;
+  color:#161311;
+  background:#fff;
+}
+
+.voteInput:focus{
+  border-color:#d4af37;
+  box-shadow:0 0 0 4px rgba(212,175,55,.14);
 }
 
 .quickVotes{
   display:grid;
-  grid-template-columns:repeat(3,1fr);
+  grid-template-columns:repeat(4,1fr);
   gap:8px;
+  margin-top:10px;
 }
 
 .quickVoteBtn{
-  border:2px solid #e6dabd;
+  border:1px solid #e6dabd;
   background:#fff;
   color:#161311;
   border-radius:14px;
-  padding:12px 6px;
+  padding:11px 8px;
   font-weight:900;
   cursor:pointer;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  gap:2px;
-  line-height:1.2;
-  position:relative;
-}
-
-.quickVoteBtn .qvAmount{
-  font-size:15px;
-  font-weight:900;
-}
-
-.quickVoteBtn .qvVotesSub{
-  font-size:11px;
-  font-weight:700;
-  color:#a99a80;
 }
 
 .quickVoteBtn:hover{
   background:linear-gradient(135deg,#d4af37,#b88718);
   border-color:#b88718;
   color:#1b1008;
-}
-
-.quickVoteBtn:hover .qvVotesSub{
-  color:#3a2a08;
-}
-
-.quickVoteBtn.active{
-  background:#161311;
-  border-color:#161311;
-  color:#fff;
-}
-
-.quickVoteBtn.active .qvVotesSub{
-  color:#d9cdb3;
 }
 
 .totalRow{
@@ -448,7 +441,6 @@ a{color:inherit}
 
 @media(max-width:600px){
   .secondaryActions{grid-template-columns:1fr}
-  .quickVotes{grid-template-columns:repeat(3,1fr)}
 }
 </style>
 </head>
@@ -506,48 +498,33 @@ a{color:inherit}
   <div class="actionCard">
     <form onsubmit="return false;">
 
-      <label class="voteLabel">Choose a Vote Package</label>
+      <label class="voteLabel">Number of Votes</label>
 
-      <div class="quickVotes" id="quickVotes">
-        <button type="button" class="quickVoteBtn" data-amount="100" data-votes="25">
-          <span class="qvAmount">GH₵100</span>
-          <span class="qvVotesSub" data-votes-label>25 votes</span>
-        </button>
+      <div class="voteInputWrap">
+        <button type="button" class="voteAdjustBtn" id="minusBtn">−</button>
 
-        <button type="button" class="quickVoteBtn" data-amount="200" data-votes="50">
-          <span class="qvAmount">GH₵200</span>
-          <span class="qvVotesSub" data-votes-label>50 votes</span>
-        </button>
+        <input
+          type="number"
+          id="voteInput"
+          class="voteInput"
+          min="1"
+          value="1"
+          inputmode="numeric"
+        >
 
-        <button type="button" class="quickVoteBtn" data-amount="300" data-votes="75">
-          <span class="qvAmount">GH₵300</span>
-          <span class="qvVotesSub" data-votes-label>75 votes</span>
-        </button>
+        <button type="button" class="voteAdjustBtn" id="plusBtn">+</button>
+      </div>
 
-        <button type="button" class="quickVoteBtn" data-amount="400" data-votes="100">
-          <span class="qvAmount">GH₵400</span>
-          <span class="qvVotesSub" data-votes-label>100 votes</span>
-        </button>
-
-        <button type="button" class="quickVoteBtn" data-amount="1000" data-votes="250">
-          <span class="qvAmount">GH₵1K</span>
-          <span class="qvVotesSub" data-votes-label>250 votes</span>
-        </button>
-
-        <button type="button" class="quickVoteBtn" data-amount="3000" data-votes="750">
-          <span class="qvAmount">GH₵3K</span>
-          <span class="qvVotesSub" data-votes-label>750 votes</span>
-        </button>
-
-        <button type="button" class="quickVoteBtn" data-amount="10000" data-votes="2500">
-          <span class="qvAmount">GH₵10K</span>
-          <span class="qvVotesSub" data-votes-label>2,500 votes</span>
-        </button>
+      <div class="quickVotes">
+        <button type="button" class="quickVoteBtn" data-votes="5">5</button>
+        <button type="button" class="quickVoteBtn" data-votes="10">10</button>
+        <button type="button" class="quickVoteBtn" data-votes="20">20</button>
+        <button type="button" class="quickVoteBtn" data-votes="50">50</button>
       </div>
 
       <div class="totalRow">
-        <span id="priceHint">25 votes</span>
-        <div class="totalMoney" id="totalAmount">GHS 100.00</div>
+        <span id="priceHint">1 vote = GHS 1.00</span>
+        <div class="totalMoney" id="totalAmount">GHS 1.00</div>
       </div>
 
       <div class="warningBox" id="warningBox">
@@ -601,7 +578,7 @@ document.getElementById("y").textContent = new Date().getFullYear();
 const urlParams = new URLSearchParams(window.location.search);
 const eventId = urlParams.get("eventId");
 const contestantId = urlParams.get("contestantId");
-const presetVotesRaw = parseInt(urlParams.get("votes") || "0", 10);
+const presetVotes = parseInt(urlParams.get("votes") || "1", 10);
 
 const menuBtn = document.getElementById("menuBtn");
 const mobileMenu = document.getElementById("mobileMenu");
@@ -620,27 +597,15 @@ const eventStatusDisplay = document.getElementById("eventStatusDisplay");
 const contestantNumberDisplay = document.getElementById("contestantNumberDisplay");
 const categoryDisplay = document.getElementById("categoryDisplay");
 
+const voteInput = document.getElementById("voteInput");
 const totalAmount = document.getElementById("totalAmount");
 const priceHint = document.getElementById("priceHint");
 const payBtn = document.getElementById("payBtn");
 const msg = document.getElementById("msg");
 
+const minusBtn = document.getElementById("minusBtn");
+const plusBtn = document.getElementById("plusBtn");
 const quickVoteButtons = document.querySelectorAll(".quickVoteBtn");
-
-// The fixed list of packages voters are allowed to choose from,
-// each one an exact {amount, votes} pair pulled straight from the
-// buttons in the markup — e.g. GHS 100 = 25 votes, GHS 1,000 = 250
-// votes. There is no formula/rate; every package's price is fixed
-// and matches exactly what gets charged.
-const AVAILABLE_PACKAGES = Array.from(quickVoteButtons).map(btn => ({
-  amount: parseInt(btn.dataset.amount || "0", 10),
-  votes: parseInt(btn.dataset.votes || "0", 10)
-})).filter(p => p.amount > 0 && p.votes > 0);
-
-// Voters can ONLY select one of AVAILABLE_PACKAGES — there is no
-// free-text or +/- input. This is the single source of truth for
-// what gets charged and how many votes are bought.
-let selectedPackage = AVAILABLE_PACKAGES[0] || { amount: 100, votes: 25 };
 
 const warningBox = document.getElementById("warningBox");
 const shareBtn = document.getElementById("shareBtn");
@@ -648,29 +613,46 @@ const toast = document.getElementById("toast");
 
 let eventData = null;
 let contestantData = null;
+let votePrice = 1;
 let toastTimer = null;
 
 menuBtn.addEventListener("click", () => {
   mobileMenu.classList.toggle("show");
 });
 
-quickVoteButtons.forEach((btn, index) => {
-  btn.addEventListener("click", () => {
-    const candidate = AVAILABLE_PACKAGES[index];
-
-    // Guard: only ever accept a package that's actually in the
-    // fixed list. This blocks any attempt to select outside the
-    // offered packages, even if the DOM were tampered with.
-    if(!candidate) return;
-
-    selectedPackage = candidate;
+document.addEventListener("input", (e) => {
+  if(e.target && e.target.id === "voteInput"){
     updateTotal();
-    syncActiveQuickVote();
+  }
+});
+
+minusBtn.addEventListener("click", () => {
+  let count = parseInt(voteInput.value || "1", 10);
+  count = isNaN(count) ? 1 : count;
+
+  if(count > 1){
+    voteInput.value = count - 1;
+    updateTotal();
+  }
+});
+
+plusBtn.addEventListener("click", () => {
+  let count = parseInt(voteInput.value || "1", 10);
+  count = isNaN(count) ? 1 : count;
+
+  voteInput.value = count + 1;
+  updateTotal();
+});
+
+quickVoteButtons.forEach(btn => {
+  btn.addEventListener("click", () => {
+    const amount = parseInt(btn.dataset.votes || "1", 10);
+    voteInput.value = amount;
+    updateTotal();
   });
 });
 
 shareBtn.addEventListener("click", shareEvent);
-
 
 function showToast(text){
   toast.textContent = text;
@@ -742,23 +724,18 @@ async function shareEvent(){
   }
 }
 
-function formatMoney(n){
-  return "GHS " + n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-}
-
 function updateTotal(){
-  totalAmount.textContent = formatMoney(selectedPackage.amount);
-  priceHint.textContent = `${selectedPackage.votes.toLocaleString()} votes`;
-}
+  let count = parseInt(voteInput.value || "1", 10);
 
-// Highlights whichever package button matches the currently
-// selected package.
-function syncActiveQuickVote(){
-  quickVoteButtons.forEach((btn, index) => {
-    const pkg = AVAILABLE_PACKAGES[index];
-    const isActive = pkg && pkg.amount === selectedPackage.amount && pkg.votes === selectedPackage.votes;
-    btn.classList.toggle("active", !!isActive);
-  });
+  if(isNaN(count) || count < 1){
+    count = 1;
+    voteInput.value = 1;
+  }
+
+  const total = count * votePrice;
+
+  totalAmount.textContent = "GHS " + total.toFixed(2);
+  priceHint.textContent = `${count.toLocaleString()} vote(s) × GHS ${votePrice.toFixed(2)}`;
 }
 
 function renderPhoto(){
@@ -848,6 +825,12 @@ async function loadCheckout(){
       ...contestantSnap.data()
     };
 
+    votePrice = Number(eventData.votePrice || 1);
+
+    if(isNaN(votePrice) || votePrice < 1){
+      votePrice = 1;
+    }
+
     const eventName = eventData.eventName || "Competition";
     const contestantName = contestantData.fullName || "Contestant";
     const contestantNumber = contestantData.contestantNumber || "";
@@ -872,13 +855,7 @@ async function loadCheckout(){
       categoryDisplay.style.display = "none";
     }
 
-    // Only honor a "votes" URL param if it exactly matches the vote
-    // count of one of the fixed packages. Otherwise fall back to
-    // the smallest package.
-    const matchedPackage = AVAILABLE_PACKAGES.find(p => p.votes === presetVotesRaw);
-    if(matchedPackage){
-      selectedPackage = matchedPackage;
-    }
+    voteInput.value = (!isNaN(presetVotes) && presetVotes > 0) ? presetVotes : 1;
 
     const eventLink = `live-event-details.html?eventId=${eventId}`;
 
@@ -886,7 +863,6 @@ async function loadCheckout(){
     mobileBackLink.href = eventLink;
 
     updateTotal();
-    syncActiveQuickVote();
     updateAvailability();
 
     document.title = `Vote for ${contestantName} | Lumina Vote`;
@@ -901,19 +877,12 @@ async function loadCheckout(){
 }
 
 payBtn.addEventListener("click", async () => {
-  // Hard guard: the amount charged can only ever be one of the
-  // published packages, never an arbitrary number.
-  const isValidPackage = AVAILABLE_PACKAGES.some(
-    p => p.amount === selectedPackage.amount && p.votes === selectedPackage.votes
-  );
+  const votesBought = parseInt(voteInput.value || "0", 10);
 
-  if(!isValidPackage){
-    setMsg("Please select a valid vote package.", "error");
+  if(!votesBought || votesBought < 1){
+    setMsg("Enter valid votes.", "error");
     return;
   }
-
-  const votesBought = selectedPackage.votes;
-  const amount = selectedPackage.amount; // GHS — fixed by the package, not computed
 
   if(!eventData || !contestantData){
     setMsg("Checkout data is not ready.", "error");
@@ -937,6 +906,7 @@ payBtn.addEventListener("click", async () => {
   payBtn.textContent = "Redirecting to Hubtel...";
   setMsg("", "success");
 
+  const amount = votesBought * votePrice; // GHS
   const contestantName = contestantData.fullName || "Contestant";
 
   try{
