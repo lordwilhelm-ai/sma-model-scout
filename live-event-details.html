@@ -169,12 +169,8 @@ a{color:inherit}
   margin-bottom:22px;
 }
 
-.selectorRow.twoCol{
-  grid-template-columns:1fr;
-}
-
 @media(min-width:640px){
-  .selectorRow.twoCol{grid-template-columns:1fr 1fr}
+  .selectorRow{grid-template-columns:minmax(0,360px)}
 }
 
 .selectorField label{
@@ -207,7 +203,7 @@ a{color:inherit}
   border-radius:18px;
   padding:22px;
   box-shadow:0 10px 30px rgba(60,45,10,0.05);
-  margin-bottom:18px;
+  margin-bottom:22px;
   display:flex;
   flex-wrap:wrap;
   align-items:flex-start;
@@ -281,31 +277,6 @@ a{color:inherit}
 
 @keyframes spin{
   to{transform:rotate(360deg)}
-}
-
-/* TABS */
-.viewTabs{
-  display:inline-flex;
-  background:#f2ead9;
-  border-radius:999px;
-  padding:4px;
-  margin-bottom:22px;
-}
-
-.viewTabBtn{
-  border:0;
-  background:transparent;
-  padding:10px 20px;
-  border-radius:999px;
-  font-weight:800;
-  font-size:13px;
-  color:#6b6156;
-  cursor:pointer;
-}
-
-.viewTabBtn.active{
-  background:#161311;
-  color:#fff;
 }
 
 /* RESULTS LIST */
@@ -423,66 +394,6 @@ a{color:inherit}
   transition:width .4s ease;
 }
 
-/* RANKINGS TABLE VIEW */
-.rankTable{
-  width:100%;
-  border-collapse:collapse;
-}
-
-.rankTable th{
-  text-align:left;
-  font-size:11px;
-  text-transform:uppercase;
-  letter-spacing:.05em;
-  color:#a99a80;
-  font-weight:800;
-  padding:0 10px 12px;
-  border-bottom:1px solid #efe7d8;
-}
-
-.rankTable th.num,.rankTable td.num{text-align:right}
-
-.rankTable tr.rankRow{cursor:pointer}
-
-.rankTable td{
-  padding:14px 10px;
-  border-bottom:1px solid #f4eee0;
-  font-size:14px;
-}
-
-.rankTable td.rankCell{
-  font-weight:900;
-  width:34px;
-}
-
-.rankTable td.nameCell b{
-  font-weight:800;
-  font-style:italic;
-}
-
-.rankTable td.nameCell .nameTop{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  flex-wrap:wrap;
-}
-
-.rankTable td.nameCell span.numTag{
-  display:block;
-  font-size:11.5px;
-  color:#a99a80;
-  font-weight:700;
-  margin-top:2px;
-}
-
-.rankTable td.num{
-  font-weight:900;
-  white-space:nowrap;
-}
-
-.viewPane{display:none}
-.viewPane.active{display:block}
-
 /* STATE BOXES */
 .stateBox{
   border:1px dashed #e6dabd;
@@ -499,25 +410,6 @@ a{color:inherit}
 </head>
 
 <body>
-<div id="maintenance-overlay" style="position:fixed;inset:0;width:100vw;height:100vh;z-index:2147483647;background:rgba(22,19,17,0.94);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;text-align:center;padding:24px;">
-  <div style="max-width:440px;color:#faf7f0;font-family:Arial, Helvetica, sans-serif;">
-    <div style="font-size:52px;margin-bottom:18px;">🛠️</div>
-    <h1 style="font-size:26px;margin:0 0 12px;font-weight:900;">We'll be right back</h1>
-    <p style="font-size:16px;line-height:1.6;opacity:0.85;margin:0;">
-      This site is currently down for scheduled maintenance. We're working hard to get things back up and running. Please check back shortly.
-    </p>
-  </div>
-</div>
-<script>
-(function(){
-  document.documentElement.style.overflow='hidden';
-  document.body.style.overflow='hidden';
-  document.addEventListener('contextmenu',function(e){e.preventDefault();},true);
-  document.addEventListener('keydown',function(e){e.stopPropagation();e.preventDefault();},true);
-  document.addEventListener('wheel',function(e){e.preventDefault();},{passive:false,capture:true});
-  document.addEventListener('touchmove',function(e){e.preventDefault();},{passive:false,capture:true});
-})();
-</script>
 
 <header class="siteHeader">
   <div class="siteHeaderInner">
@@ -551,30 +443,30 @@ a{color:inherit}
 
   <span class="eyebrow">Results Dashboard</span>
   <h1 class="pageTitle">Live Results</h1>
-  <p class="pageSub">Select an event to view nominee standings. If the event has categories, pick one to narrow the list — or leave it on All Nominees.</p>
+  <p class="pageSub">Live standings for every nominee across all categories, straight from Firestore.</p>
 
-  <div class="selectorRow twoCol" id="selectorRow">
+  <div class="selectorRow" id="selectorRow">
     <div class="selectorField">
       <label for="eventSelect">Event</label>
       <select id="eventSelect"></select>
-    </div>
-
-    <div class="selectorField" id="categoryField">
-      <label for="categorySelect">Select category</label>
-      <select id="categorySelect"></select>
     </div>
   </div>
 
   <div class="dashCard">
     <div class="dashLeft">
       <div class="dashEyebrow" id="dashEventName">—</div>
-      <h2 id="dashCategoryName">—</h2>
+      <h2>Live Standings</h2>
     </div>
 
     <div class="dashRight">
       <div class="statBlock">
         <b id="dashNomineeCount">0</b>
         <span>Nominees</span>
+      </div>
+
+      <div class="statBlock">
+        <b id="dashTotalVotes">0</b>
+        <span>Total Votes</span>
       </div>
 
       <button class="refreshBtn" id="refreshBtn" type="button">
@@ -584,31 +476,10 @@ a{color:inherit}
     </div>
   </div>
 
-  <div class="viewTabs">
-    <button class="viewTabBtn active" id="barTabBtn" type="button">Bar Chart</button>
-    <button class="viewTabBtn" id="rankTabBtn" type="button">Rankings</button>
-  </div>
-
   <div id="loadingState" class="stateBox">Loading results...</div>
   <div id="emptyState" class="stateBox hidden">No nominees found.</div>
 
-  <div id="barPane" class="viewPane active">
-    <div class="resultsList" id="resultsList"></div>
-  </div>
-
-  <div id="rankPane" class="viewPane">
-    <table class="rankTable">
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Nominee</th>
-          <th class="num">Votes</th>
-          <th class="num">Share</th>
-        </tr>
-      </thead>
-      <tbody id="rankTableBody"></tbody>
-    </table>
-  </div>
+  <div class="resultsList" id="resultsList"></div>
 
 </main>
 
@@ -637,34 +508,23 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 const RANK_COLORS = ["#d64541", "#e8935a", "#f0cf5f", "#161311", "#d64541", "#e8935a", "#f0cf5f", "#161311"];
-const ALL_VALUE = "all";
 
 const eventSelect = document.getElementById("eventSelect");
-const categorySelect = document.getElementById("categorySelect");
-const categoryField = document.getElementById("categoryField");
-const selectorRow = document.getElementById("selectorRow");
 const eventSearchInput = document.getElementById("eventSearchInput");
 
 const dashEventName = document.getElementById("dashEventName");
-const dashCategoryName = document.getElementById("dashCategoryName");
 const dashNomineeCount = document.getElementById("dashNomineeCount");
+const dashTotalVotes = document.getElementById("dashTotalVotes");
 
 const refreshBtn = document.getElementById("refreshBtn");
-
-const barTabBtn = document.getElementById("barTabBtn");
-const rankTabBtn = document.getElementById("rankTabBtn");
-const barPane = document.getElementById("barPane");
-const rankPane = document.getElementById("rankPane");
 
 const loadingState = document.getElementById("loadingState");
 const emptyState = document.getElementById("emptyState");
 const resultsList = document.getElementById("resultsList");
-const rankTableBody = document.getElementById("rankTableBody");
 
 let allEvents = [];
 let eventCategories = [];
 let allContestantsForEvent = [];
-let displayRows = [];
 
 const params = new URLSearchParams(window.location.search);
 const preselectEventId = params.get("event") || params.get("eventId");
@@ -687,22 +547,10 @@ function goToCheckout(item){
   window.location.href = `vote-checkout.html?eventId=${eventId}&contestantId=${item.id}&votes=1`;
 }
 
-barTabBtn.addEventListener("click", () => setView("bar"));
-rankTabBtn.addEventListener("click", () => setView("rank"));
-
-function setView(view){
-  barTabBtn.classList.toggle("active", view === "bar");
-  rankTabBtn.classList.toggle("active", view === "rank");
-  barPane.classList.toggle("active", view === "bar");
-  rankPane.classList.toggle("active", view === "rank");
-}
-
 eventSelect.addEventListener("change", async () => {
   await loadCategoriesForSelectedEvent();
   await loadResults();
 });
-
-categorySelect.addEventListener("change", renderResults);
 
 refreshBtn.addEventListener("click", loadResults);
 
@@ -743,7 +591,6 @@ async function loadEvents(){
 async function loadCategoriesForSelectedEvent(){
   const eventId = eventSelect.value;
   eventCategories = [];
-  categorySelect.innerHTML = "";
 
   if(!eventId) return;
 
@@ -753,29 +600,6 @@ async function loadCategoriesForSelectedEvent(){
   eventCategories = snap.docs
     .map(docu => ({ id: docu.id, ...docu.data() }))
     .sort((a, b) => Number(a.categoryCode || 0) - Number(b.categoryCode || 0));
-
-  if(eventCategories.length === 0){
-    categoryField.classList.add("hidden");
-    selectorRow.classList.remove("twoCol");
-    return;
-  }
-
-  categoryField.classList.remove("hidden");
-  selectorRow.classList.add("twoCol");
-
-  const allOpt = document.createElement("option");
-  allOpt.value = ALL_VALUE;
-  allOpt.textContent = "All Nominees";
-  categorySelect.appendChild(allOpt);
-
-  eventCategories.forEach(cat => {
-    const opt = document.createElement("option");
-    opt.value = cat.id;
-    opt.textContent = cat.categoryName || `Category ${cat.categoryCode || ""}`;
-    categorySelect.appendChild(opt);
-  });
-
-  categorySelect.value = ALL_VALUE;
 }
 
 function contestantMatchesCategory(item, cat){
@@ -806,7 +630,6 @@ async function loadResults(){
   loadingState.classList.remove("hidden");
   emptyState.classList.add("hidden");
   resultsList.innerHTML = "";
-  rankTableBody.innerHTML = "";
 
   try{
     const q = query(collection(db, "eventContestants"), where("eventId", "==", eventId));
@@ -826,18 +649,8 @@ async function loadResults(){
 }
 
 function buildDisplayRows(){
+  const items = allContestantsForEvent;
   const hasCategories = eventCategories.length > 0;
-  const selectedCategoryId = hasCategories ? categorySelect.value : ALL_VALUE;
-  const showAll = !hasCategories || selectedCategoryId === ALL_VALUE;
-
-  let items;
-
-  if(showAll){
-    items = allContestantsForEvent;
-  }else{
-    const cat = eventCategories.find(c => c.id === selectedCategoryId);
-    items = allContestantsForEvent.filter(item => contestantMatchesCategory(item, cat));
-  }
 
   const groupTotals = new Map();
 
@@ -864,26 +677,19 @@ function buildDisplayRows(){
 
   rows.sort((a, b) => b.votes - a.votes);
 
-  const dashLabel = !hasCategories
-    ? "All Nominees"
-    : (selectedCategoryId === ALL_VALUE
-        ? "All Nominees"
-        : (eventCategories.find(c => c.id === selectedCategoryId)?.categoryName || "—"));
-
-  return { rows, showCategoryTag: hasCategories && showAll, dashLabel };
+  return { rows, showCategoryTag: hasCategories };
 }
 
 function renderResults(){
   loadingState.classList.add("hidden");
 
-  const { rows, showCategoryTag, dashLabel } = buildDisplayRows();
-  displayRows = rows;
+  const { rows, showCategoryTag } = buildDisplayRows();
 
-  dashCategoryName.textContent = dashLabel;
+  const totalVotes = rows.reduce((sum, row) => sum + row.votes, 0);
   dashNomineeCount.textContent = money0(rows.length);
+  dashTotalVotes.textContent = money0(totalVotes);
 
   resultsList.innerHTML = "";
-  rankTableBody.innerHTML = "";
 
   if(rows.length === 0){
     emptyState.classList.remove("hidden");
@@ -925,25 +731,6 @@ function renderResults(){
     rowEl.querySelector(".voteMiniBtn").addEventListener("click", () => goToCheckout(item));
 
     resultsList.appendChild(rowEl);
-
-    const tr = document.createElement("tr");
-    tr.className = "rankRow";
-    tr.innerHTML = `
-      <td class="rankCell">${index + 1}</td>
-      <td class="nameCell">
-        <div class="nameTop">
-          <b>${item.fullName || "Unnamed"}</b>
-          ${tagHtml}
-        </div>
-        <span class="numTag">${item.contestantNumber || ""}</span>
-      </td>
-      <td class="num">${money0(votes)}</td>
-      <td class="num">${pct.toFixed(1)}%</td>
-    `;
-
-    tr.addEventListener("click", () => goToCheckout(item));
-
-    rankTableBody.appendChild(tr);
   });
 }
 
@@ -958,4 +745,3 @@ init();
 
 </body>
 </html>
-s
