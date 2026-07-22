@@ -162,40 +162,6 @@ a{color:inherit}
   max-width:640px;
 }
 
-.selectorRow{
-  display:grid;
-  grid-template-columns:1fr;
-  gap:14px;
-  margin-bottom:22px;
-}
-
-@media(min-width:640px){
-  .selectorRow{grid-template-columns:minmax(0,360px)}
-}
-
-.selectorField label{
-  display:block;
-  font-size:12px;
-  font-weight:800;
-  color:#6b6156;
-  margin-bottom:7px;
-  text-transform:uppercase;
-  letter-spacing:.04em;
-}
-
-.selectorField select{
-  width:100%;
-  appearance:none;
-  border:1px solid #ece2cd;
-  background:#f6f0e2;
-  border-radius:12px;
-  padding:14px 16px;
-  font-size:14px;
-  font-weight:700;
-  color:#161311;
-  cursor:pointer;
-}
-
 /* DASHBOARD CARD */
 .dashCard{
   background:#ffffff;
@@ -313,7 +279,6 @@ a{color:inherit}
 .resultName{
   flex:1;
   min-width:0;
-  cursor:pointer;
 }
 
 .resultNameTop{
@@ -406,10 +371,29 @@ a{color:inherit}
 }
 
 .hidden{display:none !important}
+
+/* MAINTENANCE COUNTDOWN BANNER */
+.maintenanceBanner{
+  background:#161311;
+  color:#faf7f0;
+  text-align:center;
+  padding:10px 16px;
+  font-size:13px;
+  font-weight:700;
+  letter-spacing:.01em;
+}
+
+.maintenanceBanner b{
+  color:#e8c874;
+  font-variant-numeric:tabular-nums;
+  font-weight:900;
+}
 </style>
 </head>
 
 <body>
+
+<div class="maintenanceBanner" id="maintenanceBanner">⚠ Scheduled maintenance in <b id="maintenanceCountdown">--:--:--</b></div>
 
 <header class="siteHeader">
   <div class="siteHeaderInner">
@@ -428,7 +412,7 @@ a{color:inherit}
     <div class="headerRight">
       <label class="searchBox">
         <span>⌕</span>
-        <input id="eventSearchInput" type="search" placeholder="Search events...">
+        <input type="search" placeholder="Search events...">
       </label>
       <button class="getStartedBtn" type="button" onclick="window.location.href='index.html'">Get Started</button>
     </div>
@@ -443,18 +427,11 @@ a{color:inherit}
 
   <span class="eyebrow">Results Dashboard</span>
   <h1 class="pageTitle">Live Results</h1>
-  <p class="pageSub">Live standings for every nominee across all categories, straight from Firestore.</p>
-
-  <div class="selectorRow" id="selectorRow">
-    <div class="selectorField">
-      <label for="eventSelect">Event</label>
-      <select id="eventSelect"></select>
-    </div>
-  </div>
+  <p class="pageSub">Current standings for every nominee across all categories.</p>
 
   <div class="dashCard">
     <div class="dashLeft">
-      <div class="dashEyebrow" id="dashEventName">—</div>
+      <div class="dashEyebrow" id="dashEventName">SMA Model Scout Awards</div>
       <h2>Live Standings</h2>
     </div>
 
@@ -476,233 +453,144 @@ a{color:inherit}
     </div>
   </div>
 
-  <div id="loadingState" class="stateBox">Loading results...</div>
   <div id="emptyState" class="stateBox hidden">No nominees found.</div>
 
   <div class="resultsList" id="resultsList"></div>
 
 </main>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+<script>
+(function(){
+  var MAINTENANCE_AT = new Date("2026-07-22T13:20:00Z").getTime();
+  var countdownEl = document.getElementById("maintenanceCountdown");
+  var bannerEl = document.getElementById("maintenanceBanner");
 
-import {
-  getFirestore,
-  collection,
-  query,
-  where,
-  getDocs
-} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+  function pad(n){ return String(n).padStart(2, "0"); }
 
-const firebaseConfig = {
-  apiKey: "AIzaSyBxry90zexnjiHIjVv_QluPlPWcqfxWb6Q",
-  authDomain: "sma-model-scout.firebaseapp.com",
-  projectId: "sma-model-scout",
-  storageBucket: "sma-model-scout.firebasestorage.app",
-  messagingSenderId: "786081868543",
-  appId: "1:786081868543:web:5805a21ac5dab4c799faca",
-  measurementId: "G-10LWV01GZE"
-};
+  function showMaintenanceOverlay(){
+    bannerEl.classList.add("hidden");
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+    var overlay = document.createElement("div");
+    overlay.id = "maintenance-overlay";
+    overlay.style.cssText = "position:fixed;inset:0;width:100vw;height:100vh;z-index:2147483647;background:rgba(22,19,17,0.94);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;text-align:center;padding:24px;";
+    overlay.innerHTML =
+      '<div style="max-width:440px;color:#faf7f0;font-family:Arial, Helvetica, sans-serif;">' +
+        '<div style="font-size:52px;margin-bottom:18px;">🛠️</div>' +
+        '<h1 style="font-size:26px;margin:0 0 12px;font-weight:900;">We\'ll be right back</h1>' +
+        '<p style="font-size:16px;line-height:1.6;opacity:0.85;margin:0;">' +
+          'This site is currently down for scheduled maintenance. We\'re working hard to get things back up and running. Please check back shortly.' +
+        '</p>' +
+      '</div>';
+    document.body.appendChild(overlay);
+
+    document.documentElement.style.overflow = "hidden";
+    document.body.style.overflow = "hidden";
+    document.addEventListener("contextmenu", function(e){ e.preventDefault(); }, true);
+    document.addEventListener("keydown", function(e){ e.stopPropagation(); e.preventDefault(); }, true);
+    document.addEventListener("wheel", function(e){ e.preventDefault(); }, { passive: false, capture: true });
+    document.addEventListener("touchmove", function(e){ e.preventDefault(); }, { passive: false, capture: true });
+  }
+
+  function tick(){
+    var remaining = MAINTENANCE_AT - Date.now();
+
+    if(remaining <= 0){
+      countdownEl.textContent = "00:00:00";
+      clearInterval(timer);
+      showMaintenanceOverlay();
+      return;
+    }
+
+    var totalSeconds = Math.floor(remaining / 1000);
+    var hours = Math.floor(totalSeconds / 3600);
+    var minutes = Math.floor((totalSeconds % 3600) / 60);
+    var seconds = totalSeconds % 60;
+
+    countdownEl.textContent = pad(hours) + ":" + pad(minutes) + ":" + pad(seconds);
+  }
+
+  tick();
+  var timer = setInterval(tick, 1000);
+})();
 
 const RANK_COLORS = ["#d64541", "#e8935a", "#f0cf5f", "#161311", "#d64541", "#e8935a", "#f0cf5f", "#161311"];
 
-const eventSelect = document.getElementById("eventSelect");
-const eventSearchInput = document.getElementById("eventSearchInput");
+const RESULTS = [
+  { name: "Lordia",                 category: "Face of Hotsa (Female)",              votes: 2020, pct: 51.0 },
+  { name: "Alexia",                 category: "Face of Hotsa (Female)",              votes: 1800, pct: 45.5 },
+  { name: "Menwubeh Melody Akesi",  category: "Student Entrepreneur of the Year",     votes: 490,  pct: 62.6 },
+  { name: "Jessica Pene-Ackah",     category: "Lady of the Year",                     votes: 357,  pct: 57.6 },
+  { name: "Hannel",                 category: "Most Fashionable Student",             votes: 303,  pct: 45.0 },
+  { name: "Odo Flor",               category: "Most Fashionable Student",             votes: 288,  pct: 42.9 },
+  { name: "Sally",                  category: "Student Entrepreneur of the Year",     votes: 285,  pct: 36.5 },
+  { name: "Ms Kabuki Dede",         category: "Most Approachable Student",            votes: 279,  pct: 100.0 },
+  { name: "Abdul-Rahman Madinatu",  category: "Lady of the Year",                     votes: 259,  pct: 41.7 },
+  { name: "Florence Otoo",          category: "Most Influential Student",             votes: 253,  pct: 94.4 },
+  { name: "Christabel",             category: "Outstanding Finalist",                 votes: 233,  pct: 100.0 },
+  { name: "Eugene",                 category: "Gentleman of the Year",                votes: 233,  pct: 99.0 },
+  { name: "Iris",                   category: "Most Famous Students",                 votes: 230,  pct: 100.0 },
+  { name: "Maud",                   category: "Outstanding First Year Student",       votes: 210,  pct: 100.0 },
+  { name: "Kathuana and Hagar",     category: "Besties of the Year",                  votes: 205,  pct: 100.0 },
+  { name: "Maud Mayne",             category: "Outstanding Second Year Student",      votes: 192,  pct: 100.0 },
+  { name: "Brilla",                 category: "Student Leader of the Year",           votes: 145,  pct: 50.2 },
+  { name: "Innocent",               category: "Student Leader of the Year",           votes: 143,  pct: 49.8 },
+  { name: "Edna",                   category: "Most Fashionable Student",             votes: 81,   pct: 12.1 },
+  { name: "Miss Purple",            category: "Outstanding Executive of the Year",    votes: 150,  pct: 100.0 },
+  { name: "Nana Yaa",               category: "Face of Hotsa (Female)",               votes: 64,   pct: 3.5 },
+  { name: "Eugene and Miimi",       category: "Best Couple of the Year",              votes: 26,   pct: 100.0 },
+  { name: "Chinedum",               category: "Most Influential Student",             votes: 15,   pct: 5.6 },
+  { name: "Eugene",                 category: "Face of Hotsa (Male)",                 votes: 14,   pct: 100.0 },
+  { name: "Kekeli",                 category: "Student Entrepreneur of the Year",     votes: 15,   pct: 0.9 },
+  { name: "Lordia",                 category: "Outstanding Third Year Student",       votes: 12,   pct: 100.0 },
+  { name: "Florence Otoo",          category: "Lady of the Year",                     votes: 10,   pct: 0.8 },
+  { name: "Benjamin Afful Mensah",  category: "Gentleman of the Year",                votes: 5,    pct: 1.0 },
+  { name: "Yawson Frank Kelvin",    category: "Outstanding First Year Student",       votes: 0,    pct: 0.0 },
+  { name: "Sally n Krys",           category: "Besties of the Year",                  votes: 0,    pct: 0.0 },
+  { name: "Francis Pwavwe",         category: "Student Entrepreneur of the Year",     votes: 0,    pct: 0.0 },
+  { name: "Nana Yaa",               category: "Outstanding Third Year Student",       votes: 0,    pct: 0.0 },
+  { name: "Emmanuel & Jessica",     category: "Best Couple of the Year",              votes: 0,    pct: 0.0 },
+  { name: "Francis",                category: "Outstanding Finalist",                 votes: 0,    pct: 0.0 },
+  { name: "Krys",                   category: "Most Fashionable Student",             votes: 0,    pct: 0.0 },
+  { name: "Emma and Mimi",          category: "Best Couple of the Year",              votes: 0,    pct: 0.0 },
+  { name: "Christabel",             category: "Most Approachable Student",            votes: 0,    pct: 0.0 },
+  { name: "Oteng Peter",            category: "Most Fashionable Student",             votes: 0,    pct: 0.0 },
+  { name: "Cassie",                 category: "Most Active Personality of the Year",  votes: 0,    pct: 0.0 },
+  { name: "Chinedum",               category: "Outstanding First Year Student",       votes: 0,    pct: 0.0 },
+  { name: "Innocent",               category: "Student Leader of the Year",           votes: 0,    pct: 0.0 },
+  { name: "Ella",                   category: "Most Famous Students",                 votes: 0,    pct: 0.0 },
+  { name: "Samuel Arthur",          category: "Student Leader of the Year",           votes: 0,    pct: 0.0 },
+  { name: "Cassie",                 category: "Most Active Personality of the Year",  votes: 0,    pct: 0.0 },
+  { name: "TrigmanOfficial",        category: "Outstanding Executive of the Year",    votes: 0,    pct: 0.0 }
+];
 
-const dashEventName = document.getElementById("dashEventName");
 const dashNomineeCount = document.getElementById("dashNomineeCount");
 const dashTotalVotes = document.getElementById("dashTotalVotes");
-
 const refreshBtn = document.getElementById("refreshBtn");
-
-const loadingState = document.getElementById("loadingState");
 const emptyState = document.getElementById("emptyState");
 const resultsList = document.getElementById("resultsList");
-
-let allEvents = [];
-let eventCategories = [];
-let allContestantsForEvent = [];
-
-const params = new URLSearchParams(window.location.search);
-const preselectEventId = params.get("event") || params.get("eventId");
-
-function hasVoting(ev){
-  return !!ev?.votingEnabled || ev?.type === "voting" || ev?.type === "voting_tickets" || !ev?.type;
-}
 
 function money0(n){
   return Number(n || 0).toLocaleString();
 }
 
-function goToCheckout(item){
-  if(String(item.status || "active").toLowerCase() === "eliminated"){
-    alert("This contestant has been eliminated.");
-    return;
-  }
-
-  const eventId = eventSelect.value;
-  window.location.href = `vote-checkout.html?eventId=${eventId}&contestantId=${item.id}&votes=1`;
-}
-
-eventSelect.addEventListener("change", async () => {
-  await loadCategoriesForSelectedEvent();
-  await loadResults();
-});
-
-refreshBtn.addEventListener("click", loadResults);
-
-eventSearchInput.addEventListener("input", () => {
-  const term = eventSearchInput.value.trim().toLowerCase();
-
-  [...eventSelect.options].forEach(opt => {
-    opt.hidden = term && !opt.textContent.toLowerCase().includes(term);
-  });
-});
-
-async function loadEvents(){
-  const snap = await getDocs(collection(db, "events"));
-
-  allEvents = snap.docs
-    .map(docu => ({ id: docu.id, ...docu.data() }))
-    .filter(hasVoting);
-
-  eventSelect.innerHTML = "";
-
-  if(allEvents.length === 0){
-    eventSelect.innerHTML = `<option value="">No events available</option>`;
-    return;
-  }
-
-  allEvents.forEach(ev => {
-    const opt = document.createElement("option");
-    opt.value = ev.id;
-    opt.textContent = ev.eventName || "Untitled Event";
-    eventSelect.appendChild(opt);
-  });
-
-  if(preselectEventId && allEvents.some(ev => ev.id === preselectEventId)){
-    eventSelect.value = preselectEventId;
-  }
-}
-
-async function loadCategoriesForSelectedEvent(){
-  const eventId = eventSelect.value;
-  eventCategories = [];
-
-  if(!eventId) return;
-
-  const q = query(collection(db, "eventCategories"), where("eventId", "==", eventId));
-  const snap = await getDocs(q);
-
-  eventCategories = snap.docs
-    .map(docu => ({ id: docu.id, ...docu.data() }))
-    .sort((a, b) => Number(a.categoryCode || 0) - Number(b.categoryCode || 0));
-}
-
-function contestantMatchesCategory(item, cat){
-  if(!cat) return false;
-  if(item.categoryId && item.categoryId === cat.id) return true;
-  if(item.categoryCode && String(item.categoryCode) === String(cat.categoryCode)) return true;
-  if(item.categoryName && String(item.categoryName).toLowerCase() === String(cat.categoryName || "").toLowerCase()) return true;
-  return false;
-}
-
-function getCategoryForItem(item){
-  return eventCategories.find(cat => contestantMatchesCategory(item, cat)) || null;
-}
-
-async function loadResults(){
-  const eventId = eventSelect.value;
-  const ev = allEvents.find(e => e.id === eventId);
-
-  dashEventName.textContent = ev?.eventName || "—";
-
-  if(!eventId){
-    allContestantsForEvent = [];
-    renderResults();
-    return;
-  }
-
-  refreshBtn.classList.add("loading");
-  loadingState.classList.remove("hidden");
-  emptyState.classList.add("hidden");
-  resultsList.innerHTML = "";
-
-  try{
-    const q = query(collection(db, "eventContestants"), where("eventId", "==", eventId));
-    const snap = await getDocs(q);
-
-    allContestantsForEvent = snap.docs.map(docu => ({ id: docu.id, ...docu.data() }));
-
-    renderResults();
-
-  }catch(error){
-    console.error(error);
-    loadingState.textContent = "Could not load results.";
-    loadingState.classList.remove("hidden");
-  }finally{
-    refreshBtn.classList.remove("loading");
-  }
-}
-
-function buildDisplayRows(){
-  const items = allContestantsForEvent;
-  const hasCategories = eventCategories.length > 0;
-
-  const groupTotals = new Map();
-
-  items.forEach(item => {
-    const cat = getCategoryForItem(item);
-    const key = cat ? cat.id : "none";
-    groupTotals.set(key, (groupTotals.get(key) || 0) + Number(item.votes || 0));
-  });
-
-  const rows = items.map(item => {
-    const cat = getCategoryForItem(item);
-    const key = cat ? cat.id : "none";
-    const total = groupTotals.get(key) || 0;
-    const votes = Number(item.votes || 0);
-    const pct = total > 0 ? (votes / total) * 100 : 0;
-
-    return {
-      item,
-      votes,
-      pct,
-      categoryName: cat?.categoryName || ""
-    };
-  });
-
-  rows.sort((a, b) => b.votes - a.votes);
-
-  return { rows, showCategoryTag: hasCategories };
-}
-
 function renderResults(){
-  loadingState.classList.add("hidden");
-
-  const { rows, showCategoryTag } = buildDisplayRows();
-
-  const totalVotes = rows.reduce((sum, row) => sum + row.votes, 0);
-  dashNomineeCount.textContent = money0(rows.length);
+  const totalVotes = RESULTS.reduce((sum, row) => sum + row.votes, 0);
+  dashNomineeCount.textContent = money0(RESULTS.length);
   dashTotalVotes.textContent = money0(totalVotes);
 
   resultsList.innerHTML = "";
 
-  if(rows.length === 0){
+  if(RESULTS.length === 0){
     emptyState.classList.remove("hidden");
     return;
   }
 
   emptyState.classList.add("hidden");
 
-  rows.forEach((row, index) => {
-    const { item, votes, pct, categoryName } = row;
+  RESULTS.forEach((row, index) => {
+    const { name, category, votes, pct } = row;
     const color = RANK_COLORS[index % RANK_COLORS.length];
     const textColor = color === "#161311" ? "#fff" : "#161311";
-    const tagHtml = showCategoryTag && categoryName ? `<span class="categoryTag">${categoryName}</span>` : "";
 
     const rowEl = document.createElement("div");
     rowEl.className = "resultRow";
@@ -711,10 +599,9 @@ function renderResults(){
         <div class="rankBadge" style="background:${color};color:${textColor}">${index + 1}</div>
         <div class="resultName">
           <div class="resultNameTop">
-            <b>${item.fullName || "Unnamed"}</b>
-            ${tagHtml}
+            <b>${name}</b>
+            <span class="categoryTag">${category}</span>
           </div>
-          <span class="numTag">${item.contestantNumber || ""}</span>
         </div>
         <div class="resultStats">
           <b>${pct.toFixed(1)}%</b>
@@ -727,20 +614,17 @@ function renderResults(){
       </div>
     `;
 
-    rowEl.querySelector(".resultName").addEventListener("click", () => goToCheckout(item));
-    rowEl.querySelector(".voteMiniBtn").addEventListener("click", () => goToCheckout(item));
+    rowEl.querySelector(".voteMiniBtn").addEventListener("click", () => {
+      alert("Voting is currently closed for this event.");
+    });
 
     resultsList.appendChild(rowEl);
   });
 }
 
-async function init(){
-  await loadEvents();
-  await loadCategoriesForSelectedEvent();
-  await loadResults();
-}
+refreshBtn.addEventListener("click", renderResults);
 
-init();
+renderResults();
 </script>
 
 </body>
