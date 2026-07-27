@@ -405,30 +405,10 @@ a{color:inherit}
 }
 
 .hidden{display:none !important}
-
-/* MAINTENANCE COUNTDOWN BANNER */
-.maintenanceBanner{
-  background:#161311;
-  color:#faf7f0;
-  text-align:center;
-  padding:20px 16px;
-  font-size:19px;
-  font-weight:800;
-  letter-spacing:.01em;
-}
-
-.maintenanceBanner b{
-  color:#e8c874;
-  font-variant-numeric:tabular-nums;
-  font-weight:900;
-  font-size:22px;
-}
 </style>
 </head>
 
 <body>
-
-<div class="maintenanceBanner" id="maintenanceBanner">⚠ Scheduled maintenance in <b id="maintenanceCountdown">--:--:--</b></div>
 
 <header class="siteHeader">
   <div class="siteHeaderInner">
@@ -497,59 +477,6 @@ a{color:inherit}
 </main>
 
 <script>
-(function(){
-  var MAINTENANCE_AT = new Date("2026-07-22T13:20:00Z").getTime();
-  var countdownEl = document.getElementById("maintenanceCountdown");
-  var bannerEl = document.getElementById("maintenanceBanner");
-
-  function pad(n){ return String(n).padStart(2, "0"); }
-
-  function showMaintenanceOverlay(){
-    bannerEl.classList.add("hidden");
-
-    var overlay = document.createElement("div");
-    overlay.id = "maintenance-overlay";
-    overlay.style.cssText = "position:fixed;inset:0;width:100vw;height:100vh;z-index:2147483647;background:rgba(22,19,17,0.94);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;text-align:center;padding:24px;";
-    overlay.innerHTML =
-      '<div style="max-width:440px;color:#faf7f0;font-family:Arial, Helvetica, sans-serif;">' +
-        '<div style="font-size:52px;margin-bottom:18px;">🛠️</div>' +
-        '<h1 style="font-size:26px;margin:0 0 12px;font-weight:900;">We\'ll be right back</h1>' +
-        '<p style="font-size:16px;line-height:1.6;opacity:0.85;margin:0;">' +
-          'This site is currently down for scheduled maintenance. We\'re working hard to get things back up and running. Please check back shortly.' +
-        '</p>' +
-      '</div>';
-    document.body.appendChild(overlay);
-
-    document.documentElement.style.overflow = "hidden";
-    document.body.style.overflow = "hidden";
-    document.addEventListener("contextmenu", function(e){ e.preventDefault(); }, true);
-    document.addEventListener("keydown", function(e){ e.stopPropagation(); e.preventDefault(); }, true);
-    document.addEventListener("wheel", function(e){ e.preventDefault(); }, { passive: false, capture: true });
-    document.addEventListener("touchmove", function(e){ e.preventDefault(); }, { passive: false, capture: true });
-  }
-
-  function tick(){
-    var remaining = MAINTENANCE_AT - Date.now();
-
-    if(remaining <= 0){
-      countdownEl.textContent = "00:00:00";
-      clearInterval(timer);
-      showMaintenanceOverlay();
-      return;
-    }
-
-    var totalSeconds = Math.floor(remaining / 1000);
-    var hours = Math.floor(totalSeconds / 3600);
-    var minutes = Math.floor((totalSeconds % 3600) / 60);
-    var seconds = totalSeconds % 60;
-
-    countdownEl.textContent = pad(hours) + ":" + pad(minutes) + ":" + pad(seconds);
-  }
-
-  tick();
-  var timer = setInterval(tick, 1000);
-})();
-
 const RANK_COLORS = ["#d64541", "#e8935a", "#f0cf5f", "#161311", "#d64541", "#e8935a", "#f0cf5f", "#161311"];
 
 const RESULTS = [
