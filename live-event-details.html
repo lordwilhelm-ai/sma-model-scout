@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Live Results | Lumina Vote</title>
+<title>Event Details | Lumina Vote</title>
 
 <style>
 *{box-sizing:border-box}
@@ -30,12 +30,30 @@ a{color:inherit}
 .siteHeaderInner{
   max-width:1180px;
   margin:0 auto;
-  height:68px;
+  height:76px;
   display:flex;
   align-items:center;
   justify-content:space-between;
   gap:16px;
-  padding:0 18px;
+  padding:0 22px;
+}
+
+.headerLeft,.headerRight{
+  display:flex;
+  align-items:center;
+  gap:16px;
+}
+
+.menuIcon{
+  border:0;
+  background:transparent;
+  color:#161311;
+  cursor:pointer;
+  padding:0;
+  display:grid;
+  place-items:center;
+  font-size:26px;
+  line-height:1;
 }
 
 .logoLink{
@@ -45,21 +63,22 @@ a{color:inherit}
   text-decoration:none;
   color:#161311;
   font-weight:900;
-  font-size:19px;
-  letter-spacing:-0.4px;
+  font-size:21px;
+  letter-spacing:-0.5px;
 }
 
 .logoMark{
-  width:30px;
-  height:30px;
-  border-radius:8px;
+  width:34px;
+  height:34px;
+  border-radius:9px;
   background:linear-gradient(135deg,#d4af37,#b88718);
   display:grid;
   place-items:center;
   color:#fff;
   font-weight:900;
-  font-size:16px;
+  font-size:17px;
   font-style:italic;
+  flex:0 0 auto;
 }
 
 .navLinks{
@@ -67,55 +86,51 @@ a{color:inherit}
   align-items:center;
   gap:26px;
   font-size:14px;
-  font-weight:600;
+  font-weight:700;
   color:#6b6156;
 }
 
 .navLinks a{text-decoration:none}
 .navLinks a.active{color:#161311}
 
-.headerRight{
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
-
-.searchBox{
-  display:none;
-  align-items:center;
-  gap:8px;
-  background:#f4efe4;
-  border-radius:999px;
-  padding:9px 14px;
-  font-size:13px;
-  color:#8a7f6f;
-  min-width:200px;
-}
-
-.searchBox input{
-  border:0;
-  background:transparent;
-  outline:none;
-  font-size:13px;
-  width:100%;
-  color:#161311;
-}
-
-.getStartedBtn{
+.sellBtn{
   border:0;
   background:#161311;
   color:#fff;
+  text-decoration:none;
   padding:11px 18px;
   border-radius:999px;
-  font-weight:800;
   font-size:13px;
+  font-weight:800;
+}
+
+.mobileMenu{
+  display:none;
+  padding:14px 18px 18px;
+  background:#fff;
+  border-top:1px solid #eee4d3;
+}
+
+.mobileMenu.show{display:block}
+
+.mobileMenu a,.mobileMenu button{
+  width:100%;
+  border:0;
+  display:flex;
+  align-items:center;
+  padding:12px 4px;
+  text-decoration:none;
+  color:#161311;
+  font-size:15px;
+  font-weight:700;
+  background:transparent;
+  border-bottom:1px solid #f2ead9;
+  text-align:left;
   cursor:pointer;
-  white-space:nowrap;
 }
 
 @media(min-width:860px){
   .navLinks{display:flex}
-  .searchBox{display:flex}
 }
 
 /* MAIN */
@@ -162,6 +177,44 @@ a{color:inherit}
   max-width:640px;
 }
 
+/* TICKET CTA */
+.ticketCta{
+  background:#161311;
+  color:#fff;
+  border-radius:20px;
+  padding:24px;
+  margin-bottom:26px;
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px;
+}
+
+.ticketCta .left b{
+  display:block;
+  font-size:19px;
+  margin-bottom:4px;
+}
+
+.ticketCta .left span{
+  color:#c9bfae;
+  font-size:13.5px;
+}
+
+.ticketCta .buyBtn{
+  border:0;
+  background:linear-gradient(135deg,#d4af37,#b88718);
+  color:#1b1008;
+  text-decoration:none;
+  padding:14px 24px;
+  border-radius:999px;
+  font-weight:900;
+  font-size:14px;
+  white-space:nowrap;
+}
+
+/* SELECTOR */
 .selectorRow{
   display:grid;
   grid-template-columns:1fr;
@@ -372,12 +425,15 @@ a{color:inherit}
   border:0;
   background:linear-gradient(135deg,#d4af37,#b88718);
   color:#1b1008;
+  text-decoration:none;
   padding:10px 16px;
   border-radius:999px;
   font-weight:800;
   font-size:12px;
   cursor:pointer;
   white-space:nowrap;
+  display:inline-flex;
+  align-items:center;
 }
 
 .barTrack{
@@ -404,6 +460,14 @@ a{color:inherit}
   font-weight:600;
 }
 
+.footer{
+  margin-top:40px;
+  text-align:center;
+  color:#a99a80;
+  font-size:12.5px;
+  line-height:1.6;
+}
+
 .hidden{display:none !important}
 </style>
 </head>
@@ -412,139 +476,188 @@ a{color:inherit}
 
 <header class="siteHeader">
   <div class="siteHeaderInner">
-    <a class="logoLink" href="index.html">
-      <span class="logoMark">V</span>
-      <span>Lumina Vote</span>
-    </a>
+    <div class="headerLeft">
+      <button class="menuIcon" id="menuBtn" type="button">☰</button>
+
+      <a class="logoLink" href="index.html">
+        <span class="logoMark">V</span>
+        <span>Lumina Vote</span>
+      </a>
+    </div>
 
     <nav class="navLinks">
-      <a href="index.html">Home</a>
+      <a href="voting-home.html">Events</a>
       <a href="live-results.html" class="active">Live Results</a>
       <a href="verify-vote.html">Verify vote</a>
-      <a href="support.html">Support</a>
     </nav>
 
     <div class="headerRight">
-      <label class="searchBox">
-        <span>⌕</span>
-        <input type="search" placeholder="Search events...">
-      </label>
-      <button class="getStartedBtn" type="button" onclick="window.location.href='index.html'">Get Started</button>
+      <a class="sellBtn" href="event-registration.html">Sell tickets</a>
     </div>
+  </div>
+
+  <div class="mobileMenu" id="mobileMenu">
+    <a href="index.html">Home</a>
+    <a href="voting-home.html">Events</a>
+    <a href="verify-vote.html">Verify vote</a>
+    <a href="support.html">Support</a>
   </div>
 </header>
 
 <main class="pageWrap">
 
   <div class="breadcrumb">
-    <a href="index.html">Home</a> / <span class="current">Live Results</span>
+    <a href="index.html">Home</a> / <a href="live-results.html">Live Results</a> / <span class="current" id="breadcrumbEvent">Event</span>
   </div>
 
-  <span class="eyebrow">Results Dashboard</span>
-  <h1 class="pageTitle">Live Results</h1>
-  <p class="pageSub">Current standings for every nominee across all categories.</p>
+  <div id="loadingState" class="stateBox">Loading event...</div>
+  <div id="notFoundState" class="stateBox hidden">We couldn't find this event. It may have been removed or the link is incorrect.</div>
 
-  <div class="selectorRow">
-    <div class="selectorField">
-      <label for="categorySelect">Category</label>
-      <select id="categorySelect"></select>
+  <div id="eventContent" class="hidden">
+
+    <span class="eyebrow" id="eventEyebrow">Event</span>
+    <h1 class="pageTitle" id="pageTitle">—</h1>
+    <p class="pageSub" id="pageSub"></p>
+
+    <div class="ticketCta hidden" id="ticketCta">
+      <div class="left">
+        <b id="ticketCtaTitle">Tickets available</b>
+        <span id="ticketCtaSub">—</span>
+      </div>
+      <a class="buyBtn" id="ticketCtaBtn" href="#">Buy Ticket</a>
     </div>
-  </div>
 
-  <div class="dashCard">
-    <div class="dashLeft">
-      <div class="dashEyebrow" id="dashEventName">HOTSA Dinner and Awards Night</div>
-      <h2>Live Standings</h2>
-    </div>
-
-    <div class="dashRight">
-      <div class="statBlock">
-        <b id="dashNomineeCount">0</b>
-        <span>Nominees</span>
+    <div id="votingSection" class="hidden">
+      <div class="selectorRow">
+        <div class="selectorField">
+          <label for="categorySelect">Category</label>
+          <select id="categorySelect"></select>
+        </div>
       </div>
 
-      <button class="refreshBtn" id="refreshBtn" type="button">
-        <span class="spin">↻</span>
-        <span>Refresh results</span>
-      </button>
+      <div class="dashCard">
+        <div class="dashLeft">
+          <div class="dashEyebrow">Live Standings</div>
+          <h2 id="dashEventName">—</h2>
+        </div>
+
+        <div class="dashRight">
+          <div class="statBlock">
+            <b id="dashNomineeCount">0</b>
+            <span>Nominees</span>
+          </div>
+
+          <button class="refreshBtn" id="refreshBtn" type="button">
+            <span class="spin">↻</span>
+            <span>Refresh results</span>
+          </button>
+        </div>
+      </div>
+
+      <div id="emptyState" class="stateBox hidden">No nominees found for this category yet.</div>
+
+      <div class="resultsList" id="resultsList"></div>
     </div>
+
   </div>
 
-  <div id="emptyState" class="stateBox hidden">No nominees found.</div>
-
-  <div class="resultsList" id="resultsList"></div>
+  <div class="footer">
+    © <span id="y"></span> Lumina Creative Co<br>
+    Site created by <b>Lord Wilhelm</b> (0593410452)
+  </div>
 
 </main>
 
-<script>
+<script type="module">
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+const SUPABASE_URL = "https://shtzagoeuhqdthgzvmjx.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNodHphZ29ldWhxZHRoZ3p2bWp4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUxMDYyNjMsImV4cCI6MjEwMDY4MjI2M30.ChyQ1hAxsyitWRVXgcMOa8ztuI6WB3oKUhciXgguYyk";
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+function toCamel(row){
+  const out = {};
+  for(const key in row){
+    out[key.replace(/_([a-z0-9])/g, (_, c) => c.toUpperCase())] = row[key];
+  }
+  return out;
+}
+
+document.getElementById("y").textContent = new Date().getFullYear();
+
+const menuBtn = document.getElementById("menuBtn");
+const mobileMenu = document.getElementById("mobileMenu");
+menuBtn.addEventListener("click", () => mobileMenu.classList.toggle("show"));
+
 const RANK_COLORS = ["#d64541", "#e8935a", "#f0cf5f", "#161311", "#d64541", "#e8935a", "#f0cf5f", "#161311"];
+const ALL_VALUE = "all";
 
-const RESULTS = [
-  { name: "Lordia",                 category: "Face of Hotsa (Female)",              votes: 2020, pct: 51.0 },
-  { name: "Alexia",                 category: "Face of Hotsa (Female)",              votes: 1800, pct: 45.5 },
-  { name: "Menwubeh Melody Akesi",  category: "Student Entrepreneur of the Year",     votes: 490,  pct: 62.6 },
-  { name: "Jessica Pene-Ackah",     category: "Lady of the Year",                     votes: 357,  pct: 57.6 },
-  { name: "Hannel",                 category: "Most Fashionable Student",             votes: 303,  pct: 45.0 },
-  { name: "Odo Flor",               category: "Most Fashionable Student",             votes: 288,  pct: 42.9 },
-  { name: "Sally",                  category: "Student Entrepreneur of the Year",     votes: 285,  pct: 36.5 },
-  { name: "Ms Kabuki Dede",         category: "Most Approachable Student",            votes: 279,  pct: 100.0 },
-  { name: "Abdul-Rahman Madinatu",  category: "Lady of the Year",                     votes: 259,  pct: 41.7 },
-  { name: "Florence Otoo",          category: "Most Influential Student",             votes: 253,  pct: 94.4 },
-  { name: "Christabel",             category: "Outstanding Finalist",                 votes: 233,  pct: 100.0 },
-  { name: "Eugene",                 category: "Gentleman of the Year",                votes: 233,  pct: 99.0 },
-  { name: "Iris",                   category: "Most Famous Students",                 votes: 230,  pct: 100.0 },
-  { name: "Maud",                   category: "Outstanding First Year Student",       votes: 210,  pct: 100.0 },
-  { name: "Kathuana and Hagar",     category: "Besties of the Year",                  votes: 205,  pct: 100.0 },
-  { name: "Maud Mayne",             category: "Outstanding Second Year Student",      votes: 192,  pct: 100.0 },
-  { name: "Brilla",                 category: "Student Leader of the Year",           votes: 145,  pct: 50.2 },
-  { name: "Innocent",               category: "Student Leader of the Year",           votes: 143,  pct: 49.8 },
-  { name: "Edna",                   category: "Most Fashionable Student",             votes: 81,   pct: 12.1 },
-  { name: "Miss Purple",            category: "Outstanding Executive of the Year",    votes: 150,  pct: 100.0 },
-  { name: "Nana Yaa",               category: "Face of Hotsa (Female)",               votes: 64,   pct: 3.5 },
-  { name: "Eugene and Miimi",       category: "Best Couple of the Year",              votes: 26,   pct: 100.0 },
-  { name: "Chinedum",               category: "Most Influential Student",             votes: 15,   pct: 5.6 },
-  { name: "Eugene",                 category: "Face of Hotsa (Male)",                 votes: 14,   pct: 100.0 },
-  { name: "Kekeli",                 category: "Student Entrepreneur of the Year",     votes: 15,   pct: 0.9 },
-  { name: "Lordia",                 category: "Outstanding Third Year Student",       votes: 12,   pct: 100.0 },
-  { name: "Florence Otoo",          category: "Lady of the Year",                     votes: 10,   pct: 0.8 },
-  { name: "Benjamin Afful Mensah",  category: "Gentleman of the Year",                votes: 5,    pct: 1.0 },
-  { name: "Yawson Frank Kelvin",    category: "Outstanding First Year Student",       votes: 0,    pct: 0.0 },
-  { name: "Sally n Krys",           category: "Besties of the Year",                  votes: 0,    pct: 0.0 },
-  { name: "Francis Pwavwe",         category: "Student Entrepreneur of the Year",     votes: 0,    pct: 0.0 },
-  { name: "Nana Yaa",               category: "Outstanding Third Year Student",       votes: 0,    pct: 0.0 },
-  { name: "Emmanuel & Jessica",     category: "Best Couple of the Year",              votes: 0,    pct: 0.0 },
-  { name: "Francis",                category: "Outstanding Finalist",                 votes: 0,    pct: 0.0 },
-  { name: "Krys",                   category: "Most Fashionable Student",             votes: 0,    pct: 0.0 },
-  { name: "Emma and Mimi",          category: "Best Couple of the Year",              votes: 0,    pct: 0.0 },
-  { name: "Christabel",             category: "Most Approachable Student",            votes: 0,    pct: 0.0 },
-  { name: "Oteng Peter",            category: "Most Fashionable Student",             votes: 0,    pct: 0.0 },
-  { name: "Cassie",                 category: "Most Active Personality of the Year",  votes: 0,    pct: 0.0 },
-  { name: "Chinedum",               category: "Outstanding First Year Student",       votes: 0,    pct: 0.0 },
-  { name: "Innocent",               category: "Student Leader of the Year",           votes: 0,    pct: 0.0 },
-  { name: "Ella",                   category: "Most Famous Students",                 votes: 0,    pct: 0.0 },
-  { name: "Samuel Arthur",          category: "Student Leader of the Year",           votes: 0,    pct: 0.0 },
-  { name: "Cassie",                 category: "Most Active Personality of the Year",  votes: 0,    pct: 0.0 },
-  { name: "TrigmanOfficial",        category: "Outstanding Executive of the Year",    votes: 0,    pct: 0.0 }
-];
+const loadingState = document.getElementById("loadingState");
+const notFoundState = document.getElementById("notFoundState");
+const eventContent = document.getElementById("eventContent");
 
+const breadcrumbEvent = document.getElementById("breadcrumbEvent");
+const eventEyebrow = document.getElementById("eventEyebrow");
+const pageTitle = document.getElementById("pageTitle");
+const pageSub = document.getElementById("pageSub");
+
+const ticketCta = document.getElementById("ticketCta");
+const ticketCtaTitle = document.getElementById("ticketCtaTitle");
+const ticketCtaSub = document.getElementById("ticketCtaSub");
+const ticketCtaBtn = document.getElementById("ticketCtaBtn");
+
+const votingSection = document.getElementById("votingSection");
+const categorySelect = document.getElementById("categorySelect");
+const dashEventName = document.getElementById("dashEventName");
 const dashNomineeCount = document.getElementById("dashNomineeCount");
 const refreshBtn = document.getElementById("refreshBtn");
 const emptyState = document.getElementById("emptyState");
 const resultsList = document.getElementById("resultsList");
-const categorySelect = document.getElementById("categorySelect");
 
-const ALL_VALUE = "all";
+const params = new URLSearchParams(window.location.search);
+const eventId = params.get("eventId");
 
-function money0(n){
+let currentEvent = null;
+let contestants = [];
+
+function normalizeStatus(status){
+  const s = String(status || "").toLowerCase();
+  if(s === "active" || s === "live") return "active";
+  if(s === "upcoming") return "upcoming";
+  if(s === "paused") return "paused";
+  return "closed";
+}
+
+function prettyStatus(status){
+  const s = normalizeStatus(status);
+  if(s === "active") return "Live";
+  if(s === "upcoming") return "Upcoming";
+  if(s === "paused") return "Paused";
+  return "Closed";
+}
+
+function hasVoting(item){
+  return !!item.votingEnabled || item.eventType === "voting" || item.eventType === "voting_tickets" || !item.eventType;
+}
+
+function hasTickets(item){
+  return !!item.ticketsEnabled || item.eventType === "tickets" || item.eventType === "voting_tickets";
+}
+
+function money(n){
   return Number(n || 0).toLocaleString();
 }
 
 function populateCategorySelect(){
   const categories = [];
 
-  RESULTS.forEach(row => {
-    if(!categories.includes(row.category)) categories.push(row.category);
+  contestants.forEach(c => {
+    const cat = c.categoryName || "General";
+    if(!categories.includes(cat)) categories.push(cat);
   });
+
+  categorySelect.innerHTML = "";
 
   const allOpt = document.createElement("option");
   allOpt.value = ALL_VALUE;
@@ -564,11 +677,10 @@ function populateCategorySelect(){
 function renderResults(){
   const selectedCategory = categorySelect.value;
   const rows = selectedCategory === ALL_VALUE
-    ? RESULTS
-    : RESULTS.filter(row => row.category === selectedCategory);
+    ? contestants
+    : contestants.filter(c => (c.categoryName || "General") === selectedCategory);
 
-  dashNomineeCount.textContent = money0(rows.length);
-
+  dashNomineeCount.textContent = money(rows.length);
   resultsList.innerHTML = "";
 
   if(rows.length === 0){
@@ -578,46 +690,155 @@ function renderResults(){
 
   emptyState.classList.add("hidden");
 
-  rows.forEach((row, index) => {
-    const { name, category, votes, pct } = row;
+  // Vote share is computed within each contestant's own category, not
+  // globally — matches how nominees are actually compared against rivals.
+  const categoryTotals = {};
+  contestants.forEach(c => {
+    const cat = c.categoryName || "General";
+    categoryTotals[cat] = (categoryTotals[cat] || 0) + Number(c.votes || 0);
+  });
+
+  const sorted = [...rows].sort((a, b) => Number(b.votes || 0) - Number(a.votes || 0));
+  const canVoteNow = hasVoting(currentEvent) && normalizeStatus(currentEvent.status) === "active";
+
+  sorted.forEach((row, index) => {
+    const cat = row.categoryName || "General";
+    const catTotal = categoryTotals[cat] || 0;
+    const votes = Number(row.votes || 0);
+    const pct = catTotal > 0 ? (votes / catTotal) * 100 : 0;
+
     const color = RANK_COLORS[index % RANK_COLORS.length];
     const textColor = color === "#161311" ? "#fff" : "#161311";
 
     const rowEl = document.createElement("div");
     rowEl.className = "resultRow";
+
+    const voteBtnHtml = canVoteNow
+      ? `<a class="voteMiniBtn" href="vote-checkout.html?eventId=${currentEvent.id}&contestantId=${row.id}">Vote</a>`
+      : `<button class="voteMiniBtn" type="button" style="opacity:.6;cursor:not-allowed;" disabled>Closed</button>`;
+
     rowEl.innerHTML = `
       <div class="resultTop">
         <div class="rankBadge" style="background:${color};color:${textColor}">${index + 1}</div>
         <div class="resultName">
           <div class="resultNameTop">
-            <b>${name}</b>
-            <span class="categoryTag">${category}</span>
+            <b>${row.fullName || "Unnamed"}</b>
+            <span class="categoryTag">${cat}</span>
           </div>
+          ${row.contestantNumber ? `<span class="numTag">No. ${row.contestantNumber}</span>` : ""}
         </div>
         <div class="resultStats">
           <b>${pct.toFixed(1)}%</b>
-          <span>${money0(votes)} votes</span>
+          <span>${money(votes)} votes</span>
         </div>
-        <button class="voteMiniBtn" type="button">Vote</button>
+        ${voteBtnHtml}
       </div>
       <div class="barTrack">
         <div class="barFill" style="width:${pct}%;background:${color}"></div>
       </div>
     `;
 
-    rowEl.querySelector(".voteMiniBtn").addEventListener("click", () => {
-      alert("Voting is currently closed for this event.");
-    });
-
     resultsList.appendChild(rowEl);
   });
 }
 
-refreshBtn.addEventListener("click", renderResults);
+function renderEventContent(){
+  const item = currentEvent;
+
+  document.title = `${item.eventName || "Event"} | Lumina Vote`;
+  breadcrumbEvent.textContent = item.eventName || "Event";
+  pageTitle.textContent = item.eventName || "Untitled Event";
+  eventEyebrow.textContent = prettyStatus(item.status);
+
+  const subParts = [];
+  if(item.organizerName) subParts.push(item.organizerName);
+  if(item.location) subParts.push(item.location);
+  pageSub.textContent = subParts.join(" · ") || item.description || "";
+
+  if(hasTickets(item)){
+    ticketCta.classList.remove("hidden");
+
+    const available = Math.max(Number(item.ticketQuantity || 0) - Number(item.ticketsSold || 0), 0);
+    ticketCtaTitle.textContent = `Tickets from GHS ${Number(item.ticketPrice || 0).toFixed(2)}`;
+    ticketCtaSub.textContent = normalizeStatus(item.status) === "active"
+      ? `${available.toLocaleString()} ticket(s) available`
+      : "Ticket sales are currently closed for this event";
+
+    if(normalizeStatus(item.status) === "active" && available > 0){
+      ticketCtaBtn.href = `ticket-checkout.html?eventId=${item.id}`;
+      ticketCtaBtn.textContent = "Buy Ticket";
+      ticketCtaBtn.style.pointerEvents = "auto";
+      ticketCtaBtn.style.opacity = "1";
+    }else{
+      ticketCtaBtn.href = "#";
+      ticketCtaBtn.textContent = "Sold Out / Closed";
+      ticketCtaBtn.style.pointerEvents = "none";
+      ticketCtaBtn.style.opacity = "0.6";
+    }
+  }else{
+    ticketCta.classList.add("hidden");
+  }
+
+  if(hasVoting(item)){
+    votingSection.classList.remove("hidden");
+    dashEventName.textContent = item.eventName || "—";
+    populateCategorySelect();
+    renderResults();
+  }else{
+    votingSection.classList.add("hidden");
+  }
+}
+
+async function loadEvent(){
+  if(!eventId){
+    loadingState.classList.add("hidden");
+    notFoundState.classList.remove("hidden");
+    return;
+  }
+
+  const { data: eventRow, error: eventError } = await supabase
+    .from("events").select("*").eq("id", eventId).maybeSingle();
+
+  if(eventError || !eventRow){
+    loadingState.classList.add("hidden");
+    notFoundState.classList.remove("hidden");
+    return;
+  }
+
+  currentEvent = toCamel(eventRow);
+
+  const { data: contestantRows } = await supabase
+    .from("event_contestants").select("*").eq("event_id", eventId);
+
+  contestants = (contestantRows || []).map(toCamel);
+
+  loadingState.classList.add("hidden");
+  eventContent.classList.remove("hidden");
+
+  renderEventContent();
+}
+
+refreshBtn.addEventListener("click", async () => {
+  refreshBtn.classList.add("loading");
+  await loadEvent();
+  refreshBtn.classList.remove("loading");
+});
+
 categorySelect.addEventListener("change", renderResults);
 
-populateCategorySelect();
-renderResults();
+loadEvent();
+
+if(eventId){
+  supabase
+    .channel(`public:event_contestants:live-event-details:${eventId}`)
+    .on("postgres_changes", { event: "*", schema: "public", table: "event_contestants", filter: `event_id=eq.${eventId}` }, loadEvent)
+    .subscribe();
+
+  supabase
+    .channel(`public:events:live-event-details:${eventId}`)
+    .on("postgres_changes", { event: "*", schema: "public", table: "events", filter: `id=eq.${eventId}` }, loadEvent)
+    .subscribe();
+}
 </script>
 
 </body>
