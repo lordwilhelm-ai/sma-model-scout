@@ -1,14 +1,7 @@
-import admin from 'firebase-admin';
-const fetch = globalThis.fetch;
+import { createClient } from '@supabase/supabase-js';
 
-// Initialize Firebase
-if (!admin.apps.length) {
-  const serviceAccount = JSON.parse(
-    Buffer.from(process.env.FIREBASE_SERVICE_ACCOUNT_BASE64, 'base64').toString('utf8')
-  );
-  admin.initializeApp({ credential: admin.credential.cert(serviceAccount) });
-}
-const db = admin.firestore();
+const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
+const fetch = globalThis.fetch;
 
 function formatPhone(phone) {
   // Convert 0551234567 or +233551234567 to 233551234567
@@ -20,17 +13,17 @@ function formatPhone(phone) {
 
 export default async function handler(req, res) {
   try {
-    if (req.method!== 'POST') return res.status(405).end();
+    if (req.method !== 'POST') return res.status(405).end();
 
     const { sessionId, serviceCode, phoneNumber, text } = req.body;
     let response = '';
 
     const clientId = process.env.HUBTEL_CLIENT_ID;
     const clientSecret = process.env.HUBTEL_CLIENT_SECRET;
-    const merchantAccountNumber = String(process.env.HUBTEL_MERCHANT_ACCOUNT || '').trim(); // FIX 1
+    const merchantAccountNumber = String(process.env.HUBTEL_MERCHANT_ACCOUNT || '').trim();
     const callbackUrl = process.env.HUBTEL_CALLBACK_URL;
 
-    if (!clientId ||!clientSecret ||!merchantAccountNumber) {
+    if (!clientId || !clientSecret || !merchantAccountNumber) {
       console.error('Missing Hubtel env vars');
       response = `END System error. Please try later.`;
       res.setHeader('Content-Type', 'text/plain');
@@ -50,31 +43,41 @@ export default async function handler(req, res) {
       const parts = text.split('*');
       const contestantCode = parts[1];
       const amountChoice = parts[2];
-      const amount = amountChoice === '1'? 1 : amountChoice === '2'? 5 : 10;
+      const amount = amountChoice === '1' ? 1 : amountChoice === '2' ? 5 : 10;
 
-      // Save pending vote to Firebase
-      await db.collection('pending_votes').doc(sessionId).set({
-        phoneNumber,
-        contestantCode,
+      // Save pending vote, keyed by USSD session. contestantCode is a short
+      // nominee_code with no event context — resolved to an actual
+      // event_contestants row by process_hubtel_payment once Hubtel confirms.
+      const { error: pendingError } = await supabase.from('pending_transactions').insert({
+        key: sessionId,
+        type: 'ussd_vote',
+        contestant_code: contestantCode,
+        phone_number: phoneNumber,
         amount,
-        status: 'pending',
-        createdAt: admin.firestore.FieldValue.serverTimestamp()
+        status: 'pending'
       });
+
+      if (pendingError) {
+        console.error('pending_transactions insert error:', pendingError);
+        response = `END System error. Please try again.`;
+        res.setHeader('Content-Type', 'text/plain');
+        return res.status(200).send(response);
+      }
 
       // Call Hubtel to charge MoMo
       const auth = Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
 
       const hubtelPayload = {
-        CustomerPhoneNumber: formatPhone(phoneNumber), // FIX 3: 233XXXXXXXXX
+        CustomerPhoneNumber: formatPhone(phoneNumber),
         CustomerName: 'Lumina Voter',
         Amount: Number(amount.toFixed(2)),
         Description: `Vote for ${contestantCode}`,
-        MerchantAccountNumber: merchantAccountNumber, // FIX 1
+        MerchantAccountNumber: merchantAccountNumber,
         CallbackUrl: callbackUrl,
         ClientReference: `ussd_vote_${sessionId}`
       };
 
-      const hubtelRes = await fetch('https://payproxyapi.hubtel.com/items/v1/receive/mobilemoney', { // FIX 2
+      const hubtelRes = await fetch('https://payproxyapi.hubtel.com/items/v1/receive/mobilemoney', {
         method: 'POST',
         headers: {
           'Authorization': `Basic ${auth}`,

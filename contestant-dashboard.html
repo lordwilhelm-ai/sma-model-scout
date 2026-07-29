@@ -23,11 +23,11 @@ margin-top:20px;
 }
 
 .statCard{
-background:rgba(255,255,255,0.05);
+background:#ffffff;
 border:1px solid var(--stroke);
 border-radius:20px;
 padding:20px;
-box-shadow:0 10px 24px rgba(15,23,42,0.06);
+box-shadow:0 10px 24px rgba(60,45,10,0.06);
 }
 
 .statLabel{
@@ -54,11 +54,11 @@ margin-top:24px;
 }
 
 .panel{
-background:rgba(255,255,255,0.05);
+background:#ffffff;
 border:1px solid var(--stroke);
 border-radius:22px;
 padding:20px;
-box-shadow:0 10px 24px rgba(15,23,42,0.06);
+box-shadow:0 10px 24px rgba(60,45,10,0.06);
 }
 
 .profileCard{
@@ -72,8 +72,8 @@ object-fit:cover;
 border-radius:24px;
 margin:0 auto 16px;
 border:1px solid var(--stroke);
-box-shadow:0 12px 24px rgba(15,23,42,0.08);
-background:#dbeafe;
+box-shadow:0 12px 24px rgba(60,45,10,0.08);
+background:#f2ead9;
 }
 
 .rankBadge{
@@ -83,9 +83,9 @@ padding:8px 12px;
 border-radius:999px;
 font-size:13px;
 font-weight:800;
-background:#eef4ff;
-border:1px solid #d6e4ff;
-color:var(--accent-dark);
+background:#f6e6c8;
+border:1px solid #ece2cd;
+color:#8a5b12;
 margin-bottom:12px;
 }
 
@@ -96,15 +96,14 @@ margin-top:18px;
 .progressBar{
 width:100%;
 height:14px;
-background:#eaf0fb;
+background:#f2ead9;
 border-radius:999px;
 overflow:hidden;
 }
 
 .progressFill{
 height:100%;
-width:72%;
-background:linear-gradient(135deg,#2563eb,#1d4ed8);
+background:linear-gradient(135deg,#d4af37,#b88718);
 border-radius:999px;
 }
 
@@ -121,7 +120,7 @@ align-items:center;
 padding:14px;
 border:1px solid var(--stroke);
 border-radius:16px;
-background:#fbfdff;
+background:#fafafa;
 }
 
 @media(max-width:700px){
@@ -142,7 +141,7 @@ margin-top:14px;
 padding:14px;
 border:1px solid var(--stroke);
 border-radius:16px;
-background:#fbfdff;
+background:#fafafa;
 }
 
 .bigNumber{
@@ -151,6 +150,14 @@ font-weight:900;
 color:var(--accent-dark);
 margin:8px 0;
 }
+
+.loginBox{
+max-width:480px;
+margin:40px auto;
+text-align:center;
+}
+
+.hidden{display:none !important}
 </style>
 </head>
 <body>
@@ -159,16 +166,26 @@ margin:8px 0;
 <div class="brand">Lumina <span>Contestant Dashboard</span></div>
 
 <div style="display:flex;gap:10px;">
-<a class="btn small ghost" href="event-details.html">Event Page</a>
-<a class="btn small" href="voting-home.html">Voting Home</a>
+<a class="btn small ghost" href="voting-home.html">Voting Home</a>
+<button class="btn small" id="logoutBtn" type="button" style="display:none;">Logout</button>
 </div>
 </header>
 
 <main class="container fade-in">
 
+<section class="card loginBox" id="loginBox" style="display:none;">
+<h1 style="margin-bottom:8px;">Contestant login required</h1>
+<p class="muted">Log in to your contestant account to view your votes, rank, and event details.</p>
+<a class="btn" href="contestant-login.html">Go to Contestant Login</a>
+</section>
+
+<div id="loadingBox" class="card" style="text-align:center;">Loading your dashboard...</div>
+
+<div id="dashboardContent" class="hidden">
+
 <section class="card hero-glow">
 <div class="section-tag">CONTESTANT PANEL</div>
-<h1 style="margin-bottom:8px;">Contestant 1 — Ama Mensah</h1>
+<h1 id="welcomeTitle" style="margin-bottom:8px;">Your Dashboard</h1>
 <p class="muted" style="margin:0;">
 View your votes, rank, event details, and overall progress.
 </p>
@@ -177,57 +194,57 @@ View your votes, rank, event details, and overall progress.
 <section class="topStats">
 <div class="statCard">
 <div class="statLabel">Total Votes</div>
-<div class="statValue">1,240</div>
+<div class="statValue" id="statVotes">—</div>
 </div>
 
 <div class="statCard">
 <div class="statLabel">Current Rank</div>
-<div class="statValue">#1</div>
+<div class="statValue" id="statRank">—</div>
 </div>
 
 <div class="statCard">
 <div class="statLabel">Event Status</div>
-<div class="statValue" style="font-size:20px;">Active</div>
+<div class="statValue" id="statStatus" style="font-size:20px;">—</div>
 </div>
 
 <div class="statCard">
 <div class="statLabel">Vote Price</div>
-<div class="statValue">GHS 1</div>
+<div class="statValue" id="statVotePrice">—</div>
 </div>
 </section>
 
 <section class="dashGrid">
 
 <div class="panel profileCard">
-<img class="profileImg" src="images/model1.jpg" alt="Contestant Photo">
+<img class="profileImg" id="profileImg" src="" alt="Contestant Photo" style="display:none;">
 
-<div class="rankBadge">Leaderboard Rank #1</div>
+<div class="rankBadge" id="rankBadge">Rank —</div>
 
-<h2 style="margin:6px 0 4px;">Ama Mensah</h2>
-<p class="muted" style="margin:0;">Face of SMA 2026 Contestant</p>
+<h2 id="profileName" style="margin:6px 0 4px;">—</h2>
+<p class="muted" id="profileSub" style="margin:0;">—</p>
 
-<div class="progressWrap">
-<p class="small" style="margin-bottom:8px;">Progress compared to current target</p>
+<div class="progressWrap" id="progressWrap" style="display:none;">
+<p class="small" style="margin-bottom:8px;">Votes compared to the category leader</p>
 <div class="progressBar">
-<div class="progressFill"></div>
+<div class="progressFill" id="progressFill" style="width:0%;"></div>
 </div>
-<p class="small" style="margin-top:8px;">72% of current target reached</p>
+<p class="small" id="progressLabel" style="margin-top:8px;">—</p>
 </div>
 
 <div class="infoList">
 <div class="infoItem">
 <div class="small">Contestant Number</div>
-<div style="font-weight:900;">1</div>
+<div style="font-weight:900;" id="infoNumber">—</div>
 </div>
 
 <div class="infoItem">
 <div class="small">Event</div>
-<div style="font-weight:900;">Face of SMA 2026</div>
+<div style="font-weight:900;" id="infoEvent">—</div>
 </div>
 
 <div class="infoItem">
 <div class="small">Voting Ends</div>
-<div style="font-weight:900;">30 March 2026</div>
+<div style="font-weight:900;" id="infoEndDate">—</div>
 </div>
 </div>
 </div>
@@ -235,52 +252,20 @@ View your votes, rank, event details, and overall progress.
 <div class="panel">
 <h2>Your Vote Summary</h2>
 
-<div class="notice">
-<b>Good news:</b><br>
-You are currently leading the event leaderboard.
+<div class="notice" id="summaryNotice">
+<b>Status:</b><br>
+<span id="summaryNoticeText">Loading your standing...</span>
 </div>
 
-<div class="bigNumber">1,240 votes</div>
+<div class="bigNumber" id="summaryVotes">0 votes</div>
 <p class="muted">This is your current total vote count.</p>
 
 <hr>
 
-<h2 style="margin-top:18px;">Recent Vote Activity</h2>
+<h2 style="margin-top:18px;">Category Leaderboard</h2>
 
-<div class="voteHistory">
-
-<div class="voteRow">
-<div>
-<div style="font-weight:800;">+120 votes added</div>
-<div class="small">Today, 10:42 AM</div>
-</div>
-<div class="small">MoMo confirmed</div>
-</div>
-
-<div class="voteRow">
-<div>
-<div style="font-weight:800;">+80 votes added</div>
-<div class="small">Yesterday, 7:15 PM</div>
-</div>
-<div class="small">MoMo confirmed</div>
-</div>
-
-<div class="voteRow">
-<div>
-<div style="font-weight:800;">+45 votes added</div>
-<div class="small">Yesterday, 1:03 PM</div>
-</div>
-<div class="small">MoMo confirmed</div>
-</div>
-
-<div class="voteRow">
-<div>
-<div style="font-weight:800;">+30 votes added</div>
-<div class="small">2 days ago</div>
-</div>
-<div class="small">MoMo confirmed</div>
-</div>
-
+<div class="voteHistory" id="leaderboardList">
+<div class="voteRow"><div>Loading...</div></div>
 </div>
 
 <hr>
@@ -291,12 +276,12 @@ You are currently leading the event leaderboard.
 
 <div class="infoItem">
 <div class="small">Event Organizer</div>
-<div style="font-weight:900;">Sunset Modeling Agency</div>
+<div style="font-weight:900;" id="notesOrganizer">—</div>
 </div>
 
 <div class="infoItem">
 <div class="small">Voting Status</div>
-<div style="font-weight:900;">Open</div>
+<div style="font-weight:900;" id="notesStatus">—</div>
 </div>
 
 <div class="infoItem">
@@ -309,6 +294,17 @@ You are currently leading the event leaderboard.
 
 </section>
 
+</div>
+
+<div id="noMatchBox" class="card hidden">
+<h1 style="margin-bottom:8px;">We couldn't find your contestant record</h1>
+<p class="muted">
+Your login is set up for event "<b id="noMatchEvent">—</b>", contestant number
+<b id="noMatchNumber">—</b>, but we couldn't find a matching entry among registered
+contestants. Contact your event organizer to confirm your event name and contestant number.
+</p>
+</div>
+
 <div class="footer">
 © <span id="y"></span> Lumina Creative Co<br>
 Site created by <b>Lord Wilhelm</b> (0593410452)
@@ -316,8 +312,199 @@ Site created by <b>Lord Wilhelm</b> (0593410452)
 
 </main>
 
-<script>
+<script type="module">
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+const SUPABASE_URL = "https://shtzagoeuhqdthgzvmjx.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNodHphZ29ldWhxZHRoZ3p2bWp4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUxMDYyNjMsImV4cCI6MjEwMDY4MjI2M30.ChyQ1hAxsyitWRVXgcMOa8ztuI6WB3oKUhciXgguYyk";
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+function toCamel(row){
+  const out = {};
+  for(const key in row){
+    out[key.replace(/_([a-z0-9])/g, (_, c) => c.toUpperCase())] = row[key];
+  }
+  return out;
+}
+
 document.getElementById("y").textContent = new Date().getFullYear();
+
+const loginBox = document.getElementById("loginBox");
+const loadingBox = document.getElementById("loadingBox");
+const dashboardContent = document.getElementById("dashboardContent");
+const noMatchBox = document.getElementById("noMatchBox");
+const logoutBtn = document.getElementById("logoutBtn");
+
+function normalizeStatus(status){
+  const s = String(status || "").toLowerCase();
+  if(s === "active" || s === "live") return "active";
+  if(s === "upcoming") return "upcoming";
+  if(s === "paused") return "paused";
+  return "closed";
+}
+
+function prettyStatus(status){
+  const s = normalizeStatus(status);
+  if(s === "active") return "Live";
+  if(s === "upcoming") return "Upcoming";
+  if(s === "paused") return "Paused";
+  return "Closed";
+}
+
+function money(n){
+  return "GHS " + Number(n || 0).toFixed(2);
+}
+
+async function loadDashboard(user){
+  const { data: profileData, error: profileError } = await supabase
+    .from("contestants").select("*").eq("id", user.id).maybeSingle();
+
+  if(profileError || !profileData){
+    loadingBox.classList.add("hidden");
+    noMatchBox.classList.remove("hidden");
+    document.getElementById("noMatchEvent").textContent = "—";
+    document.getElementById("noMatchNumber").textContent = "—";
+    return;
+  }
+
+  const profile = toCamel(profileData);
+
+  // Best-effort match: contestant signup only stores a free-text event name
+  // and contestant number, not a real link to an event_contestants row.
+  const { data: events } = await supabase
+    .from("events").select("*").ilike("event_name", profile.eventName || "");
+
+  const event = (events || [])[0] ? toCamel(events[0]) : null;
+
+  let matched = null;
+  let categoryPeers = [];
+
+  if(event){
+    const { data: contestants } = await supabase
+      .from("event_contestants").select("*").eq("event_id", event.id);
+
+    const allContestants = (contestants || []).map(toCamel);
+    matched = allContestants.find(c => String(c.contestantNumber || "").trim() === String(profile.contestantNumber || "").trim()) || null;
+
+    if(matched){
+      categoryPeers = allContestants
+        .filter(c => matched.categoryId ? c.categoryId === matched.categoryId : true)
+        .sort((a, b) => Number(b.votes || 0) - Number(a.votes || 0));
+    }
+  }
+
+  loadingBox.classList.add("hidden");
+
+  if(!event || !matched){
+    noMatchBox.classList.remove("hidden");
+    document.getElementById("noMatchEvent").textContent = profile.eventName || "—";
+    document.getElementById("noMatchNumber").textContent = profile.contestantNumber || "—";
+    return;
+  }
+
+  dashboardContent.classList.remove("hidden");
+
+  const rankIndex = categoryPeers.findIndex(c => c.id === matched.id);
+  const rank = rankIndex >= 0 ? rankIndex + 1 : null;
+  const topVotes = categoryPeers.length > 0 ? Number(categoryPeers[0].votes || 0) : 0;
+  const myVotes = Number(matched.votes || 0);
+
+  document.getElementById("welcomeTitle").textContent = `Contestant ${matched.contestantNumber || ""} — ${matched.fullName || profile.fullName}`;
+
+  document.getElementById("statVotes").textContent = myVotes.toLocaleString();
+  document.getElementById("statRank").textContent = rank ? `#${rank}` : "—";
+  document.getElementById("statStatus").textContent = prettyStatus(event.status);
+  document.getElementById("statVotePrice").textContent = money(event.votePrice);
+
+  if(matched.photoUrl){
+    const img = document.getElementById("profileImg");
+    img.src = matched.photoUrl;
+    img.style.display = "block";
+  }
+
+  document.getElementById("rankBadge").textContent = rank ? `Leaderboard Rank #${rank}` : "Rank unavailable";
+  document.getElementById("profileName").textContent = matched.fullName || profile.fullName || "—";
+  document.getElementById("profileSub").textContent = `${event.eventName}${matched.categoryName ? " — " + matched.categoryName : ""}`;
+
+  if(topVotes > 0){
+    const pct = Math.min(100, Math.round((myVotes / topVotes) * 100));
+    document.getElementById("progressWrap").style.display = "block";
+    document.getElementById("progressFill").style.width = pct + "%";
+    document.getElementById("progressLabel").textContent = rank === 1
+      ? "You currently have the most votes in your category."
+      : `${pct}% of the category leader's votes (${topVotes.toLocaleString()}).`;
+  }
+
+  document.getElementById("infoNumber").textContent = matched.contestantNumber || "—";
+  document.getElementById("infoEvent").textContent = event.eventName || "—";
+  document.getElementById("infoEndDate").textContent = event.endDate || "—";
+
+  const noticeText = document.getElementById("summaryNoticeText");
+  if(rank === 1){
+    noticeText.textContent = "You are currently leading your category.";
+  }else if(rank){
+    noticeText.textContent = `You are currently #${rank} of ${categoryPeers.length} in your category.`;
+  }else{
+    noticeText.textContent = "Standing unavailable right now.";
+  }
+
+  document.getElementById("summaryVotes").textContent = `${myVotes.toLocaleString()} votes`;
+
+  const leaderboardList = document.getElementById("leaderboardList");
+  leaderboardList.innerHTML = "";
+
+  categoryPeers.slice(0, 5).forEach((c, index) => {
+    const row = document.createElement("div");
+    row.className = "voteRow";
+    const isMe = c.id === matched.id;
+
+    row.innerHTML = `
+      <div>
+        <div style="font-weight:800;">#${index + 1} ${c.fullName || "Unnamed"}${isMe ? " (You)" : ""}</div>
+        <div class="small">${c.categoryName || event.eventName}</div>
+      </div>
+      <div class="small">${Number(c.votes || 0).toLocaleString()} votes</div>
+    `;
+
+    leaderboardList.appendChild(row);
+  });
+
+  if(categoryPeers.length === 0){
+    leaderboardList.innerHTML = `<div class="voteRow"><div>No other contestants found yet.</div></div>`;
+  }
+
+  document.getElementById("notesOrganizer").textContent = event.organizerName || "—";
+  document.getElementById("notesStatus").textContent = prettyStatus(event.status);
+}
+
+async function logout(){
+  await supabase.auth.signOut();
+  window.location.reload();
+}
+
+logoutBtn.addEventListener("click", logout);
+
+supabase.auth.onAuthStateChange(async (authEvent, session) => {
+  const user = session?.user;
+
+  if(!user){
+    loadingBox.classList.add("hidden");
+    loginBox.style.display = "block";
+    logoutBtn.style.display = "none";
+    return;
+  }
+
+  loginBox.style.display = "none";
+  logoutBtn.style.display = "inline-flex";
+
+  try{
+    await loadDashboard(user);
+  }catch(error){
+    console.error(error);
+    loadingBox.textContent = "Could not load your dashboard. Try again.";
+  }
+});
 </script>
 
 </body>

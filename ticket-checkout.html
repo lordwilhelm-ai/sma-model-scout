@@ -13,10 +13,8 @@ html{scroll-behavior:smooth}
 body{
   margin:0;
   overflow-x:hidden;
-  background: radial-gradient(circle at top left, rgba(37,99,235,0.22), transparent 26%),
-              radial-gradient(circle at top right, rgba(212,175,55,0.20), transparent 18%),
-              linear-gradient(180deg, #100a06 0%, #271912 100%);
-  color:#f7ebd9;
+  background:#faf7f0;
+  color:#161311;
   font-family:Arial, Helvetica, sans-serif;
 }
 
@@ -26,8 +24,9 @@ body{
   position:sticky;
   top:0;
   z-index:100;
-  background:linear-gradient(135deg, #d4af37, #b88718);
-  color:#f7ebd9;
+  background:#ffffff;
+  color:#161311;
+  border-bottom:1px solid #eee4d3;
 }
 
 .smartHeaderInner{
@@ -48,7 +47,7 @@ body{
 .menuIcon{
   border:0;
   background:transparent;
-  color:#f7ebd9;
+  color:#161311;
   cursor:pointer;
   padding:0;
   display:grid;
@@ -58,7 +57,7 @@ body{
 }
 
 .logoLink{
-  color:#f7ebd9;
+  color:#161311;
   text-decoration:none;
   display:flex;
   align-items:center;
@@ -72,7 +71,7 @@ body{
   width:38px;
   height:38px;
   border-radius:50%;
-  background:rgba(255,255,255,0.05);
+  background:#f6f0e2;
   display:grid;
   place-items:center;
   position:relative;
@@ -92,7 +91,7 @@ body{
 .sellBtn{
   border:0;
   background:linear-gradient(135deg, #d4af37, #b88718);
-  color:#f7ebd9;
+  color:#fff;
   padding:13px 18px;
   border-radius:999px;
   font-weight:800;
@@ -104,8 +103,8 @@ body{
 .mobileMenu{
   display:none;
   padding:14px 18px 18px;
-  background:rgba(16,10,6,0.96);
-  border-top:1px solid rgba(212,175,55,0.22);
+  background:#ffffff;
+  border-top:1px solid #eee4d3;
 }
 
 .mobileMenu.show{display:block}
@@ -119,7 +118,7 @@ body{
   border-radius:14px;
   margin-top:8px;
   font-weight:800;
-  background:rgba(255,255,255,0.05);
+  background:#f6f0e2;
   color:#0b4bea;
 }
 
@@ -162,7 +161,7 @@ body{
   display:flex;
   align-items:center;
   gap:8px;
-  color:#d7c07a;
+  color:#6b6156;
   font-size:14px;
   margin-bottom:20px;
 }
@@ -281,11 +280,11 @@ body{
 
 /* DETAILS */
 .detailsCard{
-  background:rgba(255,255,255,0.05);
-  border:1px solid rgba(212,175,55,0.18);
+  background:#ffffff;
+  border:1px solid #eee4d3;
   border-radius:18px;
   padding:24px;
-  box-shadow:0 12px 28px rgba(0,0,0,.07);
+  box-shadow:0 12px 28px rgba(60,45,10,0.07);
 }
 
 .checkoutTag{
@@ -329,7 +328,7 @@ body{
   padding:8px 11px;
   border-radius:999px;
   background:#f7f7f7;
-  color:#e7d8ae;
+  color:#6b6156;
   font-size:12px;
   font-weight:800;
   border:1px solid rgba(212,175,55,0.18);
@@ -363,14 +362,14 @@ body{
 
 .infoCard span{
   display:block;
-  color:#d7c07a;
+  color:#6b6156;
   font-size:12px;
   font-weight:800;
 }
 
 .infoBig{
   margin-top:5px;
-  color:#f7ebd9;
+  color:#161311;
   font-size:21px;
   font-weight:900;
   word-break:break-word;
@@ -471,9 +470,9 @@ input:focus,select:focus{
 }
 
 .ticketTypeCard.active{
-  background:rgba(18,12,7,0.95);
-  border-color:#071321;
-  color:#f7ebd9;
+  background:#161311;
+  border-color:#161311;
+  color:#fff;
 }
 
 .ticketTypeCard b{
@@ -484,7 +483,7 @@ input:focus,select:focus{
 
 .ticketTypeCard span{
   display:block;
-  color:#d7c07a;
+  color:#6b6156;
   font-size:13px;
   line-height:1.45;
 }
@@ -537,7 +536,7 @@ input:focus,select:focus{
 .quickQtyBtn{
   border:1px solid #e2e2e2;
   background:#fafafa;
-  color:#f7ebd9;
+  color:#161311;
   border-radius:14px;
   padding:11px 8px;
   font-weight:900;
@@ -546,15 +545,15 @@ input:focus,select:focus{
 
 .quickQtyBtn:hover{
   background:linear-gradient(135deg, #d4af37, #b88718);
-  border-color:#0b4bea;
-  color:#f7ebd9;
+  border-color:#b88718;
+  color:#fff;
 }
 
 /* TOTAL */
 .totalBox{
   margin-top:16px;
-  background:rgba(18,12,7,0.95);
-  color:#f7ebd9;
+  background:#161311;
+  color:#fff;
   border-radius:18px;
   padding:20px;
 }
@@ -609,8 +608,8 @@ input:focus,select:focus{
   min-height:58px;
   border:0;
   border-radius:999px;
-  background:#000000;
-  color:#f7ebd9;
+  background:#161311;
+  color:#fff;
   font-size:17px;
   font-weight:900;
   cursor:pointer;
@@ -641,15 +640,15 @@ input:focus,select:focus{
 }
 
 .backBtn{
-  border:1px solid rgba(212,175,55,0.18);
-  color:#f7ebd9;
-  background:rgba(255,255,255,0.05);
+  border:1px solid #eee4d3;
+  color:#161311;
+  background:#f6f0e2;
 }
 
 .shareBtn{
-  border:1px solid rgba(212,175,55,0.18);
+  border:1px solid #eee4d3;
   color:#0b4bea;
-  background:rgba(255,255,255,0.05);
+  background:#f6f0e2;
   cursor:pointer;
 }
 
@@ -666,11 +665,11 @@ input:focus,select:focus{
 .loadingBox{
   width:min(1180px,calc(100% - 28px));
   margin:22px auto;
-  border:1px dashed #d7d7d7;
+  border:1px dashed #e6dabd;
   border-radius:18px;
   padding:26px;
   text-align:center;
-  color:#d7c07a;
+  color:#6b6156;
 }
 
 .toast{
@@ -679,7 +678,7 @@ input:focus,select:focus{
   bottom:20px;
   transform:translateX(-50%) translateY(20px);
   background:#111;
-  color:#f7ebd9;
+  color:#fff;
   padding:12px 16px;
   border-radius:999px;
   font-size:13px;
@@ -698,7 +697,7 @@ input:focus,select:focus{
 .footer{
   margin-top:28px;
   text-align:center;
-  color:#d7c07a;
+  color:#6b6156;
   font-size:13px;
   line-height:1.6;
 }
@@ -898,30 +897,20 @@ input:focus,select:focus{
 <div class="toast" id="toast">Copied</div>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-import {
-  getFirestore,
-  doc,
-  getDoc,
-  collection,
-  query,
-  where,
-  getDocs
-} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+const SUPABASE_URL = "https://shtzagoeuhqdthgzvmjx.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNodHphZ29ldWhxZHRoZ3p2bWp4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUxMDYyNjMsImV4cCI6MjEwMDY4MjI2M30.ChyQ1hAxsyitWRVXgcMOa8ztuI6WB3oKUhciXgguYyk";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyBxry90zexnjiHIjVv_QluPlPWcqfxWb6Q",
-  authDomain: "sma-model-scout.firebaseapp.com",
-  projectId: "sma-model-scout",
-  storageBucket: "sma-model-scout.firebasestorage.app",
-  messagingSenderId: "786081868543",
-  appId: "1:786081868543:web:5805a21ac5dab4c799faca",
-  measurementId: "G-10LWV01GZE"
-};
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+function toCamel(row){
+  const out = {};
+  for(const key in row){
+    out[key.replace(/_([a-z0-9])/g, (_, c) => c.toUpperCase())] = row[key];
+  }
+  return out;
+}
 
 document.getElementById("y").textContent = new Date().getFullYear();
 
@@ -1242,17 +1231,12 @@ function updateAvailability(){
 }
 
 async function loadTicketTypes(){
-  const q = query(
-    collection(db, "eventTicketTypes"),
-    where("eventId", "==", eventId)
-  );
+  const { data, error } = await supabase
+    .from("event_ticket_types").select("*").eq("event_id", eventId);
 
-  const snap = await getDocs(q);
+  if(error) throw error;
 
-  ticketTypes = snap.docs.map(docu => ({
-    id: docu.id,
-    ...docu.data()
-  }));
+  ticketTypes = data.map(toCamel);
 
   ticketTypes = ticketTypes
     .filter(item => String(item.status || "active").toLowerCase() === "active")
@@ -1279,18 +1263,15 @@ async function loadCheckout(){
   }
 
   try{
-    const eventRef = doc(db, "events", eventId);
-    const eventSnap = await getDoc(eventRef);
+    const { data, error } = await supabase
+      .from("events").select("*").eq("id", eventId).maybeSingle();
 
-    if(!eventSnap.exists()){
+    if(error || !data){
       loadingBox.textContent = "Event not found.";
       return;
     }
 
-    eventData = {
-      id: eventSnap.id,
-      ...eventSnap.data()
-    };
+    eventData = toCamel(data);
 
     if(!hasTickets()){
       loadingBox.textContent = "This event does not have ticket sales enabled.";

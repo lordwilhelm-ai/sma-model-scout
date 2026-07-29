@@ -1,0 +1,581 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Verify Vote | Lumina Vote</title>
+
+<style>
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+
+body{
+  margin:0;
+  overflow-x:hidden;
+  background:#faf7f0;
+  color:#161311;
+  font-family:Arial, Helvetica, sans-serif;
+}
+
+a{color:inherit}
+
+/* HEADER */
+.siteHeader{
+  position:sticky;
+  top:0;
+  z-index:100;
+  background:#ffffff;
+  border-bottom:1px solid #eee4d3;
+}
+
+.siteHeaderInner{
+  max-width:1180px;
+  margin:0 auto;
+  height:76px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  padding:0 22px;
+}
+
+.headerLeft,.headerRight{
+  display:flex;
+  align-items:center;
+  gap:16px;
+}
+
+.menuIcon{
+  border:0;
+  background:transparent;
+  color:#161311;
+  cursor:pointer;
+  padding:0;
+  display:grid;
+  place-items:center;
+  font-size:26px;
+  line-height:1;
+}
+
+.logoLink{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  text-decoration:none;
+  color:#161311;
+  font-weight:900;
+  font-size:21px;
+  letter-spacing:-0.5px;
+}
+
+.logoMark{
+  width:34px;
+  height:34px;
+  border-radius:9px;
+  background:linear-gradient(135deg,#d4af37,#b88718);
+  display:grid;
+  place-items:center;
+  color:#fff;
+  font-weight:900;
+  font-size:17px;
+  font-style:italic;
+  flex:0 0 auto;
+}
+
+.navLinks{
+  display:none;
+  align-items:center;
+  gap:26px;
+  font-size:14px;
+  font-weight:700;
+  color:#6b6156;
+}
+
+.navLinks a{text-decoration:none}
+.navLinks a.active{color:#161311}
+
+.sellBtn{
+  border:0;
+  background:#161311;
+  color:#fff;
+  padding:12px 20px;
+  border-radius:999px;
+  font-weight:800;
+  font-size:14px;
+  text-decoration:none;
+  white-space:nowrap;
+}
+
+.mobileMenu{
+  display:none;
+  padding:14px 18px 18px;
+  background:#fff;
+  border-top:1px solid #eee4d3;
+}
+
+.mobileMenu.show{display:block}
+
+.mobileMenu a{
+  width:100%;
+  display:flex;
+  justify-content:center;
+  text-decoration:none;
+  padding:13px;
+  border-radius:12px;
+  margin-top:8px;
+  font-weight:800;
+  background:#f6f0e2;
+  color:#161311;
+  font-size:14px;
+}
+
+@media(min-width:860px){
+  .navLinks{display:flex}
+}
+
+/* MAIN */
+.pageWrap{
+  max-width:760px;
+  margin:0 auto;
+  padding:34px 18px 70px;
+}
+
+.breadcrumb{
+  font-size:13px;
+  color:#a99a80;
+  margin-bottom:16px;
+}
+
+.breadcrumb a{text-decoration:none;color:#a99a80}
+.breadcrumb span.current{color:#161311;font-weight:700}
+
+.eyebrow{
+  display:inline-block;
+  background:#f6e6c8;
+  color:#8a5b12;
+  font-weight:800;
+  font-size:11px;
+  letter-spacing:.05em;
+  text-transform:uppercase;
+  padding:7px 12px;
+  border-radius:999px;
+  margin-bottom:14px;
+}
+
+.pageTitle{
+  margin:0 0 8px;
+  font-family:Georgia, "Times New Roman", serif;
+  font-size:34px;
+  font-weight:900;
+  letter-spacing:-0.6px;
+}
+
+.pageSub{
+  margin:0 0 26px;
+  color:#6b6156;
+  font-size:14.5px;
+  line-height:1.6;
+  max-width:600px;
+}
+
+/* FORM */
+.formCard{
+  background:#ffffff;
+  border:1px solid #efe7d8;
+  border-radius:18px;
+  padding:22px;
+  box-shadow:0 10px 30px rgba(60,45,10,0.05);
+  margin-bottom:26px;
+}
+
+.formCard label{
+  display:block;
+  font-size:12px;
+  font-weight:800;
+  color:#6b6156;
+  margin-bottom:7px;
+  text-transform:uppercase;
+  letter-spacing:.04em;
+}
+
+.formCard input{
+  width:100%;
+  border:1px solid #ece2cd;
+  background:#f6f0e2;
+  border-radius:12px;
+  padding:14px 16px;
+  font-size:15px;
+  outline:none;
+  color:#161311;
+}
+
+.formCard input:focus{
+  border-color:#d4af37;
+  box-shadow:0 0 0 4px rgba(212,175,55,.14);
+  background:#fff;
+}
+
+.orDivider{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin:16px 0;
+  color:#a99a80;
+  font-size:12px;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:.05em;
+}
+
+.orDivider::before,.orDivider::after{
+  content:"";
+  flex:1;
+  height:1px;
+  background:#eee4d3;
+}
+
+.checkBtn{
+  width:100%;
+  margin-top:8px;
+  min-height:54px;
+  border:0;
+  border-radius:999px;
+  background:#161311;
+  color:#fff;
+  font-size:15px;
+  font-weight:900;
+  cursor:pointer;
+}
+
+.checkBtn:disabled{
+  opacity:.55;
+  cursor:not-allowed;
+}
+
+.formMsg{
+  margin-top:12px;
+  font-size:13px;
+  font-weight:800;
+  line-height:1.5;
+}
+
+.formMsg.error{color:#a3231e}
+.formMsg.success{color:#1f7a3a}
+
+/* RESULTS */
+.resultsList{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+
+.resultCard{
+  background:#ffffff;
+  border:1px solid #efe7d8;
+  border-radius:16px;
+  padding:16px;
+  box-shadow:0 8px 24px rgba(60,45,10,0.05);
+}
+
+.resultTop{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:12px;
+}
+
+.resultName{
+  font-size:15.5px;
+  font-weight:800;
+  font-style:italic;
+}
+
+.resultMeta{
+  margin-top:3px;
+  font-size:12.5px;
+  color:#a99a80;
+  font-weight:600;
+}
+
+.statusPill{
+  flex:0 0 auto;
+  padding:6px 11px;
+  border-radius:999px;
+  font-size:11px;
+  font-weight:900;
+  text-transform:uppercase;
+  letter-spacing:.03em;
+  white-space:nowrap;
+}
+
+.statusPill.paid{
+  background:#dff5e3;
+  color:#1f7a3a;
+}
+
+.statusPill.other{
+  background:#fbe9e8;
+  color:#a3231e;
+}
+
+.resultStatsRow{
+  display:flex;
+  gap:22px;
+  margin-top:14px;
+  padding-top:12px;
+  border-top:1px solid #f2ead9;
+}
+
+.resultStat span{
+  display:block;
+  font-size:10.5px;
+  color:#a99a80;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:.04em;
+}
+
+.resultStat b{
+  display:block;
+  margin-top:3px;
+  font-size:15px;
+  font-weight:900;
+}
+
+.resultRef{
+  margin-top:10px;
+  font-size:11.5px;
+  color:#a99a80;
+  font-weight:600;
+}
+
+.stateBox{
+  border:1px dashed #e6dabd;
+  border-radius:16px;
+  padding:26px 20px;
+  text-align:center;
+  color:#a99a80;
+  font-size:14px;
+  font-weight:600;
+}
+
+.hidden{display:none !important}
+
+.footer{
+  margin-top:34px;
+  text-align:center;
+  color:#a99a80;
+  font-size:12.5px;
+  line-height:1.6;
+}
+</style>
+</head>
+
+<body>
+
+<header class="siteHeader">
+  <div class="siteHeaderInner">
+    <div class="headerLeft">
+      <button class="menuIcon" id="menuBtn" type="button">☰</button>
+
+      <a class="logoLink" href="index.html">
+        <span class="logoMark">V</span>
+        <span>Lumina Vote</span>
+      </a>
+    </div>
+
+    <nav class="navLinks">
+      <a href="voting-home.html">Events</a>
+      <a href="live-results.html">Live Results</a>
+      <a href="verify-vote.html" class="active">Verify vote</a>
+    </nav>
+
+    <div class="headerRight">
+      <a class="sellBtn" href="event-registration.html">Sell tickets</a>
+    </div>
+  </div>
+
+  <div class="mobileMenu" id="mobileMenu">
+    <a href="index.html">Home</a>
+    <a href="voting-home.html">Events</a>
+    <a href="live-results.html">Live Results</a>
+    <a href="support.html">Support</a>
+  </div>
+</header>
+
+<main class="pageWrap">
+
+  <div class="breadcrumb">
+    <a href="index.html">Home</a> / <span class="current">Verify Vote</span>
+  </div>
+
+  <span class="eyebrow">Payment &amp; Vote Status</span>
+  <h1 class="pageTitle">Verify Your Vote</h1>
+  <p class="pageSub">
+    Just paid and it hasn't reflected yet? Enter your phone number or the payment reference
+    from your receipt, and we'll show exactly what was recorded.
+  </p>
+
+  <div class="formCard">
+    <form id="verifyForm" onsubmit="return false;">
+      <label for="phoneInput">Phone Number</label>
+      <input type="tel" id="phoneInput" placeholder="e.g. 0551234567">
+
+      <div class="orDivider">or</div>
+
+      <label for="referenceInput">Payment Reference</label>
+      <input type="text" id="referenceInput" placeholder="e.g. vote_ab12cd34">
+
+      <button type="button" class="checkBtn" id="checkBtn">Check Status</button>
+      <div id="formMsg" class="formMsg"></div>
+    </form>
+  </div>
+
+  <div id="loadingState" class="stateBox hidden">Checking...</div>
+  <div id="emptyState" class="stateBox hidden">No matching payment found yet.</div>
+
+  <div class="resultsList" id="resultsList"></div>
+
+  <div class="footer">
+    © <span id="y"></span> Lumina Creative Co<br>
+    Site created by <b>Lord Wilhelm</b> (0593410452)
+  </div>
+
+</main>
+
+<script>
+document.getElementById("y").textContent = new Date().getFullYear();
+
+const menuBtn = document.getElementById("menuBtn");
+const mobileMenu = document.getElementById("mobileMenu");
+
+const phoneInput = document.getElementById("phoneInput");
+const referenceInput = document.getElementById("referenceInput");
+const checkBtn = document.getElementById("checkBtn");
+const formMsg = document.getElementById("formMsg");
+
+const loadingState = document.getElementById("loadingState");
+const emptyState = document.getElementById("emptyState");
+const resultsList = document.getElementById("resultsList");
+
+menuBtn.addEventListener("click", () => {
+  mobileMenu.classList.toggle("show");
+});
+
+function setMsg(text, type){
+  formMsg.textContent = text;
+  formMsg.className = "formMsg " + (type || "");
+}
+
+function money(n){
+  return "GHS " + Number(n || 0).toFixed(2);
+}
+
+function formatDate(iso){
+  if(!iso) return "—";
+  const d = new Date(iso);
+  if(isNaN(d.getTime())) return "—";
+  return d.toLocaleString();
+}
+
+function renderResults(items){
+  resultsList.innerHTML = "";
+
+  items.forEach(item => {
+    const isPaid = String(item.status || "").toLowerCase() === "paid";
+    const card = document.createElement("div");
+    card.className = "resultCard";
+
+    card.innerHTML = `
+      <div class="resultTop">
+        <div>
+          <div class="resultName">${item.contestantName ? (item.contestantNumber ? "Contestant " + item.contestantNumber + " — " : "") + item.contestantName : "Vote payment"}</div>
+          <div class="resultMeta">${item.categoryName ? item.categoryName + " • " : ""}${item.eventName || "Event"}</div>
+        </div>
+        <span class="statusPill ${isPaid ? "paid" : "other"}">${item.status || "unknown"}</span>
+      </div>
+
+      <div class="resultStatsRow">
+        <div class="resultStat">
+          <span>Votes Credited</span>
+          <b>${Number(item.votes || 0).toLocaleString()}</b>
+        </div>
+        <div class="resultStat">
+          <span>Amount Paid</span>
+          <b>${money(item.amount)}</b>
+        </div>
+        <div class="resultStat">
+          <span>Date</span>
+          <b style="font-size:13px;">${formatDate(item.createdAt)}</b>
+        </div>
+      </div>
+
+      <div class="resultRef">Reference: ${item.reference}</div>
+    `;
+
+    resultsList.appendChild(card);
+  });
+}
+
+async function checkStatus(){
+  const phone = phoneInput.value.trim();
+  const reference = referenceInput.value.trim();
+
+  if(!phone && !reference){
+    setMsg("Enter a phone number or payment reference.", "error");
+    return;
+  }
+
+  setMsg("", "");
+  loadingState.classList.remove("hidden");
+  emptyState.classList.add("hidden");
+  resultsList.innerHTML = "";
+  checkBtn.disabled = true;
+  checkBtn.textContent = "Checking...";
+
+  try{
+    const params = new URLSearchParams();
+    if(reference) params.set("reference", reference);
+    else params.set("phone", phone);
+
+    const resp = await fetch(`/api/verify-vote?${params.toString()}`);
+    const json = await resp.json();
+
+    loadingState.classList.add("hidden");
+
+    if(!resp.ok || json.status === false && !json.data){
+      setMsg(json.message || "Could not check vote status right now.", "error");
+      return;
+    }
+
+    const items = json.data || [];
+
+    if(items.length === 0){
+      emptyState.textContent = json.message || "No matching payment found yet.";
+      emptyState.classList.remove("hidden");
+      return;
+    }
+
+    renderResults(items);
+
+  }catch(error){
+    console.error(error);
+    loadingState.classList.add("hidden");
+    setMsg("Could not check vote status right now. Try again.", "error");
+  }finally{
+    checkBtn.disabled = false;
+    checkBtn.textContent = "Check Status";
+  }
+}
+
+checkBtn.addEventListener("click", checkStatus);
+
+[phoneInput, referenceInput].forEach(input => {
+  input.addEventListener("keydown", (e) => {
+    if(e.key === "Enter") checkStatus();
+  });
+});
+</script>
+
+</body>
+</html>

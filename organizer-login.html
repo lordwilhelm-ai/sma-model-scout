@@ -18,10 +18,8 @@ html{
 body{
   margin:0;
   overflow-x:hidden;
-  background: radial-gradient(circle at top left, rgba(37,99,235,0.22), transparent 26%),
-              radial-gradient(circle at top right, rgba(212,175,55,0.20), transparent 18%),
-              linear-gradient(180deg, #100a06 0%, #271912 100%);
-  color:#f7ebd9;
+  background:#faf7f0;
+  color:#161311;
   font-family:Arial, Helvetica, sans-serif;
 }
 
@@ -31,8 +29,9 @@ body{
   position:sticky;
   top:0;
   z-index:100;
-  background:linear-gradient(135deg, #d4af37, #b88718);
-  color:#f7ebd9;
+  background:#ffffff;
+  color:#161311;
+  border-bottom:1px solid #eee4d3;
 }
 
 .smartHeaderInner{
@@ -54,7 +53,7 @@ body{
 .menuIcon{
   border:0;
   background:transparent;
-  color:#f7ebd9;
+  color:#161311;
   cursor:pointer;
   padding:0;
   display:grid;
@@ -64,7 +63,7 @@ body{
 }
 
 .logoLink{
-  color:#f7ebd9;
+  color:#161311;
   text-decoration:none;
   display:flex;
   align-items:center;
@@ -78,7 +77,7 @@ body{
   width:38px;
   height:38px;
   border-radius:50%;
-  background:rgba(255,255,255,0.05);
+  background:#f6f0e2;
   display:grid;
   place-items:center;
   position:relative;
@@ -98,7 +97,7 @@ body{
 .headerBtn{
   border:0;
   background:linear-gradient(135deg, #d4af37, #b88718);
-  color:#f7ebd9;
+  color:#fff;
   padding:13px 18px;
   border-radius:999px;
   font-weight:800;
@@ -110,8 +109,8 @@ body{
 .mobileMenu{
   display:none;
   padding:14px 18px 18px;
-  background:rgba(16,10,6,0.96);
-  border-top:1px solid rgba(212,175,55,0.22);
+  background:#ffffff;
+  border-top:1px solid #eee4d3;
 }
 
 .mobileMenu.show{
@@ -127,7 +126,7 @@ body{
   border-radius:14px;
   margin-top:8px;
   font-weight:800;
-  background:rgba(255,255,255,0.05);
+  background:#f6f0e2;
   color:#0b4bea;
 }
 
@@ -171,8 +170,8 @@ body{
 }
 
 .sidePanel{
-  background:rgba(18,12,7,0.95);
-  color:#f7ebd9;
+  background:#f6f0e2;
+  color:#161311;
   padding:62px 22px;
   display:flex;
   align-items:center;
@@ -185,9 +184,9 @@ body{
 
 .sideTag{
   display:inline-flex;
-  background:rgba(255,255,255,0.05);
-  border:1px solid rgba(255,255,255,.18);
-  color:#dbeafe;
+  background:#ffffff;
+  border:1px solid #ece2cd;
+  color:#8a5b12;
   border-radius:999px;
   padding:9px 13px;
   font-size:12px;
@@ -207,7 +206,7 @@ body{
 
 .sidePanel p{
   margin:0;
-  color:#d7d7d7;
+  color:#6b6156;
   font-size:17px;
   line-height:1.6;
 }
@@ -221,9 +220,9 @@ body{
 .featureItem{
   padding:15px 16px;
   border-radius:16px;
-  background:rgba(255,255,255,0.05);
-  border:1px solid rgba(255,255,255,.14);
-  color:#f7ebd9;
+  background:#ffffff;
+  border:1px solid #ece2cd;
+  color:#161311;
   font-size:14px;
   line-height:1.45;
   font-weight:800;
@@ -238,11 +237,11 @@ body{
 
 .loginPanel{
   width:min(560px,100%);
-  background:rgba(255,255,255,0.05);
-  border:1px solid rgba(212,175,55,0.18);
+  background:#ffffff;
+  border:1px solid #eee4d3;
   border-radius:22px;
   padding:26px;
-  box-shadow:0 14px 32px rgba(0,0,0,.08);
+  box-shadow:0 12px 30px rgba(60,45,10,0.07);
 }
 
 .switchRow{
@@ -260,15 +259,15 @@ body{
   border:0;
   border-radius:999px;
   background:transparent;
-  color:#f7ebd9;
+  color:#161311;
   cursor:pointer;
   font-weight:900;
   font-size:14px;
 }
 
 .switchBtn.active{
-  background:rgba(18,12,7,0.95);
-  color:#f7ebd9;
+  background:#161311;
+  color:#fff;
 }
 
 .formTitle{
@@ -281,7 +280,7 @@ body{
 
 .formSub{
   margin:0 0 18px;
-  color:#d7c07a;
+  color:#6b6156;
   line-height:1.6;
   font-size:14px;
 }
@@ -291,18 +290,18 @@ body{
   margin:14px 0 7px;
   font-size:13px;
   font-weight:900;
-  color:#f7ebd9;
+  color:#161311;
 }
 
 .form input{
   width:100%;
-  border:1px solid rgba(212,175,55,0.18);
+  border:1px solid #ece2cd;
   border-radius:14px;
   padding:14px;
   font-size:15px;
   outline:none;
-  background:rgba(255,255,255,0.05);
-  color:#f7ebd9;
+  background:#ffffff;
+  color:#161311;
 }
 
 .form input:focus{
@@ -322,8 +321,8 @@ body{
   min-height:56px;
   border:0;
   border-radius:999px;
-  background:#000;
-  color:#f7ebd9;
+  background:#161311;
+  color:#fff;
   font-size:16px;
   font-weight:900;
   cursor:pointer;
@@ -336,7 +335,7 @@ body{
 
 .small{
   margin-top:14px;
-  color:#d7c07a;
+  color:#6b6156;
   font-size:13px;
   line-height:1.5;
 }
@@ -362,7 +361,7 @@ body{
 
 .footer{
   margin-top:26px;
-  color:#d7c07a;
+  color:#6b6156;
   font-size:13px;
   line-height:1.6;
   text-align:center;
@@ -542,33 +541,12 @@ body{
 </main>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-import {
-  getAuth,
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword
-} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+const SUPABASE_URL = "https://shtzagoeuhqdthgzvmjx.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNodHphZ29ldWhxZHRoZ3p2bWp4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUxMDYyNjMsImV4cCI6MjEwMDY4MjI2M30.ChyQ1hAxsyitWRVXgcMOa8ztuI6WB3oKUhciXgguYyk";
 
-import {
-  getFirestore,
-  doc,
-  setDoc
-} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyBxry90zexnjiHIjVv_QluPlPWcqfxWb6Q",
-  authDomain: "sma-model-scout.firebaseapp.com",
-  projectId: "sma-model-scout",
-  storageBucket: "sma-model-scout.firebasestorage.app",
-  messagingSenderId: "786081868543",
-  appId: "1:786081868543:web:5805a21ac5dab4c799faca",
-  measurementId: "G-10LWV01GZE"
-};
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 document.getElementById("y").textContent = new Date().getFullYear();
 
@@ -639,24 +617,29 @@ loginBtn.addEventListener("click", async () => {
   setMsg(loginMsg, "", "success");
 
   try{
-    await signInWithEmailAndPassword(auth, email, password);
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+
+    if(error){
+      console.error(error);
+
+      const message = String(error.message || "").toLowerCase();
+
+      if(message.includes("invalid login credentials")){
+        setMsg(loginMsg, "Login failed. Check email or password.");
+      }else if(message.includes("rate limit") || message.includes("too many")){
+        setMsg(loginMsg, "Too many attempts. Wait small and try again.");
+      }else{
+        setMsg(loginMsg, "Login failed. Try again.");
+      }
+
+      return;
+    }
 
     setMsg(loginMsg, "Login successful.", "success");
 
     setTimeout(() => {
       goNext();
     }, 500);
-
-  }catch(error){
-    console.error(error);
-
-    if(error.code === "auth/user-not-found" || error.code === "auth/wrong-password" || error.code === "auth/invalid-credential"){
-      setMsg(loginMsg, "Login failed. Check email or password.");
-    }else if(error.code === "auth/too-many-requests"){
-      setMsg(loginMsg, "Too many attempts. Wait small and try again.");
-    }else{
-      setMsg(loginMsg, "Login failed. Try again.");
-    }
 
   }finally{
     loginBtn.disabled = false;
@@ -686,35 +669,42 @@ signupBtn.addEventListener("click", async () => {
   setMsg(signupMsg, "", "success");
 
   try{
-    const userCred = await createUserWithEmailAndPassword(auth, email, password);
-
-    await setDoc(doc(db, "organizers", userCred.user.uid), {
-      fullName,
-      phone,
+    const { error } = await supabase.auth.signUp({
       email,
-      brand,
-      role: "organizer",
-      status: "active",
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      password,
+      options: {
+        data: {
+          role: "organizer",
+          full_name: fullName,
+          phone,
+          brand
+        }
+      }
     });
 
+    if(error){
+      console.error(error);
+
+      const message = String(error.message || "").toLowerCase();
+
+      if(message.includes("already registered") || message.includes("already exists")){
+        setMsg(signupMsg, "This email is already in use. Use Login instead.");
+      }else if(message.includes("invalid") && message.includes("email")){
+        setMsg(signupMsg, "Enter a valid email address.");
+      }else{
+        setMsg(signupMsg, "Account creation failed. Try again.");
+      }
+
+      return;
+    }
+
+    // Profile row is created server-side by a database trigger reading the
+    // metadata above, so it exists immediately even before email confirmation.
     setMsg(signupMsg, "Account created successfully.", "success");
 
     setTimeout(() => {
       goNext();
     }, 500);
-
-  }catch(error){
-    console.error(error);
-
-    if(error.code === "auth/email-already-in-use"){
-      setMsg(signupMsg, "This email is already in use. Use Login instead.");
-    }else if(error.code === "auth/invalid-email"){
-      setMsg(signupMsg, "Enter a valid email address.");
-    }else{
-      setMsg(signupMsg, "Account creation failed. Try again.");
-    }
 
   }finally{
     signupBtn.disabled = false;

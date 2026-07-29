@@ -796,27 +796,23 @@ a{color:inherit}
 </footer>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
-import {
-  getFirestore,
-  collection,
-  onSnapshot
-} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyBxry90zexnjiHIjVv_QluPlPWcqfxWb6Q",
-  authDomain: "sma-model-scout.firebaseapp.com",
-  projectId: "sma-model-scout",
-  storageBucket: "sma-model-scout.firebasestorage.app",
-  messagingSenderId: "786081868543",
-  appId: "1:786081868543:web:5805a21ac5dab4c799faca",
-  measurementId: "G-10LWV01GZE"
-};
+const SUPABASE_URL = "https://shtzagoeuhqdthgzvmjx.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNodHphZ29ldWhxZHRoZ3p2bWp4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUxMDYyNjMsImV4cCI6MjEwMDY4MjI2M30.ChyQ1hAxsyitWRVXgcMOa8ztuI6WB3oKUhciXgguYyk";
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// Postgres rows are snake_case; the rest of this page's logic expects the
+// same camelCase shape the old Firestore docs had, so convert on the way in.
+function toCamel(row){
+  const out = {};
+  for(const key in row){
+    out[key.replace(/_([a-z0-9])/g, (_, c) => c.toUpperCase())] = row[key];
+  }
+  out.type = row.event_type;
+  return out;
+}
 
 document.getElementById("y").textContent = new Date().getFullYear();
 
@@ -868,18 +864,15 @@ globalSearchInput.addEventListener("input", () => {
   renderPopularEvents();
 });
 
-function goToDashboard(){
+async function goToDashboard(){
   const redirect = encodeURIComponent("organizer-dashboard.html");
+  const { data: { session } } = await supabase.auth.getSession();
 
-  const unsubscribe = onAuthStateChanged(auth, (user) => {
-    unsubscribe();
-
-    if(user){
-      window.location.href = "organizer-dashboard.html";
-    }else{
-      window.location.href = `organizer-login.html?redirect=${redirect}`;
-    }
-  });
+  if(session){
+    window.location.href = "organizer-dashboard.html";
+  }else{
+    window.location.href = `organizer-login.html?redirect=${redirect}`;
+  }
 }
 
 mobileDashboardBtn.addEventListener("click", goToDashboard);
@@ -1076,30 +1069,45 @@ function renderStats(){
   statNominees.textContent = nominees.toLocaleString();
 }
 
-onSnapshot(collection(db, "events"), (snapshot) => {
-  allEvents = snapshot.docs.map(docu => ({
-    id: docu.id,
-    ...docu.data()
-  }));
+async function loadEvents(){
+  const { data, error } = await supabase.from("events").select("*");
 
+  if(error){
+    console.error(error);
+    popularLoading.textContent = "Could not load events.";
+    return;
+  }
+
+  allEvents = (data || []).map(toCamel);
   renderPopularEvents();
   renderStats();
-}, (error) => {
-  console.error(error);
-  popularLoading.textContent = "Could not load events.";
-});
+}
 
-onSnapshot(collection(db, "eventContestants"), (snapshot) => {
-  allContestants = snapshot.docs.map(docu => ({
-    id: docu.id,
-    ...docu.data()
-  }));
+async function loadContestants(){
+  const { data, error } = await supabase.from("event_contestants").select("*");
 
+  if(error){
+    console.error(error);
+    return;
+  }
+
+  allContestants = (data || []).map(toCamel);
   renderPopularEvents();
   renderStats();
-}, (error) => {
-  console.error(error);
-});
+}
+
+loadEvents();
+loadContestants();
+
+supabase
+  .channel("public:events:index")
+  .on("postgres_changes", { event: "*", schema: "public", table: "events" }, loadEvents)
+  .subscribe();
+
+supabase
+  .channel("public:event_contestants:index")
+  .on("postgres_changes", { event: "*", schema: "public", table: "event_contestants" }, loadContestants)
+  .subscribe();
 </script>
 
 </body>

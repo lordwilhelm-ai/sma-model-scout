@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Support | Lumina Vote</title>
+
+<style>
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+
+body{
+  margin:0;
+  overflow-x:hidden;
+  background:#faf7f0;
+  color:#161311;
+  font-family:Arial, Helvetica, sans-serif;
+}
+
+a{color:inherit}
+
+/* HEADER */
+.siteHeader{
+  position:sticky;
+  top:0;
+  z-index:100;
+  background:#ffffff;
+  border-bottom:1px solid #eee4d3;
+}
+
+.siteHeaderInner{
+  max-width:1180px;
+  margin:0 auto;
+  height:76px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  padding:0 22px;
+}
+
+.headerLeft,.headerRight{
+  display:flex;
+  align-items:center;
+  gap:16px;
+}
+
+.menuIcon{
+  border:0;
+  background:transparent;
+  color:#161311;
+  cursor:pointer;
+  padding:0;
+  display:grid;
+  place-items:center;
+  font-size:26px;
+  line-height:1;
+}
+
+.logoLink{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  text-decoration:none;
+  color:#161311;
+  font-weight:900;
+  font-size:21px;
+  letter-spacing:-0.5px;
+}
+
+.logoMark{
+  width:34px;
+  height:34px;
+  border-radius:9px;
+  background:linear-gradient(135deg,#d4af37,#b88718);
+  display:grid;
+  place-items:center;
+  color:#fff;
+  font-weight:900;
+  font-size:17px;
+  font-style:italic;
+  flex:0 0 auto;
+}
+
+.navLinks{
+  display:none;
+  align-items:center;
+  gap:26px;
+  font-size:14px;
+  font-weight:700;
+  color:#6b6156;
+}
+
+.navLinks a{text-decoration:none}
+.navLinks a.active{color:#161311}
+
+.sellBtn{
+  border:0;
+  background:#161311;
+  color:#fff;
+  padding:12px 20px;
+  border-radius:999px;
+  font-weight:800;
+  font-size:14px;
+  text-decoration:none;
+  white-space:nowrap;
+}
+
+.mobileMenu{
+  display:none;
+  padding:14px 18px 18px;
+  background:#fff;
+  border-top:1px solid #eee4d3;
+}
+
+.mobileMenu.show{display:block}
+
+.mobileMenu a{
+  width:100%;
+  display:flex;
+  justify-content:center;
+  text-decoration:none;
+  padding:13px;
+  border-radius:12px;
+  margin-top:8px;
+  font-weight:800;
+  background:#f6f0e2;
+  color:#161311;
+  font-size:14px;
+}
+
+@media(min-width:860px){
+  .navLinks{display:flex}
+}
+
+/* MAIN */
+.pageWrap{
+  max-width:760px;
+  margin:0 auto;
+  padding:34px 18px 70px;
+}
+
+.breadcrumb{
+  font-size:13px;
+  color:#a99a80;
+  margin-bottom:16px;
+}
+
+.breadcrumb a{text-decoration:none;color:#a99a80}
+.breadcrumb span.current{color:#161311;font-weight:700}
+
+.eyebrow{
+  display:inline-block;
+  background:#f6e6c8;
+  color:#8a5b12;
+  font-weight:800;
+  font-size:11px;
+  letter-spacing:.05em;
+  text-transform:uppercase;
+  padding:7px 12px;
+  border-radius:999px;
+  margin-bottom:14px;
+}
+
+.pageTitle{
+  margin:0 0 8px;
+  font-family:Georgia, "Times New Roman", serif;
+  font-size:34px;
+  font-weight:900;
+  letter-spacing:-0.6px;
+}
+
+.pageSub{
+  margin:0 0 26px;
+  color:#6b6156;
+  font-size:14.5px;
+  line-height:1.6;
+  max-width:600px;
+}
+
+.faqList{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+  margin-bottom:30px;
+}
+
+.faqCard{
+  background:#ffffff;
+  border:1px solid #efe7d8;
+  border-radius:16px;
+  padding:18px 20px;
+  box-shadow:0 8px 24px rgba(60,45,10,0.05);
+}
+
+.faqCard h3{
+  margin:0 0 8px;
+  font-size:16px;
+  font-weight:800;
+}
+
+.faqCard p{
+  margin:0;
+  color:#6b6156;
+  font-size:14px;
+  line-height:1.6;
+}
+
+.faqCard a{
+  color:#8a5b12;
+  font-weight:800;
+  text-decoration:none;
+}
+
+.contactCard{
+  background:#161311;
+  color:#faf7f0;
+  border-radius:18px;
+  padding:24px;
+  text-align:center;
+}
+
+.contactCard h2{
+  margin:0 0 8px;
+  font-family:Georgia, "Times New Roman", serif;
+  font-size:24px;
+}
+
+.contactCard p{
+  margin:0 0 18px;
+  color:#c9bfae;
+  font-size:14px;
+  line-height:1.6;
+}
+
+.contactActions{
+  display:flex;
+  gap:10px;
+  justify-content:center;
+  flex-wrap:wrap;
+}
+
+.contactBtn{
+  text-decoration:none;
+  border-radius:999px;
+  padding:12px 20px;
+  font-weight:800;
+  font-size:13.5px;
+}
+
+.contactBtn.primary{
+  background:linear-gradient(135deg,#d4af37,#b88718);
+  color:#1b1008;
+}
+
+.contactBtn.ghost{
+  border:1px solid rgba(255,255,255,.20);
+  background:rgba(255,255,255,0.06);
+  color:#faf7f0;
+}
+
+.footer{
+  margin-top:34px;
+  text-align:center;
+  color:#a99a80;
+  font-size:12.5px;
+  line-height:1.6;
+}
+</style>
+</head>
+
+<body>
+
+<header class="siteHeader">
+  <div class="siteHeaderInner">
+    <div class="headerLeft">
+      <button class="menuIcon" id="menuBtn" type="button">☰</button>
+
+      <a class="logoLink" href="index.html">
+        <span class="logoMark">V</span>
+        <span>Lumina Vote</span>
+      </a>
+    </div>
+
+    <nav class="navLinks">
+      <a href="voting-home.html">Events</a>
+      <a href="live-results.html">Live Results</a>
+      <a href="verify-vote.html">Verify vote</a>
+    </nav>
+
+    <div class="headerRight">
+      <a class="sellBtn" href="event-registration.html">Sell tickets</a>
+    </div>
+  </div>
+
+  <div class="mobileMenu" id="mobileMenu">
+    <a href="index.html">Home</a>
+    <a href="voting-home.html">Events</a>
+    <a href="verify-vote.html">Verify vote</a>
+    <a href="support.html">Support</a>
+  </div>
+</header>
+
+<main class="pageWrap">
+
+  <div class="breadcrumb">
+    <a href="index.html">Home</a> / <span class="current">Support</span>
+  </div>
+
+  <span class="eyebrow">Help Center</span>
+  <h1 class="pageTitle">Support</h1>
+  <p class="pageSub">Answers to the most common questions about voting, tickets, and payments.</p>
+
+  <div class="faqList">
+
+    <div class="faqCard">
+      <h3>I paid but my vote hasn't reflected yet</h3>
+      <p>
+        Vote confirmations usually land within a minute of payment. Go to
+        <a href="verify-vote.html">Verify Vote</a> and enter the phone number you paid with
+        (or the payment reference from your receipt) to check the exact status. If it still
+        shows nothing after a few minutes, contact us below with your reference.
+      </p>
+    </div>
+
+    <div class="faqCard">
+      <h3>I paid but got no confirmation message</h3>
+      <p>
+        Check <a href="verify-vote.html">Verify Vote</a> first — payments are sometimes confirmed
+        even if the SMS/prompt was delayed. If nothing shows up after 10 minutes, reach out with
+        your MoMo transaction ID.
+      </p>
+    </div>
+
+    <div class="faqCard">
+      <h3>How do I buy a ticket or vote for a contestant?</h3>
+      <p>
+        Browse <a href="voting-home.html">Events</a>, open the one you want, and choose a
+        contestant to vote for or a ticket to buy. You'll be redirected to Hubtel to complete
+        payment securely.
+      </p>
+    </div>
+
+    <div class="faqCard">
+      <h3>Can I get a refund?</h3>
+      <p>
+        Votes and tickets are non-refundable once payment is confirmed, since votes are credited
+        immediately. If you were charged without receiving any votes or ticket after 15+ minutes,
+        contact us with your reference and we'll investigate.
+      </p>
+    </div>
+
+    <div class="faqCard">
+      <h3>I want to organize my own event</h3>
+      <p>
+        Head to <a href="event-registration.html">Create Event</a> to set up a voting
+        competition or ticketed event — you'll need an organizer account first.
+      </p>
+    </div>
+
+  </div>
+
+  <div class="contactCard">
+    <h2>Still need help?</h2>
+    <p>Reach out directly and we'll sort it out.</p>
+    <div class="contactActions">
+      <a class="contactBtn primary" href="tel:0593410452">Call 0593410452</a>
+      <a class="contactBtn ghost" href="verify-vote.html">Verify a Payment</a>
+    </div>
+  </div>
+
+  <div class="footer">
+    © <span id="y"></span> Lumina Creative Co<br>
+    Site created by <b>Lord Wilhelm</b> (0593410452)
+  </div>
+
+</main>
+
+<script>
+document.getElementById("y").textContent = new Date().getFullYear();
+
+document.getElementById("menuBtn").addEventListener("click", () => {
+  document.getElementById("mobileMenu").classList.toggle("show");
+});
+</script>
+
+</body>
+</html>

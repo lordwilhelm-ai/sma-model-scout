@@ -23,7 +23,7 @@ margin-top:20px;
 }
 
 .statCard{
-background:rgba(255,255,255,0.05);
+background:#ffffff;
 border:1px solid var(--stroke);
 border-radius:20px;
 padding:20px;
@@ -54,7 +54,7 @@ margin-top:24px;
 }
 
 .panel{
-background:rgba(255,255,255,0.05);
+background:#ffffff;
 border:1px solid var(--stroke);
 border-radius:22px;
 padding:20px;
@@ -259,10 +259,27 @@ margin-top:14px;
 <a class="btn small ghost" href="index.html">Home</a>
 <a class="btn small ghost" href="voting-home.html">Voting Home</a>
 <a class="btn small" href="admin-settings.html">Admin Settings</a>
+<button class="btn small ghost" id="logoutBtn" type="button" style="display:none;">Logout</button>
 </div>
 </header>
 
 <main class="container fade-in">
+
+<section class="card" id="loginCard">
+<h1 style="margin-bottom:8px;">Admin Login</h1>
+<p class="muted">Only authorized Lumina admins can access this dashboard.</p>
+
+<label>Email</label>
+<input id="email" type="email" placeholder="admin email">
+
+<label>Password</label>
+<input id="password" type="password" placeholder="password">
+
+<button class="btn" id="loginBtn" type="button" style="width:100%;margin-top:14px;">Login</button>
+<p class="msg error" id="loginMsg"></p>
+</section>
+
+<section id="dashboardContent" style="display:none;">
 
 <section class="card hero-glow">
 <div class="section-tag">MASTER ADMIN PANEL</div>
@@ -396,6 +413,8 @@ Use the buttons above to update payout and event status.
 
 </section>
 
+</section>
+
 <div class="footer">
 © <span id="y"></span> Lumina Creative Co<br>
 Site created by <b>Lord Wilhelm</b> (0593410452)
@@ -404,31 +423,28 @@ Site created by <b>Lord Wilhelm</b> (0593410452)
 </main>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-import {
-  getFirestore,
-  collection,
-  onSnapshot,
-  doc,
-  updateDoc,
-  query,
-  where
-} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyBxry90zexnjiHIjVv_QluPlPWcqfxWb6Q",
-  authDomain: "sma-model-scout.firebaseapp.com",
-  projectId: "sma-model-scout",
-  storageBucket: "sma-model-scout.firebasestorage.app",
-  messagingSenderId: "786081868543",
-  appId: "1:786081868543:web:5805a21ac5dab4c799faca",
-  measurementId: "G-10LWV01GZE"
-};
+const SUPABASE_URL = "https://shtzagoeuhqdthgzvmjx.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNodHphZ29ldWhxZHRoZ3p2bWp4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUxMDYyNjMsImV4cCI6MjEwMDY4MjI2M30.ChyQ1hAxsyitWRVXgcMOa8ztuI6WB3oKUhciXgguYyk";
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+function toCamel(row){
+  const out = {};
+  for(const key in row){
+    out[key.replace(/_([a-z0-9])/g, (_, c) => c.toUpperCase())] = row[key];
+  }
+  return out;
+}
 
 document.getElementById("y").textContent = new Date().getFullYear();
+
+const loginCard = document.getElementById("loginCard");
+const dashboardContent = document.getElementById("dashboardContent");
+const loginBtn = document.getElementById("loginBtn");
+const loginMsg = document.getElementById("loginMsg");
+const logoutBtn = document.getElementById("logoutBtn");
 
 const eventList = document.getElementById("eventList");
 const loadingBox = document.getElementById("loadingBox");
@@ -436,6 +452,7 @@ const emptyBox = document.getElementById("emptyBox");
 
 let allEvents = [];
 let selectedEvent = null;
+let channelsSubscribed = false;
 
 function prettyStatus(status){
   const s = (status || "").toLowerCase();
@@ -458,22 +475,6 @@ function payoutBadgeClass(status){
   if (s === "paid") return "statusBadge paidBadge";
   if (s === "processing") return "statusBadge processingBadge";
   return "statusBadge unpaidBadge";
-}
-
-async function getVotesForEvent(eventId){
-  return new Promise((resolve) => {
-    const q = query(collection(db, "eventContestants"), where("eventId", "==", eventId));
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      let total = 0;
-      snapshot.docs.forEach(docSnap => {
-        total += Number(docSnap.data().votes || 0);
-      });
-      unsubscribe();
-      resolve(total);
-    }, () => {
-      resolve(0);
-    });
-  });
 }
 
 function renderSelectedEvent(item){
@@ -567,41 +568,38 @@ function renderStats(items){
 window.markPayout = async function(status){
   if(!selectedEvent) return;
 
-  try{
-    await updateDoc(doc(db, "events", selectedEvent.id), {
-      payoutStatus: status
-    });
-  }catch(error){
-    alert("Could not update payout status.");
-  }
+  const { error } = await supabase.from("events").update({ payout_status: status }).eq("id", selectedEvent.id);
+  if(error) alert("Could not update payout status.");
 };
 
 window.setEventStatus = async function(status){
   if(!selectedEvent) return;
 
-  try{
-    await updateDoc(doc(db, "events", selectedEvent.id), {
-      status: status
-    });
-  }catch(error){
-    alert("Could not update event status.");
-  }
+  const { error } = await supabase.from("events").update({ status }).eq("id", selectedEvent.id);
+  if(error) alert("Could not update event status.");
 };
 
-onSnapshot(collection(db, "events"), async (snapshot) => {
-  const baseEvents = snapshot.docs.map(docSnap => ({
-    id: docSnap.id,
-    ...docSnap.data()
-  }));
+async function loadDashboard(){
+  const [eventsRes, contestantsRes] = await Promise.all([
+    supabase.from("events").select("*"),
+    supabase.from("event_contestants").select("*")
+  ]);
 
-  const enriched = [];
-  for (const item of baseEvents) {
-    const votes = await getVotesForEvent(item.id);
-    enriched.push({
-      ...item,
-      totalVotes: votes
-    });
+  if(eventsRes.error || contestantsRes.error){
+    console.error(eventsRes.error || contestantsRes.error);
+    loadingBox.textContent = "Could not load events.";
+    return;
   }
+
+  const contestants = contestantsRes.data.map(toCamel);
+
+  const enriched = eventsRes.data.map(toCamel).map(item => {
+    const votes = contestants
+      .filter(c => c.eventId === item.id)
+      .reduce((sum, c) => sum + Number(c.votes || 0), 0);
+
+    return { ...item, totalVotes: votes };
+  });
 
   enriched.sort((a, b) => String(b.createdAt || "").localeCompare(String(a.createdAt || "")));
 
@@ -615,9 +613,64 @@ onSnapshot(collection(db, "events"), async (snapshot) => {
     selectedEvent = stillExists || allEvents[0];
     renderSelectedEvent(selectedEvent);
   }
-}, (error) => {
-  console.error(error);
-  loadingBox.textContent = "Could not load events.";
+}
+
+loginBtn.addEventListener("click", async () => {
+  loginMsg.textContent = "";
+
+  const email = document.getElementById("email").value.trim().toLowerCase();
+  const pass = document.getElementById("password").value;
+
+  const { error } = await supabase.auth.signInWithPassword({ email, password: pass });
+
+  if(error){
+    loginMsg.textContent = "Login failed. Check email/password.";
+  }
+});
+
+logoutBtn.addEventListener("click", async () => {
+  await supabase.auth.signOut();
+  location.reload();
+});
+
+supabase.auth.onAuthStateChange(async (event, session) => {
+  const user = session?.user;
+
+  if(user){
+    const { data: isAdmin } = await supabase.rpc("is_admin", { uid: user.id });
+
+    if(!isAdmin){
+      loginMsg.textContent = "Not allowed. Use an authorized admin account.";
+      await supabase.auth.signOut();
+      return;
+    }
+
+    loginCard.style.display = "none";
+    dashboardContent.style.display = "block";
+    logoutBtn.style.display = "inline-flex";
+
+    await loadDashboard();
+
+    if(!channelsSubscribed){
+      channelsSubscribed = true;
+
+      supabase
+        .channel("public:events:master-admin")
+        .on("postgres_changes", { event: "*", schema: "public", table: "events" }, loadDashboard)
+        .subscribe();
+
+      supabase
+        .channel("public:event_contestants:master-admin")
+        .on("postgres_changes", { event: "*", schema: "public", table: "event_contestants" }, loadDashboard)
+        .subscribe();
+    }
+
+    return;
+  }
+
+  loginCard.style.display = "block";
+  dashboardContent.style.display = "none";
+  logoutBtn.style.display = "none";
 });
 </script>
 

@@ -552,26 +552,20 @@ a{color:inherit}
 <div class="toast" id="toast">Copied</div>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-import {
-  getFirestore,
-  doc,
-  getDoc
-} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+const SUPABASE_URL = "https://shtzagoeuhqdthgzvmjx.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNodHphZ29ldWhxZHRoZ3p2bWp4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUxMDYyNjMsImV4cCI6MjEwMDY4MjI2M30.ChyQ1hAxsyitWRVXgcMOa8ztuI6WB3oKUhciXgguYyk";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyBxry90zexnjiHIjVv_QluPlPWcqfxWb6Q",
-  authDomain: "sma-model-scout.firebaseapp.com",
-  projectId: "sma-model-scout",
-  storageBucket: "sma-model-scout.firebasestorage.app",
-  messagingSenderId: "786081868543",
-  appId: "1:786081868543:web:5805a21ac5dab4c799faca",
-  measurementId: "G-10LWV01GZE"
-};
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+function toCamel(row){
+  const out = {};
+  for(const key in row){
+    out[key.replace(/_([a-z0-9])/g, (_, c) => c.toUpperCase())] = row[key];
+  }
+  return out;
+}
 
 document.getElementById("y").textContent = new Date().getFullYear();
 
@@ -797,33 +791,23 @@ async function loadCheckout(){
   }
 
   try{
-    const eventRef = doc(db, "events", eventId);
-    const contestantRef = doc(db, "eventContestants", contestantId);
-
-    const [eventSnap, contestantSnap] = await Promise.all([
-      getDoc(eventRef),
-      getDoc(contestantRef)
+    const [eventRes, contestantRes] = await Promise.all([
+      supabase.from("events").select("*").eq("id", eventId).maybeSingle(),
+      supabase.from("event_contestants").select("*").eq("id", contestantId).maybeSingle()
     ]);
 
-    if(!eventSnap.exists()){
+    if(eventRes.error || !eventRes.data){
       loadingBox.textContent = "Competition not found.";
       return;
     }
 
-    if(!contestantSnap.exists()){
+    if(contestantRes.error || !contestantRes.data){
       loadingBox.textContent = "Contestant not found.";
       return;
     }
 
-    eventData = {
-      id: eventSnap.id,
-      ...eventSnap.data()
-    };
-
-    contestantData = {
-      id: contestantSnap.id,
-      ...contestantSnap.data()
-    };
+    eventData = toCamel(eventRes.data);
+    contestantData = toCamel(contestantRes.data);
 
     votePrice = Number(eventData.votePrice || 1);
 

@@ -13,11 +13,11 @@
 }
 
 .card{
-  background:rgba(255,255,255,0.05);
+  background:#ffffff;
   border:1px solid var(--stroke);
   border-radius:24px;
   padding:28px;
-  box-shadow:0 12px 28px rgba(15,23,42,0.08);
+  box-shadow:0 12px 28px rgba(60,45,10,0.08);
 }
 
 .success{
@@ -187,43 +187,23 @@ Site created by <b>Lord Wilhelm</b> (0593410452)
 
 <script type="module">
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-import {
-  getAuth,
-  onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+const SUPABASE_URL = "https://shtzagoeuhqdthgzvmjx.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNodHphZ29ldWhxZHRoZ3p2bWp4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUxMDYyNjMsImV4cCI6MjEwMDY4MjI2M30.ChyQ1hAxsyitWRVXgcMOa8ztuI6WB3oKUhciXgguYyk";
 
-import {
-  getFirestore,
-  collection,
-  addDoc,
-  getDocs,
-  query,
-  where
-} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyBxry90zexnjiHIjVv_QluPlPWcqfxWb6Q",
-  authDomain: "sma-model-scout.firebaseapp.com",
-  projectId: "sma-model-scout",
-  storageBucket: "sma-model-scout.firebasestorage.app",
-  messagingSenderId: "786081868543",
-  appId: "1:786081868543:web:5805a21ac5dab4c799faca",
-  measurementId: "G-10LWV01GZE"
-};
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const CLOUDINARY_CLOUD_NAME = "dprk7qttr";
 const CLOUDINARY_UPLOAD_PRESET = "lumina_events";
 
-const ADMINS = new Set([
-  "mensahpaa00@gmail.com",
-  "techhubgraph@gmail.com"
-]);
+function toCamel(row){
+  const out = {};
+  for(const key in row){
+    out[key.replace(/_([a-z0-9])/g, (_, c) => c.toUpperCase())] = row[key];
+  }
+  return out;
+}
 
 document.getElementById("y").textContent = new Date().getFullYear();
 
@@ -376,22 +356,16 @@ async function loadEvents(){
   try{
     eventSelect.innerHTML = `<option value="">Loading your events...</option>`;
 
-    let snap;
+    let eventsQuery = supabase.from("events").select("*");
 
-    if(isAdminUser){
-      snap = await getDocs(collection(db, "events"));
-    }else{
-      const q = query(
-        collection(db, "events"),
-        where("organizerId", "==", currentUser.uid)
-      );
-      snap = await getDocs(q);
+    if(!isAdminUser){
+      eventsQuery = eventsQuery.eq("organizer_id", currentUser.id);
     }
 
-    allEvents = snap.docs.map(docu => ({
-      id: docu.id,
-      ...docu.data()
-    }));
+    const { data, error } = await eventsQuery;
+    if(error) throw error;
+
+    allEvents = data.map(toCamel);
 
     allEvents.sort((a, b) => String(b.createdAt || "").localeCompare(String(a.createdAt || "")));
 
@@ -428,17 +402,11 @@ async function loadCategoriesForEvent(eventItem){
   categoryBox.style.display = "block";
 
   try{
-    const q = query(
-      collection(db, "eventCategories"),
-      where("eventId", "==", eventItem.id)
-    );
+    const { data, error } = await supabase
+      .from("event_categories").select("*").eq("event_id", eventItem.id);
+    if(error) throw error;
 
-    const snap = await getDocs(q);
-
-    currentCategories = snap.docs.map(docu => ({
-      id: docu.id,
-      ...docu.data()
-    }));
+    currentCategories = data.map(toCamel);
 
     currentCategories.sort((a, b) => Number(a.categoryCode || 0) - Number(b.categoryCode || 0));
 
@@ -468,17 +436,11 @@ async function loadContestantsForEvent(eventItem){
   if(!eventItem) return;
 
   try{
-    const q = query(
-      collection(db, "eventContestants"),
-      where("eventId", "==", eventItem.id)
-    );
+    const { data, error } = await supabase
+      .from("event_contestants").select("*").eq("event_id", eventItem.id);
+    if(error) throw error;
 
-    const snap = await getDocs(q);
-
-    currentContestants = snap.docs.map(docu => ({
-      id: docu.id,
-      ...docu.data()
-    }));
+    currentContestants = data.map(toCamel);
 
     const maxNumber = currentContestants.reduce((max, c) => {
       const n = parseInt(c.contestantNumber || "0", 10);
@@ -597,27 +559,23 @@ addBtn.addEventListener("click", async () => {
     addBtn.disabled = true;
     addBtn.textContent = "Adding...";
 
-    await addDoc(collection(db, "eventContestants"), {
-      fullName,
-      contestantNumber,
+    const { error } = await supabase.from("event_contestants").insert({
+      full_name: fullName,
+      contestant_number: contestantNumber,
 
-      eventId: eventItem.id,
-      eventCode: eventItem.eventCode || "",
-      eventName: eventItem.eventName || "",
+      event_id: eventItem.id,
+      organizer_id: eventItem.organizerId || null,
 
-      organizerId: eventItem.organizerId || "",
-      organizerName: eventItem.organizerName || "",
+      category_id: categoryData ? categoryData.id : null,
+      category_code: categoryData ? String(categoryData.categoryCode || "") : null,
+      category_name: categoryData ? categoryData.categoryName || "" : null,
 
-      hasCategory: !!eventItem.hasCategories,
-      categoryId: categoryData ? categoryData.id : "",
-      categoryCode: categoryData ? String(categoryData.categoryCode || "") : "",
-      categoryName: categoryData ? categoryData.categoryName || "" : "",
-
-      photoUrl: uploadedPhotoUrl,
+      photo_url: uploadedPhotoUrl,
       votes,
-      status,
-      createdAt: new Date().toISOString()
+      status
     });
+
+    if(error) throw error;
 
     showMsg("Contestant added successfully.", "success");
 
@@ -640,7 +598,9 @@ addBtn.addEventListener("click", async () => {
   }
 });
 
-onAuthStateChanged(auth, async (user) => {
+supabase.auth.onAuthStateChange(async (event, session) => {
+  const user = session?.user;
+
   if(!user){
     loadingBox.style.display = "none";
     loginPrompt.style.display = "block";
@@ -648,7 +608,9 @@ onAuthStateChanged(auth, async (user) => {
   }
 
   currentUser = user;
-  isAdminUser = ADMINS.has((user.email || "").toLowerCase());
+
+  const { data: isAdmin } = await supabase.rpc("is_admin", { uid: user.id });
+  isAdminUser = !!isAdmin;
 
   loadingBox.style.display = "none";
   mainCard.style.display = "block";

@@ -13,10 +13,8 @@ html{scroll-behavior:smooth}
 body{
   margin:0;
   overflow-x:hidden;
-  background: radial-gradient(circle at top left, rgba(37,99,235,0.22), transparent 26%),
-              radial-gradient(circle at top right, rgba(212,175,55,0.20), transparent 18%),
-              linear-gradient(180deg, #100a06 0%, #271912 100%);
-  color:#f7ebd9;
+  background:#faf7f0;
+  color:#161311;
   font-family:Arial, Helvetica, sans-serif;
 }
 
@@ -26,8 +24,9 @@ body{
   position:sticky;
   top:0;
   z-index:100;
-  background:linear-gradient(135deg, #d4af37, #b88718);
-  color:#f7ebd9;
+  background:#ffffff;
+  color:#161311;
+  border-bottom:1px solid #eee4d3;
 }
 
 .smartHeaderInner{
@@ -48,7 +47,7 @@ body{
 .menuIcon{
   border:0;
   background:transparent;
-  color:#f7ebd9;
+  color:#161311;
   cursor:pointer;
   padding:0;
   display:grid;
@@ -58,7 +57,7 @@ body{
 }
 
 .logoLink{
-  color:#f7ebd9;
+  color:#161311;
   text-decoration:none;
   display:flex;
   align-items:center;
@@ -72,7 +71,7 @@ body{
   width:38px;
   height:38px;
   border-radius:50%;
-  background:rgba(255,255,255,0.05);
+  background:#f6f0e2;
   display:grid;
   place-items:center;
   position:relative;
@@ -92,7 +91,7 @@ body{
 .sellBtn{
   border:0;
   background:linear-gradient(135deg, #d4af37, #b88718);
-  color:#f7ebd9;
+  color:#fff;
   padding:13px 18px;
   border-radius:999px;
   font-weight:800;
@@ -104,8 +103,8 @@ body{
 .mobileMenu{
   display:none;
   padding:14px 18px 18px;
-  background:rgba(16,10,6,0.96);
-  border-top:1px solid rgba(212,175,55,0.22);
+  background:#ffffff;
+  border-top:1px solid #eee4d3;
 }
 
 .mobileMenu.show{display:block}
@@ -119,7 +118,7 @@ body{
   border-radius:14px;
   margin-top:8px;
   font-weight:800;
-  background:rgba(255,255,255,0.05);
+  background:#f6f0e2;
   color:#0b4bea;
 }
 
@@ -153,8 +152,8 @@ body{
 
 /* HERO */
 .createHero{
-  background:rgba(18,12,7,0.95);
-  color:#f7ebd9;
+  background:#f6f0e2;
+  color:#161311;
   padding:76px 18px;
   text-align:center;
 }
@@ -176,7 +175,7 @@ body{
 .createHero p{
   margin:22px auto 0;
   max-width:560px;
-  color:#d7d7d7;
+  color:#6b6156;
   font-size:18px;
   line-height:1.55;
 }
@@ -205,24 +204,24 @@ body{
 .loadingBox,.loginPrompt{
   width:min(760px,100%);
   margin:0 auto;
-  border:1px dashed #d7d7d7;
+  border:1px dashed #e6dabd;
   border-radius:18px;
   padding:24px;
   text-align:center;
-  color:#d7c07a;
+  color:#6b6156;
   background:#ffffff;
 }
 
 .loginPrompt h3{
   margin:0 0 8px;
-  color:#f7ebd9;
+  color:#161311;
   font-family:Georgia, "Times New Roman", serif;
   font-size:28px;
 }
 
 .loginPrompt p{
   margin:0 0 18px;
-  color:#d7c07a;
+  color:#6b6156;
   line-height:1.6;
 }
 
@@ -245,20 +244,20 @@ body{
   top:108px;
   border-radius:20px;
   overflow:hidden;
-  background:rgba(18,12,7,0.95);
-  color:#f7ebd9;
+  background:#f6f0e2;
+  color:#161311;
   min-height:420px;
   display:flex;
   align-items:flex-end;
-  box-shadow:0 14px 32px rgba(0,0,0,.14);
+  box-shadow:0 12px 30px rgba(60,45,10,0.08);
 }
 
 .sideBg{
   position:absolute;
   inset:0;
   background:
-    linear-gradient(180deg,rgba(0,0,0,.10),rgba(0,0,0,.78)),
-    linear-gradient(135deg,#071321,#0b4bea);
+    linear-gradient(180deg,rgba(255,255,255,0),rgba(255,255,255,.35)),
+    linear-gradient(135deg,#f6e6c8,#f2ead9);
 }
 
 .sideContent{
@@ -277,7 +276,7 @@ body{
 
 .sideContent p{
   margin:16px 0 0;
-  color:#d7d7d7;
+  color:#6b6156;
   line-height:1.55;
   font-size:15px;
 }
@@ -290,9 +289,9 @@ body{
 }
 
 .sidePill{
-  border:1px solid rgba(255,255,255,.20);
-  background:rgba(255,255,255,0.05);
-  color:#f7ebd9;
+  border:1px solid #ece2cd;
+  background:#ffffff;
+  color:#161311;
   border-radius:999px;
   padding:8px 11px;
   font-size:12px;
@@ -309,11 +308,11 @@ body{
 
 /* FORM */
 .formCard{
-  background:rgba(255,255,255,0.05);
-  border:1px solid rgba(212,175,55,0.18);
+  background:#ffffff;
+  border:1px solid #eee4d3;
   border-radius:20px;
   padding:24px;
-  box-shadow:0 14px 32px rgba(0,0,0,.07);
+  box-shadow:0 12px 30px rgba(60,45,10,0.07);
 }
 
 .formTitle{
@@ -341,18 +340,18 @@ label{
   margin:14px 0 7px;
   font-size:13px;
   font-weight:900;
-  color:#f7ebd9;
+  color:#161311;
 }
 
 input,textarea,select{
   width:100%;
-  border:1px solid rgba(212,175,55,0.18);
+  border:1px solid #ece2cd;
   border-radius:14px;
   padding:14px;
   font-size:15px;
   outline:none;
-  background:rgba(255,255,255,0.05);
-  color:#f7ebd9;
+  background:#ffffff;
+  color:#161311;
   font-family:Arial, Helvetica, sans-serif;
 }
 
@@ -365,7 +364,7 @@ input:focus,textarea:focus,select:focus{
 
 .small{
   font-size:12px;
-  color:#d7c07a;
+  color:#6b6156;
   line-height:1.5;
   margin:8px 0 0;
 }
@@ -408,9 +407,9 @@ input:focus,textarea:focus,select:focus{
 }
 
 .typeCard.active{
-  background:rgba(18,12,7,0.95);
-  color:#f7ebd9;
-  border-color:#071321;
+  background:#161311;
+  color:#fff;
+  border-color:#161311;
 }
 
 .typeCard b{
@@ -421,7 +420,7 @@ input:focus,textarea:focus,select:focus{
 
 .typeCard span{
   display:block;
-  color:#d7c07a;
+  color:#6b6156;
   font-size:12px;
   line-height:1.35;
 }
@@ -500,7 +499,7 @@ input:focus,textarea:focus,select:focus{
   align-items:end;
   padding:12px;
   border:1px solid #e8e8e8;
-  background:rgba(255,255,255,0.05);
+  background:#ffffff;
   border-radius:16px;
   margin-bottom:10px;
 }
@@ -543,17 +542,17 @@ input:focus,textarea:focus,select:focus{
   gap:10px;
   padding:11px 12px;
   border-radius:14px;
-  background:rgba(255,255,255,0.05);
+  background:#ffffff;
   border:1px solid #e8e8e8;
   font-size:13px;
 }
 
 .ticketPreviewItem b{
-  color:#f7ebd9;
+  color:#161311;
 }
 
 .ticketPreviewItem span{
-  color:#d7c07a;
+  color:#6b6156;
   font-weight:800;
 }
 
@@ -574,8 +573,8 @@ input:focus,textarea:focus,select:focus{
   min-height:56px;
   border:0;
   border-radius:999px;
-  background:#000;
-  color:#f7ebd9;
+  background:#161311;
+  color:#fff;
   font-size:16px;
   font-weight:900;
   cursor:pointer;
@@ -589,8 +588,8 @@ input:focus,textarea:focus,select:focus{
 .loginBtn{
   display:inline-flex;
   text-decoration:none;
-  background:#000;
-  color:#f7ebd9;
+  background:#161311;
+  color:#fff;
   border-radius:999px;
   padding:15px 24px;
   font-weight:900;
@@ -611,7 +610,7 @@ input:focus,textarea:focus,select:focus{
 .footer{
   margin-top:34px;
   text-align:center;
-  color:#d7c07a;
+  color:#6b6156;
   font-size:13px;
   line-height:1.6;
 }
@@ -812,37 +811,23 @@ Best Dancer"></textarea>
 </main>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-import {
-  getAuth,
-  onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+const SUPABASE_URL = "https://shtzagoeuhqdthgzvmjx.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNodHphZ29ldWhxZHRoZ3p2bWp4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUxMDYyNjMsImV4cCI6MjEwMDY4MjI2M30.ChyQ1hAxsyitWRVXgcMOa8ztuI6WB3oKUhciXgguYyk";
 
-import {
-  getFirestore,
-  doc,
-  getDoc,
-  collection,
-  addDoc
-} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyBxry90zexnjiHIjVv_QluPlPWcqfxWb6Q",
-  authDomain: "sma-model-scout.firebaseapp.com",
-  projectId: "sma-model-scout",
-  storageBucket: "sma-model-scout.firebasestorage.app",
-  messagingSenderId: "786081868543",
-  appId: "1:786081868543:web:5805a21ac5dab4c799faca",
-  measurementId: "G-10LWV01GZE"
-};
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const CLOUDINARY_CLOUD_NAME = "dprk7qttr";
 const CLOUDINARY_UPLOAD_PRESET = "lumina_events";
+
+function toCamel(row){
+  const out = {};
+  for(const key in row){
+    out[key.replace(/_([a-z0-9])/g, (_, c) => c.toUpperCase())] = row[key];
+  }
+  return out;
+}
 
 document.getElementById("y").textContent = new Date().getFullYear();
 
@@ -1097,15 +1082,12 @@ addTicketTypeBtn.addEventListener("click", () => {
 
 async function loadCommission(){
   try{
-    const settingsRef = doc(db, "platformSettings", "main");
-    const settingsSnap = await getDoc(settingsRef);
+    const { data, error } = await supabase
+      .from("platform_settings").select("platform_commission").eq("id", 1).maybeSingle();
 
-    if(settingsSnap.exists()){
-      const data = settingsSnap.data();
-      commissionPercent = Number(data.platformCommission || 20);
-    }else{
-      commissionPercent = 20;
-    }
+    if(error) throw error;
+
+    commissionPercent = data ? Number(data.platform_commission || 20) : 20;
   }catch(error){
     console.error("Commission load error:", error);
     commissionPercent = 20;
@@ -1314,114 +1296,102 @@ createBtn.addEventListener("click", async () => {
       ? ticketTypes.reduce((sum, item) => sum + Number(item.quantity || 0), 0)
       : 0;
 
-    const eventDoc = {
-      eventName,
-      eventCode,
-      type: eventType,
-      eventType,
-      votingEnabled,
-      ticketsEnabled,
+    const eventRow = {
+      event_name: eventName,
+      event_code: eventCode,
+      event_type: eventType,
+      voting_enabled: votingEnabled,
+      tickets_enabled: ticketsEnabled,
 
-      organizerId: currentUser.uid,
-      organizerName,
+      organizer_id: currentUser.id,
+      organizer_name: organizerName,
 
       status: "active",
       description,
-      posterUrl: uploadedPosterUrl,
-      platformCommission: Number(commissionPercent),
+      poster_url: uploadedPosterUrl,
+      platform_commission: Number(commissionPercent),
 
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-
-      payoutStatus: "unpaid"
+      payout_status: "unpaid"
     };
 
     if(votingEnabled){
-      eventDoc.votePrice = Number(votePrice);
-      eventDoc.endDate = endDate;
-      eventDoc.hasCategories = hasCategories;
-      eventDoc.categoryCount = categories.length;
-      eventDoc.totalVotes = 0;
+      eventRow.vote_price = Number(votePrice);
+      eventRow.end_date = endDate;
+      eventRow.has_categories = hasCategories;
+      eventRow.category_count = categories.length;
+      eventRow.total_votes = 0;
     }else{
-      eventDoc.votePrice = 0;
-      eventDoc.endDate = "";
-      eventDoc.hasCategories = false;
-      eventDoc.categoryCount = 0;
-      eventDoc.totalVotes = 0;
+      eventRow.vote_price = 0;
+      eventRow.end_date = null;
+      eventRow.has_categories = false;
+      eventRow.category_count = 0;
+      eventRow.total_votes = 0;
     }
 
     if(ticketsEnabled){
-      eventDoc.hasMultipleTicketTypes = ticketTypes.length > 1;
-      eventDoc.ticketTypeCount = ticketTypes.length;
+      eventRow.ticket_name = primaryTicket.name;
+      eventRow.ticket_price = Number(primaryTicket.price);
+      eventRow.ticket_quantity = Number(totalTicketQuantity);
+      eventRow.tickets_sold = 0;
+      eventRow.ticket_sales_amount = 0;
 
-      eventDoc.ticketName = primaryTicket.name;
-      eventDoc.ticketPrice = Number(primaryTicket.price);
-      eventDoc.ticketQuantity = Number(totalTicketQuantity);
-      eventDoc.ticketsSold = 0;
-      eventDoc.ticketSalesAmount = 0;
-
-      eventDoc.eventDate = ticketEventDate;
-      eventDoc.location = location;
-      eventDoc.contactPhone = contactPhone;
+      eventRow.event_date = ticketEventDate;
+      eventRow.location = location;
+      eventRow.contact_phone = contactPhone;
     }else{
-      eventDoc.hasMultipleTicketTypes = false;
-      eventDoc.ticketTypeCount = 0;
+      eventRow.ticket_name = "";
+      eventRow.ticket_price = 0;
+      eventRow.ticket_quantity = 0;
+      eventRow.tickets_sold = 0;
+      eventRow.ticket_sales_amount = 0;
 
-      eventDoc.ticketName = "";
-      eventDoc.ticketPrice = 0;
-      eventDoc.ticketQuantity = 0;
-      eventDoc.ticketsSold = 0;
-      eventDoc.ticketSalesAmount = 0;
-
-      eventDoc.eventDate = "";
-      eventDoc.location = "";
-      eventDoc.contactPhone = "";
+      eventRow.event_date = null;
+      eventRow.location = "";
+      eventRow.contact_phone = "";
     }
 
-    const docRef = await addDoc(collection(db, "events"), eventDoc);
+    const { data: insertedEvent, error: eventError } = await supabase
+      .from("events").insert(eventRow).select().single();
+
+    if(eventError) throw eventError;
+
+    const eventId = insertedEvent.id;
 
     if(votingEnabled && hasCategories){
-      for(let i = 0; i < categories.length; i++){
-        await addDoc(collection(db, "eventCategories"), {
-          eventId: docRef.id,
-          eventCode,
-          organizerId: currentUser.uid,
-          categoryCode: String(i + 1),
-          categoryName: categories[i],
-          createdAt: new Date().toISOString()
-        });
-      }
+      const categoryRows = categories.map((name, i) => ({
+        event_id: eventId,
+        organizer_id: currentUser.id,
+        category_code: String(i + 1),
+        category_name: name
+      }));
+
+      const { error: categoryError } = await supabase.from("event_categories").insert(categoryRows);
+      if(categoryError) throw categoryError;
     }
 
     if(ticketsEnabled){
-      for(let i = 0; i < ticketTypes.length; i++){
-        const item = ticketTypes[i];
+      const ticketTypeRows = ticketTypes.map((item, i) => ({
+        event_id: eventId,
+        organizer_id: currentUser.id,
 
-        await addDoc(collection(db, "eventTicketTypes"), {
-          eventId: docRef.id,
-          eventCode,
-          eventName,
-          organizerId: currentUser.uid,
-          organizerName,
+        ticket_type_code: String(i + 1),
+        name: item.name,
+        price: Number(item.price),
+        quantity: Number(item.quantity),
+        sold: 0,
+        sales_amount: 0,
 
-          ticketTypeCode: String(i + 1),
-          name: item.name,
-          price: Number(item.price),
-          quantity: Number(item.quantity),
-          sold: 0,
-          salesAmount: 0,
+        status: "active"
+      }));
 
-          status: "active",
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
-        });
-      }
+      const { error: ticketTypeError } = await supabase.from("event_ticket_types").insert(ticketTypeRows);
+      if(ticketTypeError) throw ticketTypeError;
     }
 
     setMsg("Event created successfully.", "success");
 
     setTimeout(() => {
-      window.location.href = "live-event-details.html?eventId=" + docRef.id;
+      window.location.href = "live-event-details.html?eventId=" + eventId;
     }, 900);
 
   }catch(error){
@@ -1433,7 +1403,9 @@ createBtn.addEventListener("click", async () => {
   }
 });
 
-onAuthStateChanged(auth, async (user) => {
+supabase.auth.onAuthStateChange(async (event, session) => {
+  const user = session?.user;
+
   if(!user){
     loadingBox.style.display = "none";
     loginPrompt.style.display = "block";
@@ -1443,17 +1415,19 @@ onAuthStateChanged(auth, async (user) => {
   currentUser = user;
 
   try{
-    const organizerRef = doc(db, "organizers", user.uid);
-    const organizerSnap = await getDoc(organizerRef);
+    const { data: organizerData, error: organizerError } = await supabase
+      .from("organizers").select("*").eq("id", user.id).maybeSingle();
 
-    if(!organizerSnap.exists()){
+    if(organizerError) throw organizerError;
+
+    if(!organizerData){
       loadingBox.style.display = "none";
       loginPrompt.style.display = "block";
       loginPrompt.querySelector("p").textContent = "You need an organizer account before creating an event.";
       return;
     }
 
-    currentOrganizer = organizerSnap.data();
+    currentOrganizer = toCamel(organizerData);
 
     organizerNameInput.value =
       currentOrganizer.brand ||

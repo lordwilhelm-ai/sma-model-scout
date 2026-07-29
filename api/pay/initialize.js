@@ -1,14 +1,7 @@
-import admin from 'firebase-admin';
-const fetch = globalThis.fetch;
+import { createClient } from '@supabase/supabase-js';
 
-// Initialize Firebase
-if (!admin.apps.length) {
-  const serviceAccount = JSON.parse(
-    Buffer.from(process.env.FIREBASE_SERVICE_ACCOUNT_BASE64, 'base64').toString('utf8')
-  );
-  admin.initializeApp({ credential: admin.credential.cert(serviceAccount) });
-}
-const db = admin.firestore();
+const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
+const fetch = globalThis.fetch;
 
 function getSiteUrl(req) {
   const override = process.env.HUBTEL_SITE_URL || process.env.SITE_URL;
@@ -31,7 +24,7 @@ function formatPhone(phone) {
 }
 
 // Hubtel requires clientReference to be non-empty and <= 32 characters.
-// Firestore doc IDs (20 chars) don't fit if embedded directly in the string,
+// Postgres uuids (36 chars) don't fit if embedded directly in the string,
 // so we generate a short random reference instead and store the real
 // event/contestant/votes details server-side, keyed by that reference.
 function shortRef(prefix) {
@@ -142,17 +135,20 @@ export default async function handler(req, res) {
     // Only after Hubtel accepts the request do we persist the pending record,
     // keyed by the exact clientReference the callback will receive.
     if (isVote) {
-      await db.collection('pending_payments').doc(clientReference).set({
+      const { error: pendingError } = await supabase.from('pending_transactions').insert({
+        key: clientReference,
         type: 'vote',
-        source: 'web',
-        eventId,
-        contestantId,
-        contestantName: contestantName || null,
-        votes: Number(votes) || null,
+        event_id: eventId,
+        contestant_id: contestantId,
+        phone_number: formattedPhone || null,
         amount: totalAmount,
-        status: 'pending',
-        createdAt: admin.firestore.FieldValue.serverTimestamp()
+        status: 'pending'
       });
+
+      if (pendingError) {
+        console.error('pending_transactions insert error:', pendingError);
+        return res.status(500).json({ message: 'Could not record pending payment' });
+      }
     }
 
     return res.status(200).json({

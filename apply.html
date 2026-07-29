@@ -113,21 +113,12 @@
   </main>
 
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-    import { getFirestore, collection, addDoc, Timestamp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+    import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyBxry90zexnjiHIjVv_QluPlPWcqfxWb6Q",
-      authDomain: "sma-model-scout.firebaseapp.com",
-      projectId: "sma-model-scout",
-      storageBucket: "sma-model-scout.firebasestorage.app",
-      messagingSenderId: "786081868543",
-      appId: "1:786081868543:web:5805a21ac5dab4c799faca",
-      measurementId: "G-10LWV01GZE"
-    };
+    const SUPABASE_URL = "https://shtzagoeuhqdthgzvmjx.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNodHphZ29ldWhxZHRoZ3p2bWp4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUxMDYyNjMsImV4cCI6MjEwMDY4MjI2M30.ChyQ1hAxsyitWRVXgcMOa8ztuI6WB3oKUhciXgguYyk";
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     const OWNER_ENDPOINT = "https://formsubmit.co/mensahpaa00@gmail.com";
     const MANAGER_ENDPOINT = "https://formsubmit.co/techhubgraph@gmail.com";
@@ -142,27 +133,27 @@
       btn.disabled = true;
 
       try {
-        // 1) Save details to Firestore (no photos here)
+        // 1) Save details to Supabase (no photos here)
         const data = new FormData(form);
 
-        const docData = {
-          fullName: String(data.get("Full Name") || "").trim(),
+        const row = {
+          full_name: String(data.get("Full Name") || "").trim(),
           age: Number(data.get("Age") || 0),
           gender: String(data.get("Gender") || "").trim(),
           contact: String(data.get("Contact") || "").trim(),
-          parentName: String(data.get("Parent Name") || "").trim(),
-          parentContact: String(data.get("Parent Contact") || "").trim(),
+          parent_name: String(data.get("Parent Name") || "").trim(),
+          parent_contact: String(data.get("Parent Contact") || "").trim(),
           residence: String(data.get("Residence") || "").trim(),
-          gpsAddress: String(data.get("GPS Address") || "").trim(),
-          previousAgency: String(data.get("Previous Agency") || "").trim(),
-          agencyName: String(data.get("Agency Name") || "").trim(),
+          gps_address: String(data.get("GPS Address") || "").trim(),
+          previous_agency: String(data.get("Previous Agency") || "").trim(),
+          agency_name: String(data.get("Agency Name") || "").trim(),
           reason: String(data.get("Reason") || "").trim(),
-          momoRef: String(data.get("MoMo Reference") || "").trim(),
-          status: "pending",
-          createdAt: Timestamp.fromDate(new Date())
+          momo_ref: String(data.get("MoMo Reference") || "").trim(),
+          status: "pending"
         };
 
-        await addDoc(collection(db, "applications"), docData);
+        const { error: insertError } = await supabase.from("applications").insert(row);
+        if(insertError) throw insertError;
 
         // 2) Email OWNER + MANAGER with PHOTOS using FormSubmit (same FormData)
         const ownerData = new FormData(form);

@@ -1,0 +1,556 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Live Results | Lumina Vote</title>
+
+<style>
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+
+body{
+  margin:0;
+  overflow-x:hidden;
+  background:#faf7f0;
+  color:#161311;
+  font-family:Arial, Helvetica, sans-serif;
+}
+
+a{color:inherit}
+
+/* HEADER */
+.siteHeader{
+  position:sticky;
+  top:0;
+  z-index:100;
+  background:#ffffff;
+  border-bottom:1px solid #eee4d3;
+}
+
+.siteHeaderInner{
+  max-width:1180px;
+  margin:0 auto;
+  height:76px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  padding:0 22px;
+}
+
+.headerLeft,.headerRight{
+  display:flex;
+  align-items:center;
+  gap:16px;
+}
+
+.menuIcon{
+  border:0;
+  background:transparent;
+  color:#161311;
+  cursor:pointer;
+  padding:0;
+  display:grid;
+  place-items:center;
+  font-size:26px;
+  line-height:1;
+}
+
+.logoLink{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  text-decoration:none;
+  color:#161311;
+  font-weight:900;
+  font-size:21px;
+  letter-spacing:-0.5px;
+}
+
+.logoMark{
+  width:34px;
+  height:34px;
+  border-radius:9px;
+  background:linear-gradient(135deg,#d4af37,#b88718);
+  display:grid;
+  place-items:center;
+  color:#fff;
+  font-weight:900;
+  font-size:17px;
+  font-style:italic;
+  flex:0 0 auto;
+}
+
+.navLinks{
+  display:none;
+  align-items:center;
+  gap:26px;
+  font-size:14px;
+  font-weight:700;
+  color:#6b6156;
+}
+
+.navLinks a{text-decoration:none}
+.navLinks a.active{color:#161311}
+
+.sellBtn{
+  border:0;
+  background:#161311;
+  color:#fff;
+  padding:12px 20px;
+  border-radius:999px;
+  font-weight:800;
+  font-size:14px;
+  text-decoration:none;
+  white-space:nowrap;
+}
+
+.mobileMenu{
+  display:none;
+  padding:14px 18px 18px;
+  background:#fff;
+  border-top:1px solid #eee4d3;
+}
+
+.mobileMenu.show{display:block}
+
+.mobileMenu a{
+  width:100%;
+  display:flex;
+  justify-content:center;
+  text-decoration:none;
+  padding:13px;
+  border-radius:12px;
+  margin-top:8px;
+  font-weight:800;
+  background:#f6f0e2;
+  color:#161311;
+  font-size:14px;
+}
+
+@media(min-width:860px){
+  .navLinks{display:flex}
+}
+
+/* MAIN */
+.pageWrap{
+  max-width:1180px;
+  margin:0 auto;
+  padding:34px 18px 70px;
+}
+
+.breadcrumb{
+  font-size:13px;
+  color:#a99a80;
+  margin-bottom:16px;
+}
+
+.breadcrumb a{text-decoration:none;color:#a99a80}
+.breadcrumb span.current{color:#161311;font-weight:700}
+
+.eyebrow{
+  display:inline-block;
+  background:#f6e6c8;
+  color:#8a5b12;
+  font-weight:800;
+  font-size:11px;
+  letter-spacing:.05em;
+  text-transform:uppercase;
+  padding:7px 12px;
+  border-radius:999px;
+  margin-bottom:14px;
+}
+
+.pageTitle{
+  margin:0 0 8px;
+  font-family:Georgia, "Times New Roman", serif;
+  font-size:34px;
+  font-weight:900;
+  letter-spacing:-0.6px;
+}
+
+.pageSub{
+  margin:0 0 26px;
+  color:#6b6156;
+  font-size:14.5px;
+  line-height:1.6;
+  max-width:600px;
+}
+
+.searchInput{
+  width:100%;
+  max-width:420px;
+  border:1px solid #ece2cd;
+  background:#fff;
+  border-radius:14px;
+  padding:14px 16px;
+  font-size:14px;
+  outline:none;
+  color:#161311;
+  margin-bottom:24px;
+}
+
+.searchInput:focus{
+  border-color:#d4af37;
+  box-shadow:0 0 0 4px rgba(212,175,55,.14);
+}
+
+.eventGrid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:16px;
+}
+
+@media(min-width:700px){
+  .eventGrid{grid-template-columns:1fr 1fr}
+}
+
+@media(min-width:1000px){
+  .eventGrid{grid-template-columns:1fr 1fr 1fr}
+}
+
+.eventCard{
+  display:flex;
+  flex-direction:column;
+  background:#ffffff;
+  border:1px solid #efe7d8;
+  border-radius:18px;
+  padding:16px;
+  box-shadow:0 10px 30px rgba(60,45,10,0.05);
+}
+
+.posterWrap{
+  position:relative;
+  height:150px;
+  border-radius:12px;
+  overflow:hidden;
+  background:#f2ead9;
+  margin-bottom:12px;
+}
+
+.posterWrap img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+
+.posterFallback{
+  height:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:14px;
+  text-align:center;
+  color:#161311;
+  font-weight:900;
+  font-size:14px;
+  background:linear-gradient(135deg,#f6e6c8,#f2ead9);
+}
+
+.statusPill{
+  position:absolute;
+  left:10px;
+  top:10px;
+  background:#161311;
+  color:#fff;
+  border-radius:999px;
+  padding:6px 10px;
+  font-size:10.5px;
+  font-weight:900;
+}
+
+.eventName{
+  font-size:16px;
+  font-weight:800;
+  font-style:italic;
+  margin-bottom:4px;
+}
+
+.eventMeta{
+  color:#a99a80;
+  font-size:12.5px;
+  font-weight:600;
+  margin-bottom:12px;
+}
+
+.eventStatsRow{
+  display:flex;
+  gap:18px;
+  margin-bottom:14px;
+}
+
+.eventStat span{
+  display:block;
+  font-size:10px;
+  color:#a99a80;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:.04em;
+}
+
+.eventStat b{
+  display:block;
+  margin-top:2px;
+  font-size:15px;
+  font-weight:900;
+}
+
+.viewBtn{
+  margin-top:auto;
+  text-decoration:none;
+  text-align:center;
+  background:#161311;
+  color:#fff;
+  border-radius:999px;
+  padding:12px 16px;
+  font-weight:800;
+  font-size:13.5px;
+}
+
+.stateBox{
+  border:1px dashed #e6dabd;
+  border-radius:16px;
+  padding:34px 20px;
+  text-align:center;
+  color:#a99a80;
+  font-size:14px;
+  font-weight:600;
+}
+
+.hidden{display:none !important}
+
+.footer{
+  margin-top:34px;
+  text-align:center;
+  color:#a99a80;
+  font-size:12.5px;
+  line-height:1.6;
+}
+</style>
+</head>
+
+<body>
+
+<header class="siteHeader">
+  <div class="siteHeaderInner">
+    <div class="headerLeft">
+      <button class="menuIcon" id="menuBtn" type="button">☰</button>
+
+      <a class="logoLink" href="index.html">
+        <span class="logoMark">V</span>
+        <span>Lumina Vote</span>
+      </a>
+    </div>
+
+    <nav class="navLinks">
+      <a href="voting-home.html">Events</a>
+      <a href="live-results.html" class="active">Live Results</a>
+      <a href="verify-vote.html">Verify vote</a>
+    </nav>
+
+    <div class="headerRight">
+      <a class="sellBtn" href="event-registration.html">Sell tickets</a>
+    </div>
+  </div>
+
+  <div class="mobileMenu" id="mobileMenu">
+    <a href="index.html">Home</a>
+    <a href="voting-home.html">Events</a>
+    <a href="verify-vote.html">Verify vote</a>
+    <a href="support.html">Support</a>
+  </div>
+</header>
+
+<main class="pageWrap">
+
+  <div class="breadcrumb">
+    <a href="index.html">Home</a> / <span class="current">Live Results</span>
+  </div>
+
+  <span class="eyebrow">Results Dashboard</span>
+  <h1 class="pageTitle">Live Results</h1>
+  <p class="pageSub">Pick an event below to see its live standings, updated straight from the vote count.</p>
+
+  <input class="searchInput" id="searchInput" type="search" placeholder="Search events...">
+
+  <div id="loadingState" class="stateBox">Loading events...</div>
+  <div id="emptyState" class="stateBox hidden">No events found.</div>
+
+  <div class="eventGrid" id="eventGrid"></div>
+
+  <div class="footer">
+    © <span id="y"></span> Lumina Creative Co<br>
+    Site created by <b>Lord Wilhelm</b> (0593410452)
+  </div>
+
+</main>
+
+<script type="module">
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+const SUPABASE_URL = "https://shtzagoeuhqdthgzvmjx.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNodHphZ29ldWhxZHRoZ3p2bWp4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUxMDYyNjMsImV4cCI6MjEwMDY4MjI2M30.ChyQ1hAxsyitWRVXgcMOa8ztuI6WB3oKUhciXgguYyk";
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+function toCamel(row){
+  const out = {};
+  for(const key in row){
+    out[key.replace(/_([a-z0-9])/g, (_, c) => c.toUpperCase())] = row[key];
+  }
+  return out;
+}
+
+document.getElementById("y").textContent = new Date().getFullYear();
+
+const menuBtn = document.getElementById("menuBtn");
+const mobileMenu = document.getElementById("mobileMenu");
+const searchInput = document.getElementById("searchInput");
+
+const loadingState = document.getElementById("loadingState");
+const emptyState = document.getElementById("emptyState");
+const eventGrid = document.getElementById("eventGrid");
+
+let allEvents = [];
+let allContestants = [];
+let searchText = "";
+
+menuBtn.addEventListener("click", () => {
+  mobileMenu.classList.toggle("show");
+});
+
+searchInput.addEventListener("input", () => {
+  searchText = searchInput.value.trim().toLowerCase();
+  renderEvents();
+});
+
+function normalizeStatus(status){
+  const s = String(status || "").toLowerCase();
+  if(s === "active" || s === "live") return "active";
+  if(s === "upcoming") return "upcoming";
+  if(s === "paused") return "paused";
+  return "closed";
+}
+
+function prettyStatus(status){
+  const s = normalizeStatus(status);
+  if(s === "active") return "Live";
+  if(s === "upcoming") return "Upcoming";
+  if(s === "paused") return "Paused";
+  return "Closed";
+}
+
+function votesForEvent(eventId){
+  return allContestants
+    .filter(c => c.eventId === eventId)
+    .reduce((sum, c) => sum + Number(c.votes || 0), 0);
+}
+
+function createEventCard(item){
+  const totalVotes = Math.max(votesForEvent(item.id), Number(item.totalVotes || 0));
+  const nomineeCount = allContestants.filter(c => c.eventId === item.id).length;
+
+  const card = document.createElement("div");
+  card.className = "eventCard";
+
+  const image = item.posterUrl && String(item.posterUrl).trim() !== "" ? item.posterUrl : "";
+  const title = item.eventName || "Untitled Event";
+
+  const posterHtml = image
+    ? `<img src="${image}" alt="${title} poster">`
+    : `<div class="posterFallback">${title}</div>`;
+
+  card.innerHTML = `
+    <div class="posterWrap">
+      ${posterHtml}
+      <div class="statusPill">${prettyStatus(item.status)}</div>
+    </div>
+
+    <div class="eventName">${title}</div>
+    <div class="eventMeta">${item.organizerName || "Lumina Vote"}</div>
+
+    <div class="eventStatsRow">
+      <div class="eventStat">
+        <span>Votes</span>
+        <b>${totalVotes.toLocaleString()}</b>
+      </div>
+      <div class="eventStat">
+        <span>Nominees</span>
+        <b>${nomineeCount.toLocaleString()}</b>
+      </div>
+    </div>
+
+    <a class="viewBtn" href="live-event-details.html?eventId=${item.id}">View Live Results</a>
+  `;
+
+  return card;
+}
+
+function renderEvents(){
+  eventGrid.innerHTML = "";
+
+  let items = [...allEvents];
+
+  items = items.filter(item => !!item.votingEnabled || item.eventType === "voting" || item.eventType === "voting_tickets" || !item.eventType);
+
+  if(searchText){
+    items = items.filter(item =>
+      String(item.eventName || "").toLowerCase().includes(searchText) ||
+      String(item.eventCode || "").toLowerCase().includes(searchText) ||
+      String(item.organizerName || "").toLowerCase().includes(searchText)
+    );
+  }
+
+  const rank = { active:1, upcoming:2, paused:3, closed:4 };
+  items.sort((a, b) => {
+    const ra = rank[normalizeStatus(a.status)];
+    const rb = rank[normalizeStatus(b.status)];
+    if(ra !== rb) return ra - rb;
+    return votesForEvent(b.id) - votesForEvent(a.id);
+  });
+
+  loadingState.classList.add("hidden");
+
+  if(items.length === 0){
+    emptyState.classList.remove("hidden");
+    return;
+  }
+
+  emptyState.classList.add("hidden");
+  items.forEach(item => eventGrid.appendChild(createEventCard(item)));
+}
+
+async function loadData(){
+  const [eventsRes, contestantsRes] = await Promise.all([
+    supabase.from("events").select("*"),
+    supabase.from("event_contestants").select("id, event_id, votes")
+  ]);
+
+  if(eventsRes.error){
+    loadingState.textContent = "Could not load events.";
+    return;
+  }
+
+  allEvents = eventsRes.data.map(toCamel);
+  allContestants = (contestantsRes.data || []).map(toCamel);
+
+  renderEvents();
+}
+
+loadData();
+
+supabase
+  .channel("public:events:live-results")
+  .on("postgres_changes", { event: "*", schema: "public", table: "events" }, loadData)
+  .subscribe();
+
+supabase
+  .channel("public:event_contestants:live-results")
+  .on("postgres_changes", { event: "*", schema: "public", table: "event_contestants" }, loadData)
+  .subscribe();
+</script>
+
+</body>
+</html>
