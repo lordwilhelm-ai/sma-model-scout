@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scan Tickets | Lumina Vote</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  overflow-x:hidden;
+  background:#faf7f0;
+  color:#161311;
+  font-family:Arial, Helvetica, sans-serif;
+}
+
+.nav{
+  background:#fff;
+  border-bottom:1px solid #eee4d3;
+  height:70px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 20px;
+}
+
+.brand{
+  font-weight:900;
+  font-size:19px;
+}
+
+.brand span{
+  color:#6b6156;
+  font-weight:700;
+  font-size:14px;
+  margin-left:6px;
+}
+
+.btn{
+  border:0;
+  background:#161311;
+  color:#fff;
+  text-decoration:none;
+  padding:11px 16px;
+  border-radius:999px;
+  font-size:13px;
+  font-weight:800;
+  cursor:pointer;
+}
+
+.btn.small{padding:9px 14px}
+.btn.ghost{background:#f6f0e2;color:#161311}
+
+.container{
+  max-width:520px;
+  margin:0 auto;
+  padding:24px 18px 60px;
+}
+
+.card{
+  background:#fff;
+  border:1px solid #eee4d3;
+  border-radius:22px;
+  padding:22px;
+  box-shadow:0 12px 30px rgba(60,45,10,0.08);
+  margin-bottom:18px;
+  text-align:center;
+}
+
+.loginBox{
+  max-width:480px;
+  margin:60px auto;
+  text-align:center;
+}
+
+.hidden{display:none !important}
+
+#reader{
+  width:100%;
+  border-radius:16px;
+  overflow:hidden;
+}
+
+.manualRow{
+  display:flex;
+  gap:8px;
+  margin-top:16px;
+}
+
+.manualRow input{
+  flex:1;
+  border:1px solid #eee4d3;
+  border-radius:12px;
+  padding:12px 14px;
+  font-size:14px;
+}
+
+.resultBox{
+  border-radius:18px;
+  padding:22px;
+  text-align:center;
+  margin-top:16px;
+  font-weight:800;
+}
+
+.resultBox.ok{background:#dcfce7;color:#15803d}
+.resultBox.used{background:#fef9c3;color:#854d0e}
+.resultBox.error{background:#fee2e2;color:#dc2626}
+
+.resultBox .big{
+  font-size:26px;
+  margin-bottom:6px;
+  display:block;
+}
+
+.muted{color:#6b6156;font-size:13px}
+</style>
+</head>
+
+<body>
+
+<header class="nav">
+  <div class="brand">Lumina <span>Scan Tickets</span></div>
+  <div style="display:flex;gap:10px;">
+    <a class="btn small ghost" href="organizer-dashboard.html">Dashboard</a>
+    <button class="btn small" id="logoutBtn" type="button" style="display:none;">Logout</button>
+  </div>
+</header>
+
+<main class="container">
+
+  <section class="card loginBox" id="loginBox" style="display:none;">
+    <h1 style="margin-bottom:8px;">Organizer login required</h1>
+    <p class="muted">Log in to your organizer account to check tickets in at the door.</p>
+    <a class="btn" href="organizer-login.html" style="display:inline-flex;margin-top:14px;">Go to Organizer Login</a>
+  </section>
+
+  <div id="loadingBox" class="card">Loading...</div>
+
+  <div id="scanArea" class="hidden">
+    <div class="card">
+      <p class="muted" style="margin:0 0 14px;">Point the camera at a ticket's QR code. A ticket can only be checked in once.</p>
+      <div id="reader"></div>
+
+      <div class="manualRow">
+        <input id="manualCode" type="text" placeholder="Or paste ticket code manually...">
+        <button class="btn" id="manualBtn" type="button">Check in</button>
+      </div>
+    </div>
+
+    <div id="resultBox" class="resultBox hidden"></div>
+  </div>
+
+</main>
+
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<script type="module">
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+const SUPABASE_URL = "https://shtzagoeuhqdthgzvmjx.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNodHphZ29ldWhxZHRoZ3p2bWp4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUxMDYyNjMsImV4cCI6MjEwMDY4MjI2M30.ChyQ1hAxsyitWRVXgcMOa8ztuI6WB3oKUhciXgguYyk";
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+const loginBox = document.getElementById("loginBox");
+const loadingBox = document.getElementById("loadingBox");
+const scanArea = document.getElementById("scanArea");
+const logoutBtn = document.getElementById("logoutBtn");
+const resultBox = document.getElementById("resultBox");
+const manualCode = document.getElementById("manualCode");
+const manualBtn = document.getElementById("manualBtn");
+
+let html5QrCode = null;
+let scanning = false;
+let busy = false;
+
+function extractCode(text){
+  const trimmed = String(text || "").trim();
+  try{
+    const url = new URL(trimmed);
+    const fromQuery = url.searchParams.get("code");
+    if(fromQuery) return fromQuery;
+  }catch(e){
+    // not a URL — treat the raw scanned text as the code itself
+  }
+  return trimmed;
+}
+
+function showResult(kind, title, sub){
+  resultBox.className = "resultBox " + kind;
+  resultBox.innerHTML = `<span class="big">${title}</span>${sub ? `<span class="muted">${sub}</span>` : ""}`;
+  resultBox.classList.remove("hidden");
+}
+
+async function checkIn(code){
+  if(busy || !code) return;
+  busy = true;
+
+  const { data: { session } } = await supabase.auth.getSession();
+  const token = session?.access_token;
+
+  try{
+    const resp = await fetch("/api/checkin-ticket", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify({ code })
+    });
+
+    const json = await resp.json();
+
+    if(resp.ok && json.status){
+      showResult("ok", "✓ Valid — Checked In", json.data?.eventName || "");
+    }else if(json.alreadyUsed){
+      showResult("used", "Already Used", json.message || "");
+    }else{
+      showResult("error", "Not Valid", json.message || "Could not check in this ticket.");
+    }
+  }catch(error){
+    console.error(error);
+    showResult("error", "Error", "Could not reach the server. Try again.");
+  }finally{
+    busy = false;
+    setTimeout(() => { resultBox.classList.add("hidden"); }, 3500);
+  }
+}
+
+manualBtn.addEventListener("click", () => {
+  const code = extractCode(manualCode.value);
+  manualCode.value = "";
+  checkIn(code);
+});
+
+manualCode.addEventListener("keydown", (e) => {
+  if(e.key === "Enter") manualBtn.click();
+});
+
+async function startScanner(){
+  if(scanning) return;
+  scanning = true;
+
+  html5QrCode = new Html5Qrcode("reader");
+
+  try{
+    await html5QrCode.start(
+      { facingMode: "environment" },
+      { fps: 10, qrbox: 240 },
+      (decodedText) => {
+        checkIn(extractCode(decodedText));
+      },
+      () => { /* per-frame scan miss — ignore */ }
+    );
+  }catch(error){
+    console.error("Camera error:", error);
+    showResult("error", "Camera unavailable", "Use the manual code field below instead.");
+  }
+}
+
+async function logout(){
+  await supabase.auth.signOut();
+  window.location.reload();
+}
+
+logoutBtn.addEventListener("click", logout);
+
+supabase.auth.onAuthStateChange(async (event, session) => {
+  loadingBox.classList.add("hidden");
+
+  const user = session?.user;
+
+  if(!user){
+    loginBox.style.display = "block";
+    scanArea.classList.add("hidden");
+    logoutBtn.style.display = "none";
+    return;
+  }
+
+  loginBox.style.display = "none";
+  logoutBtn.style.display = "inline-flex";
+  scanArea.classList.remove("hidden");
+
+  startScanner();
+});
+</script>
+
+</body>
+</html>

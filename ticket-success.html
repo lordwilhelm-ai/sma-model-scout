@@ -264,6 +264,35 @@ p{
   text-align:right;
 }
 
+.qrBlock{
+  border-top:1px solid #e8e8e8;
+  padding-top:14px;
+  text-align:center;
+}
+
+.qrBlock img{
+  width:160px;
+  height:160px;
+  border-radius:12px;
+  border:1px solid #eee4d3;
+  background:#fff;
+}
+
+.qrBlock .qrLabel{
+  font-size:12px;
+  font-weight:800;
+  margin-bottom:8px;
+  color:#6b6156;
+}
+
+.qrBlock a{
+  display:block;
+  margin-top:8px;
+  font-size:12px;
+  color:#0b4bea;
+  text-decoration:none;
+}
+
 .actions{
   display:grid;
   grid-template-columns:1fr 1fr;
@@ -417,6 +446,8 @@ p{
             <b id="ticketContact">—</b>
           </div>
         </div>
+
+        <div id="qrList" style="display:grid;gap:14px;margin-top:16px;"></div>
       </div>
 
       <div class="actions" id="actions" style="display:none;">
@@ -450,6 +481,7 @@ const ticketEventCode = document.getElementById("ticketEventCode");
 const ticketDate = document.getElementById("ticketDate");
 const ticketLocation = document.getElementById("ticketLocation");
 const ticketContact = document.getElementById("ticketContact");
+const qrList = document.getElementById("qrList");
 
 const params = new URLSearchParams(window.location.search);
 const reference =
@@ -496,6 +528,16 @@ function showSuccess(text, data, alreadyProcessed = false){
   ticketDate.textContent = data.eventDate || "—";
   ticketLocation.textContent = data.location || "—";
   ticketContact.textContent = data.contactPhone || "—";
+
+  const ticketIds = Array.isArray(data.ticketIds) ? data.ticketIds : [];
+
+  qrList.innerHTML = ticketIds.map((id, index) => `
+    <div class="qrBlock">
+      <div class="qrLabel">Ticket ${index + 1} of ${ticketIds.length}</div>
+      <img src="/api/ticket-qr?code=${encodeURIComponent(id)}" alt="Ticket QR code" loading="lazy">
+      <a href="ticket-status.html?code=${encodeURIComponent(id)}" target="_blank">Check this ticket's status</a>
+    </div>
+  `).join("");
 
   ticketCard.classList.add("show");
 

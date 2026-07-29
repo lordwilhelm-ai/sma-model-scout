@@ -1,6 +1,18 @@
 import { createClient } from '@supabase/supabase-js';
+import { sendTicketEmail } from '../lib/send-ticket-email.js';
 
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
+
+function getSiteUrl(req) {
+  const override = process.env.HUBTEL_SITE_URL || process.env.SITE_URL;
+  if (override && typeof override === 'string' && override.trim()) {
+    return override.trim().replace(/\/$/, '');
+  }
+  const host = req.headers?.host || '';
+  const proto = req.headers?.['x-forwarded-proto'] || req.headers?.['x-forwarded-protocol'] || 'https';
+  if (!host) return 'https://example.com';
+  return `${proto}://${host.replace(/\/$/, '')}`;
+}
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
@@ -71,6 +83,26 @@ export default async function handler(req, res) {
     }
 
     console.log('process_hubtel_payment result:', data);
+
+    // Fire the ticket QR email off the back of a fresh 'ticket' credit only —
+    // "already_saved" means this is a Hubtel retry of a callback we already
+    // processed (and already emailed for), so don't send a second email.
+    if (type === 'ticket' && data?.status === 'ok' && Array.isArray(data.ticket_ids) && data.ticket_ids.length) {
+      try {
+        await sendTicketEmail({
+          toEmail: data.buyer_email,
+          eventName: data.event_name,
+          eventDate: data.event_date,
+          location: data.location,
+          ticketTypeName: data.ticket_type_name,
+          ticketIds: data.ticket_ids,
+          siteUrl: getSiteUrl(req),
+        });
+      } catch (emailError) {
+        // Never let an email failure affect the (already-committed) payment credit.
+        console.error('sendTicketEmail failed:', emailError);
+      }
+    }
 
     // Must respond 200 OK so Hubtel stops retrying, regardless of outcome.
     res.status(200).json({ status: data?.status === 'ok' ? 'success' : data?.status, message: data?.message });

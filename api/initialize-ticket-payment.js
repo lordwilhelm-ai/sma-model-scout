@@ -149,6 +149,7 @@ export default async function handler(req, res) {
       event_id: eventId,
       ticket_type_id: ticketTypeId,
       phone_number: phone || null,
+      buyer_email: email || null,
       ticket_price: ticketPrice,
       amount,
       status: 'pending'

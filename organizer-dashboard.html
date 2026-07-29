@@ -855,6 +855,7 @@ body{
     <a href="index.html">Home</a>
     <a href="voting-home.html">Events</a>
     <a href="event-registration.html">Create Event</a>
+    <a href="scan-ticket.html">Scan Tickets</a>
     <button id="mobileLogoutBtn" type="button" style="display:none;">Logout</button>
   </div>
 </header>
@@ -998,6 +999,7 @@ body{
 
         <div class="actionGrid">
           <a class="publicBtn" id="openPublicBtn" target="_blank">Open Event</a>
+          <a class="actionBtn" id="scanTicketsBtn" target="_blank">Scan Tickets</a>
           <button class="actionBtn" id="shareEventBtn" type="button">Share</button>
           <button class="actionBtn" id="syncVotesBtn" type="button">Sync Votes</button>
           <button class="actionBtn" id="pauseEventBtn" type="button">Pause</button>
@@ -1290,6 +1292,7 @@ const detailTicketsAvailable = document.getElementById("detailTicketsAvailable")
 const detailLocation = document.getElementById("detailLocation");
 
 const openPublicBtn = document.getElementById("openPublicBtn");
+const scanTicketsBtn = document.getElementById("scanTicketsBtn");
 const shareEventBtn = document.getElementById("shareEventBtn");
 const syncVotesBtn = document.getElementById("syncVotesBtn");
 const pauseEventBtn = document.getElementById("pauseEventBtn");
@@ -1660,6 +1663,7 @@ async function openEvent(eventItem){
   detailLocation.textContent = eventItem.location || "—";
 
   openPublicBtn.href = getEventUrl(eventItem.id);
+  scanTicketsBtn.href = "scan-ticket.html";
 
   editEventName.value = eventItem.eventName || "";
   editEventCode.value = eventItem.eventCode || "";

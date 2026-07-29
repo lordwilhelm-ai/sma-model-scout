@@ -1,0 +1,524 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Check Ticket Status | Lumina Vote</title>
+
+<style>
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+
+body{
+  margin:0;
+  overflow-x:hidden;
+  background:#faf7f0;
+  color:#161311;
+  font-family:Arial, Helvetica, sans-serif;
+}
+
+a{color:inherit}
+
+/* HEADER */
+.siteHeader{
+  position:sticky;
+  top:0;
+  z-index:100;
+  background:#ffffff;
+  border-bottom:1px solid #eee4d3;
+}
+
+.siteHeaderInner{
+  max-width:1180px;
+  margin:0 auto;
+  height:76px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  padding:0 22px;
+}
+
+.headerLeft,.headerRight{
+  display:flex;
+  align-items:center;
+  gap:16px;
+}
+
+.menuIcon{
+  border:0;
+  background:transparent;
+  color:#161311;
+  cursor:pointer;
+  padding:0;
+  display:grid;
+  place-items:center;
+  font-size:26px;
+  line-height:1;
+}
+
+.logoLink{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  text-decoration:none;
+  color:#161311;
+  font-weight:900;
+  font-size:21px;
+  letter-spacing:-0.5px;
+}
+
+.logoMark{
+  width:34px;
+  height:34px;
+  border-radius:9px;
+  background:linear-gradient(135deg,#d4af37,#b88718);
+  display:grid;
+  place-items:center;
+  color:#fff;
+  font-weight:900;
+  font-size:17px;
+  font-style:italic;
+  flex:0 0 auto;
+}
+
+.navLinks{
+  display:none;
+  align-items:center;
+  gap:26px;
+  font-size:14px;
+  font-weight:700;
+  color:#6b6156;
+}
+
+.navLinks a{text-decoration:none}
+.navLinks a.active{color:#161311}
+
+.sellBtn{
+  border:0;
+  background:#161311;
+  color:#fff;
+  text-decoration:none;
+  padding:11px 18px;
+  border-radius:999px;
+  font-size:13px;
+  font-weight:800;
+}
+
+.mobileMenu{
+  display:none;
+  padding:14px 18px 18px;
+  background:#fff;
+  border-top:1px solid #eee4d3;
+}
+
+.mobileMenu.show{display:block}
+
+.mobileMenu a,.mobileMenu button{
+  width:100%;
+  border:0;
+  display:flex;
+  align-items:center;
+  padding:12px 4px;
+  text-decoration:none;
+  color:#161311;
+  font-size:15px;
+  font-weight:700;
+  background:transparent;
+  border-bottom:1px solid #f2ead9;
+  text-align:left;
+  cursor:pointer;
+}
+
+@media(min-width:860px){
+  .menuIcon{display:none}
+  .navLinks{display:flex}
+}
+
+/* PAGE */
+.pageWrap{
+  max-width:640px;
+  margin:0 auto;
+  padding:36px 20px 70px;
+}
+
+.breadcrumb{
+  font-size:13px;
+  color:#a99a80;
+  margin-bottom:18px;
+}
+
+.breadcrumb a{text-decoration:none}
+.breadcrumb .current{color:#161311;font-weight:700}
+
+.searchBox{
+  display:flex;
+  gap:10px;
+  margin-bottom:24px;
+}
+
+.searchBox input{
+  flex:1;
+  border:1px solid #eee4d3;
+  border-radius:12px;
+  padding:13px 16px;
+  font-size:14px;
+  background:#fff;
+  color:#161311;
+}
+
+.searchBox button{
+  border:0;
+  background:#161311;
+  color:#fff;
+  border-radius:12px;
+  padding:0 20px;
+  font-weight:800;
+  font-size:14px;
+  cursor:pointer;
+}
+
+.stateBox{
+  text-align:center;
+  color:#6b6156;
+  padding:40px 0;
+}
+
+.hidden{display:none !important}
+
+.card{
+  background:#fff;
+  border:1px solid #eee4d3;
+  border-radius:22px;
+  padding:26px;
+  box-shadow:0 12px 30px rgba(60,45,10,0.08);
+  text-align:center;
+}
+
+.statusPill{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:9px 16px;
+  border-radius:999px;
+  font-size:13px;
+  font-weight:900;
+  margin-bottom:18px;
+}
+
+.statusPill.valid{background:#dcfce7;color:#15803d}
+.statusPill.used{background:#fee2e2;color:#dc2626}
+
+.card h1{
+  font-family:Georgia, "Times New Roman", serif;
+  font-size:28px;
+  margin:0 0 6px;
+}
+
+.card .sub{
+  color:#6b6156;
+  font-size:14px;
+  margin:0 0 22px;
+}
+
+.countdown{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:8px;
+  margin:0 0 22px;
+}
+
+.countdown div{
+  background:#f6f0e2;
+  border-radius:14px;
+  padding:14px 6px;
+}
+
+.countdown .num{
+  font-size:22px;
+  font-weight:900;
+  display:block;
+}
+
+.countdown .lbl{
+  font-size:11px;
+  color:#6b6156;
+  text-transform:uppercase;
+  letter-spacing:0.5px;
+}
+
+.infoList{
+  display:grid;
+  gap:10px;
+  text-align:left;
+}
+
+.infoItem{
+  padding:14px;
+  border:1px solid #eee4d3;
+  border-radius:14px;
+  background:#fafafa;
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  font-size:14px;
+}
+
+.infoItem span{color:#6b6156}
+.infoItem b{text-align:right}
+
+.footer{
+  margin-top:40px;
+  text-align:center;
+  color:#a99a80;
+  font-size:12.5px;
+  line-height:1.6;
+}
+</style>
+</head>
+
+<body>
+
+<header class="siteHeader">
+  <div class="siteHeaderInner">
+    <div class="headerLeft">
+      <button class="menuIcon" id="menuBtn" type="button">☰</button>
+
+      <a class="logoLink" href="index.html">
+        <span class="logoMark">V</span>
+        <span>Lumina Vote</span>
+      </a>
+    </div>
+
+    <nav class="navLinks">
+      <a href="voting-home.html">Events</a>
+      <a href="live-results.html">Live Results</a>
+      <a href="verify-vote.html">Verify vote</a>
+    </nav>
+
+    <div class="headerRight">
+      <a class="sellBtn" href="event-registration.html">Sell tickets</a>
+    </div>
+  </div>
+
+  <div class="mobileMenu" id="mobileMenu">
+    <a href="index.html">Home</a>
+    <a href="voting-home.html">Events</a>
+    <a href="verify-vote.html">Verify vote</a>
+    <a href="support.html">Support</a>
+  </div>
+</header>
+
+<main class="pageWrap">
+
+  <div class="breadcrumb">
+    <a href="index.html">Home</a> / <span class="current">Check Ticket</span>
+  </div>
+
+  <div class="searchBox">
+    <input id="codeInput" type="text" placeholder="Paste your ticket code...">
+    <button id="checkBtn" type="button">Check</button>
+  </div>
+
+  <div id="idleState" class="stateBox">Scan your ticket's QR code, or paste its code above.</div>
+  <div id="loadingState" class="stateBox hidden">Checking ticket...</div>
+  <div id="errorState" class="stateBox hidden"></div>
+
+  <div id="resultCard" class="card hidden">
+    <div class="statusPill" id="statusPill">—</div>
+
+    <h1 id="eventName">—</h1>
+    <p class="sub" id="ticketTypeName">—</p>
+
+    <div class="countdown" id="countdown">
+      <div><span class="num" id="cdDays">00</span><span class="lbl">Days</span></div>
+      <div><span class="num" id="cdHours">00</span><span class="lbl">Hours</span></div>
+      <div><span class="num" id="cdMinutes">00</span><span class="lbl">Mins</span></div>
+      <div><span class="num" id="cdSeconds">00</span><span class="lbl">Secs</span></div>
+    </div>
+
+    <div class="infoList">
+      <div class="infoItem">
+        <span>Date &amp; Time</span>
+        <b id="infoDate">—</b>
+      </div>
+      <div class="infoItem">
+        <span>Location</span>
+        <b id="infoLocation">—</b>
+      </div>
+      <div class="infoItem">
+        <span>Contact</span>
+        <b id="infoContact">—</b>
+      </div>
+      <div class="infoItem" id="usedAtRow" style="display:none;">
+        <span>Checked in at</span>
+        <b id="infoUsedAt">—</b>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    © <span id="y"></span> Lumina Creative Co<br>
+    Site created by <b>Lord Wilhelm</b> (0593410452)<br>
+    <span style="display:block;margin-top:6px;">This page only shows your ticket's status — it never checks you in.</span>
+  </div>
+
+</main>
+
+<script>
+document.getElementById("y").textContent = new Date().getFullYear();
+
+const menuBtn = document.getElementById("menuBtn");
+const mobileMenu = document.getElementById("mobileMenu");
+menuBtn.addEventListener("click", () => mobileMenu.classList.toggle("show"));
+
+const codeInput = document.getElementById("codeInput");
+const checkBtn = document.getElementById("checkBtn");
+
+const idleState = document.getElementById("idleState");
+const loadingState = document.getElementById("loadingState");
+const errorState = document.getElementById("errorState");
+const resultCard = document.getElementById("resultCard");
+
+let countdownTimer = null;
+
+function showIdle(){
+  idleState.classList.remove("hidden");
+  loadingState.classList.add("hidden");
+  errorState.classList.add("hidden");
+  resultCard.classList.add("hidden");
+}
+
+function showLoading(){
+  idleState.classList.add("hidden");
+  loadingState.classList.remove("hidden");
+  errorState.classList.add("hidden");
+  resultCard.classList.add("hidden");
+}
+
+function showError(text){
+  idleState.classList.add("hidden");
+  loadingState.classList.add("hidden");
+  errorState.classList.remove("hidden");
+  errorState.textContent = text;
+  resultCard.classList.add("hidden");
+}
+
+function startCountdown(targetIso){
+  if(countdownTimer) clearInterval(countdownTimer);
+
+  const countdown = document.getElementById("countdown");
+
+  if(!targetIso){
+    countdown.classList.add("hidden");
+    return;
+  }
+
+  const target = new Date(targetIso).getTime();
+  if(isNaN(target)){
+    countdown.classList.add("hidden");
+    return;
+  }
+
+  countdown.classList.remove("hidden");
+
+  function tick(){
+    const diff = target - Date.now();
+
+    if(diff <= 0){
+      document.getElementById("cdDays").textContent = "00";
+      document.getElementById("cdHours").textContent = "00";
+      document.getElementById("cdMinutes").textContent = "00";
+      document.getElementById("cdSeconds").textContent = "00";
+      clearInterval(countdownTimer);
+      return;
+    }
+
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+    const minutes = Math.floor((diff / (1000 * 60)) % 60);
+    const seconds = Math.floor((diff / 1000) % 60);
+
+    document.getElementById("cdDays").textContent = String(days).padStart(2, "0");
+    document.getElementById("cdHours").textContent = String(hours).padStart(2, "0");
+    document.getElementById("cdMinutes").textContent = String(minutes).padStart(2, "0");
+    document.getElementById("cdSeconds").textContent = String(seconds).padStart(2, "0");
+  }
+
+  tick();
+  countdownTimer = setInterval(tick, 1000);
+}
+
+function renderResult(data){
+  const pill = document.getElementById("statusPill");
+  const used = data.ticketStatus === "used";
+
+  pill.className = "statusPill " + (used ? "used" : "valid");
+  pill.textContent = used ? "Already Used" : "Valid Ticket";
+
+  document.getElementById("eventName").textContent = data.eventName || "Event";
+  document.getElementById("ticketTypeName").textContent = data.ticketTypeName || "Regular Ticket";
+  document.getElementById("infoDate").textContent = data.eventDate
+    ? new Date(data.eventDate).toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short" })
+    : "TBA";
+  document.getElementById("infoLocation").textContent = data.location || "TBA";
+  document.getElementById("infoContact").textContent = data.contactPhone || "—";
+
+  const usedAtRow = document.getElementById("usedAtRow");
+  if(used && data.usedAt){
+    usedAtRow.style.display = "flex";
+    document.getElementById("infoUsedAt").textContent = new Date(data.usedAt).toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short" });
+  }else{
+    usedAtRow.style.display = "none";
+  }
+
+  startCountdown(data.eventDate);
+
+  idleState.classList.add("hidden");
+  loadingState.classList.add("hidden");
+  errorState.classList.add("hidden");
+  resultCard.classList.remove("hidden");
+}
+
+async function checkTicket(code){
+  if(!code){
+    showError("Enter or scan a ticket code first.");
+    return;
+  }
+
+  showLoading();
+
+  try{
+    const resp = await fetch(`/api/ticket-status?code=${encodeURIComponent(code)}`);
+    const json = await resp.json();
+
+    if(!resp.ok || !json.status){
+      showError(json.message || "We couldn't find a ticket with that code.");
+      return;
+    }
+
+    renderResult(json.data);
+  }catch(error){
+    console.error(error);
+    showError("Something went wrong while checking your ticket.");
+  }
+}
+
+checkBtn.addEventListener("click", () => checkTicket(codeInput.value.trim()));
+codeInput.addEventListener("keydown", (e) => {
+  if(e.key === "Enter") checkTicket(codeInput.value.trim());
+});
+
+const params = new URLSearchParams(window.location.search);
+const codeFromUrl = params.get("code");
+
+if(codeFromUrl){
+  codeInput.value = codeFromUrl;
+  checkTicket(codeFromUrl);
+}else{
+  showIdle();
+}
+</script>
+
+</body>
+</html>

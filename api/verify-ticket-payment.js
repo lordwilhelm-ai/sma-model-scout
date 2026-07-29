@@ -67,6 +67,12 @@ export default async function handler(req, res) {
       if (ticketType?.name) ticketName = ticketType.name;
     }
 
+    const { data: tickets } = await supabase
+      .from('event_tickets')
+      .select('id')
+      .eq('client_reference', reference)
+      .order('created_at', { ascending: true });
+
     res.status(200).json({
       status: true,
       message: 'Ticket payment verified',
@@ -79,7 +85,8 @@ export default async function handler(req, res) {
         location: event?.location || '',
         contactPhone: event?.contact_phone || '',
         ticketName,
-        quantity: payment.quantity || 0
+        quantity: payment.quantity || 0,
+        ticketIds: (tickets || []).map(t => t.id)
       }
     });
 
