@@ -1,4 +1,5 @@
 {
+  "cleanUrls": true,
   "rewrites": [
     { "source": "/api/ussd-menu", "destination": "/api/ussd-menu.js" },
     { "source": "/api/hubtel-callback", "destination": "/api/hubtel-callback.js" }
