@@ -162,6 +162,16 @@ body{
   }
 }
 
+/* On phones the header can't fit the logo plus both the "Create Event"
+   and "Logout" pill buttons on one line without wrapping/overflowing.
+   Both actions already exist in .mobileMenu, so just hide the inline
+   pair and rely on the hamburger menu. */
+@media(max-width:680px){
+  .headerRight{
+    display:none;
+  }
+}
+
 /* LAYOUT */
 .container{
   width:min(1250px,100%);
@@ -598,6 +608,11 @@ body{
   .detailStats{
     grid-template-columns:1fr 1fr;
   }
+
+  .tabBtn{
+    padding:11px 13px;
+    font-size:12.5px;
+  }
 }
 
 /* ACTIONS */
@@ -657,6 +672,11 @@ body{
 @media(max-width:760px){
   .actionGrid{
     grid-template-columns:1fr 1fr;
+  }
+
+  .actionGrid a,
+  .actionGrid button{
+    min-height:46px;
   }
 }
 

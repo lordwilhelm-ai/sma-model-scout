@@ -19,11 +19,20 @@ body{
 .nav{
   background:#fff;
   border-bottom:1px solid #eee4d3;
-  height:70px;
+  min-height:70px;
   display:flex;
   align-items:center;
   justify-content:space-between;
-  padding:0 20px;
+  flex-wrap:wrap;
+  row-gap:10px;
+  padding:14px 20px;
+}
+
+.navActions{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  justify-content:flex-end;
 }
 
 .brand{
@@ -116,6 +125,63 @@ body{
 }
 
 .muted{color:#6b6156;font-size:13px}
+
+@media(max-width:480px){
+  .container{
+    padding:16px 12px 50px;
+  }
+
+  .card{
+    padding:16px;
+  }
+
+  .brand{
+    font-size:16px;
+  }
+
+  .brand span{
+    display:block;
+    margin-left:0;
+    margin-top:2px;
+  }
+
+  .navActions .btn{
+    flex:1 1 auto;
+    justify-content:center;
+  }
+
+  .btn{
+    padding:14px 18px;
+    font-size:14px;
+  }
+
+  .btn.small{
+    padding:13px 16px;
+  }
+
+  .manualRow{
+    flex-direction:column;
+    gap:10px;
+  }
+
+  .manualRow input{
+    width:100%;
+    padding:14px;
+    font-size:16px;
+  }
+
+  .manualRow button{
+    width:100%;
+  }
+
+  .resultBox{
+    padding:18px;
+  }
+
+  .resultBox .big{
+    font-size:22px;
+  }
+}
 </style>
 </head>
 
@@ -123,7 +189,7 @@ body{
 
 <header class="nav">
   <div class="brand">Lumina <span>Scan Tickets</span></div>
-  <div style="display:flex;gap:10px;">
+  <div class="navActions">
     <a class="btn small ghost" href="organizer-dashboard.html">Dashboard</a>
     <button class="btn small" id="logoutBtn" type="button" style="display:none;">Logout</button>
   </div>

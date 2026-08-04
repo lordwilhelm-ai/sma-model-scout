@@ -158,6 +158,48 @@ text-align:center;
 }
 
 .hidden{display:none !important}
+
+.navActions{
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+justify-content:flex-end;
+}
+
+@media(max-width:560px){
+header.nav{
+flex-wrap:wrap;
+row-gap:10px;
+padding:14px 16px;
+}
+
+.brand{
+font-size:16px;
+}
+
+.brand span{
+display:block;
+margin-left:0;
+margin-top:2px;
+}
+
+.navActions{
+width:100%;
+justify-content:flex-start;
+}
+
+.navActions .btn{
+flex:1 1 auto;
+justify-content:center;
+padding:13px 16px;
+}
+}
+
+@media(max-width:600px){
+.statValue{font-size:22px;}
+.profileImg{width:140px;height:170px;}
+.bigNumber{font-size:28px;}
+}
 </style>
 </head>
 <body>
@@ -165,7 +207,7 @@ text-align:center;
 <header class="nav">
 <div class="brand">Lumina <span>Contestant Dashboard</span></div>
 
-<div style="display:flex;gap:10px;">
+<div class="navActions">
 <a class="btn small ghost" href="voting-home.html">Voting Home</a>
 <button class="btn small" id="logoutBtn" type="button" style="display:none;">Logout</button>
 </div>
