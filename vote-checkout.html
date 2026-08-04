@@ -955,7 +955,8 @@ payBtn.addEventListener("click", async () => {
         // NOTE: no client-built reference here anymore. Hubtel caps
         // clientReference at 32 characters, and eventId + contestantId
         // alone blow past that. The backend now generates a short
-        // reference and stores these details in Firestore keyed by it.
+        // reference and stores these details in pending_transactions
+        // (Supabase), keyed by it.
       })
     });
 

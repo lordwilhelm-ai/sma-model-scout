@@ -751,7 +751,7 @@ const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // Postgres rows are snake_case; the rest of this page's logic expects the
-// same camelCase shape the old Firestore docs had, so convert on the way in.
+// same camelCase shape the rest of this page's logic expects.
 function toCamel(row){
   const out = {};
   for(const key in row){
