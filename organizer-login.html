@@ -87,13 +87,24 @@ body{
 
 .mobileMenu{
   display:none;
-  padding:14px 18px 18px;
-  background:#ffffff;
-  border-top:1px solid #eee4d3;
+  position:fixed;
+  inset:0;
+  z-index:200;
+  background:rgba(22,19,17,.45);
+  padding:90px 18px 18px;
 }
 
-.mobileMenu.show{
-  display:block;
+.mobileMenu.show{display:block}
+
+.mobileMenuPanel{
+  width:min(360px,100%);
+  margin:0 auto;
+  background:#fff;
+  border-radius:18px;
+  padding:14px 18px 18px;
+  box-shadow:0 20px 50px rgba(0,0,0,.25);
+  max-height:calc(100vh - 110px);
+  overflow-y:auto;
 }
 
 .mobileMenu a{
@@ -407,9 +418,11 @@ body{
   </div>
 
   <div class="mobileMenu" id="mobileMenu">
-    <a href="index.html">Home</a>
-    <a href="voting-home.html">Events</a>
-    <a href="event-registration.html">Create Event</a>
+    <div class="mobileMenuPanel">
+      <a href="index.html">Home</a>
+      <a href="voting-home.html">Events</a>
+      <a href="event-registration.html">Create Event</a>
+    </div>
   </div>
 </header>
 
@@ -569,6 +582,12 @@ const signupMsg = document.getElementById("signupMsg");
 
 menuBtn.addEventListener("click", () => {
   mobileMenu.classList.toggle("show");
+});
+
+mobileMenu.addEventListener("click", (e) => {
+  if(e.target === mobileMenu){
+    mobileMenu.classList.remove("show");
+  }
 });
 
 function showTab(tab){

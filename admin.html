@@ -96,13 +96,24 @@ body{
 
 .mobileMenu{
   display:none;
-  padding:14px 18px 18px;
-  background:#ffffff;
-  border-top:1px solid #eee4d3;
+  position:fixed;
+  inset:0;
+  z-index:200;
+  background:rgba(22,19,17,.45);
+  padding:90px 18px 18px;
 }
 
-.mobileMenu.show{
-  display:block;
+.mobileMenu.show{display:block}
+
+.mobileMenuPanel{
+  width:min(360px,100%);
+  margin:0 auto;
+  background:#fff;
+  border-radius:18px;
+  padding:14px 18px 18px;
+  box-shadow:0 20px 50px rgba(0,0,0,.25);
+  max-height:calc(100vh - 110px);
+  overflow-y:auto;
 }
 
 .mobileMenu a,
@@ -950,10 +961,12 @@ body{
   </div>
 
   <div class="mobileMenu" id="mobileMenu">
-    <a href="index.html">Home</a>
-    <a href="voting-home.html">Public Events</a>
-    <a href="organizer-dashboard.html">Organizer View</a>
-    <button id="mobileLogoutBtn" type="button" style="display:none;">Logout</button>
+    <div class="mobileMenuPanel">
+      <a href="index.html">Home</a>
+      <a href="voting-home.html">Public Events</a>
+      <a href="organizer-dashboard.html">Organizer View</a>
+      <button id="mobileLogoutBtn" type="button" style="display:none;">Logout</button>
+    </div>
   </div>
 </header>
 
@@ -1188,7 +1201,7 @@ body{
                 <tr>
                   <th>Contestant</th>
                   <th>Category</th>
-                  <th>Vote Code</th>
+                  <th>Nominee Code</th>
                   <th>Status</th>
                   <th>Votes</th>
                   <th>Action</th>
@@ -1589,6 +1602,12 @@ let toastTimer = null;
 
 menuBtn.addEventListener("click", () => {
   mobileMenu.classList.toggle("show");
+});
+
+mobileMenu.addEventListener("click", (e) => {
+  if(e.target === mobileMenu){
+    mobileMenu.classList.remove("show");
+  }
 });
 
 loginBtn.addEventListener("click", async () => {
@@ -2052,7 +2071,7 @@ function renderContestants(){
         </div>
       </td>
       <td data-label="Category">${c.categoryName || "—"}</td>
-      <td data-label="Vote Code"><b>${c.nomineeCode || "—"}</b></td>
+      <td data-label="Nominee Code"><b>${c.nomineeCode || "—"}</b></td>
       <td data-label="Status">
         <span class="${String(c.status || "active").toLowerCase() === "active" ? "badge live" : "badge closed"}">
           ${c.status || "active"}

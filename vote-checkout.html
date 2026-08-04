@@ -96,12 +96,25 @@ a{color:inherit}
 
 .mobileMenu{
   display:none;
-  padding:14px 18px 18px;
-  background:#fff;
-  border-top:1px solid #eee4d3;
+  position:fixed;
+  inset:0;
+  z-index:200;
+  background:rgba(22,19,17,.45);
+  padding:90px 18px 18px;
 }
 
 .mobileMenu.show{display:block}
+
+.mobileMenuPanel{
+  width:min(360px,100%);
+  margin:0 auto;
+  background:#fff;
+  border-radius:18px;
+  padding:14px 18px 18px;
+  box-shadow:0 20px 50px rgba(0,0,0,.25);
+  max-height:calc(100vh - 110px);
+  overflow-y:auto;
+}
 
 .mobileMenu a{
   width:100%;
@@ -477,10 +490,12 @@ a{color:inherit}
   </div>
 
   <div class="mobileMenu" id="mobileMenu">
-    <a href="index.html">Home</a>
-    <a href="voting-home.html">Competitions</a>
-    <a href="verify-vote.html">Verify vote</a>
-    <a id="mobileBackLink" href="voting-home.html">Back to Competition</a>
+    <div class="mobileMenuPanel">
+      <a href="index.html">Home</a>
+      <a href="voting-home.html">Competitions</a>
+      <a href="verify-vote.html">Verify vote</a>
+      <a id="mobileBackLink" href="voting-home.html">Back to Competition</a>
+    </div>
   </div>
 </header>
 
@@ -498,12 +513,11 @@ a{color:inherit}
 
       <div class="photoTopRow">
         <span class="photoPill" id="eventStatusDisplay">Status: —</span>
-        <span class="photoPill" id="nomineeCodeDisplay" style="display:none;">Vote Code: —</span>
         <span class="photoPill" id="categoryDisplay" style="display:none;">Category: —</span>
       </div>
 
       <div class="photoBottom">
-        <span>You are voting for</span>
+        <span id="nomineeCodeDisplay">Nominee Code: —</span>
         <b id="photoName">Contestant</b>
       </div>
     </div>
@@ -660,6 +674,12 @@ let toastTimer = null;
 
 menuBtn.addEventListener("click", () => {
   mobileMenu.classList.toggle("show");
+});
+
+mobileMenu.addEventListener("click", (e) => {
+  if(e.target === mobileMenu){
+    mobileMenu.classList.remove("show");
+  }
 });
 
 document.addEventListener("input", (e) => {
@@ -875,12 +895,9 @@ async function loadCheckout(){
       ? "photoPill ok"
       : "photoPill danger";
 
-    if(contestantData.nomineeCode){
-      nomineeCodeDisplay.textContent = `Vote Code: ${contestantData.nomineeCode}`;
-      nomineeCodeDisplay.style.display = "inline-flex";
-    }else{
-      nomineeCodeDisplay.style.display = "none";
-    }
+    nomineeCodeDisplay.textContent = contestantData.nomineeCode
+      ? `Nominee Code: ${contestantData.nomineeCode}`
+      : "You are voting for";
 
     if(contestantData.categoryName){
       categoryDisplay.textContent = `Category: ${contestantData.categoryName}`;

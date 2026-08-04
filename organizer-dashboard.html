@@ -95,13 +95,24 @@ body{
 
 .mobileMenu{
   display:none;
-  padding:14px 18px 18px;
-  background:#ffffff;
-  border-top:1px solid #eee4d3;
+  position:fixed;
+  inset:0;
+  z-index:200;
+  background:rgba(22,19,17,.45);
+  padding:90px 18px 18px;
 }
 
-.mobileMenu.show{
-  display:block;
+.mobileMenu.show{display:block}
+
+.mobileMenuPanel{
+  width:min(360px,100%);
+  margin:0 auto;
+  background:#fff;
+  border-radius:18px;
+  padding:14px 18px 18px;
+  box-shadow:0 20px 50px rgba(0,0,0,.25);
+  max-height:calc(100vh - 110px);
+  overflow-y:auto;
 }
 
 .mobileMenu a,
@@ -900,11 +911,13 @@ body{
   </div>
 
   <div class="mobileMenu" id="mobileMenu">
-    <a href="index.html">Home</a>
-    <a href="voting-home.html">Events</a>
-    <a href="event-registration.html">Create Event</a>
-    <a href="scan-ticket.html">Scan Tickets</a>
-    <button id="mobileLogoutBtn" type="button" style="display:none;">Logout</button>
+    <div class="mobileMenuPanel">
+      <a href="index.html">Home</a>
+      <a href="voting-home.html">Events</a>
+      <a href="event-registration.html">Create Event</a>
+      <a href="scan-ticket.html">Scan Tickets</a>
+      <button id="mobileLogoutBtn" type="button" style="display:none;">Logout</button>
+    </div>
   </div>
 </header>
 
@@ -1070,7 +1083,7 @@ body{
                 <tr>
                   <th>Contestant</th>
                   <th>Category</th>
-                  <th>Vote Code</th>
+                  <th>Nominee Code</th>
                   <th>Status</th>
                   <th>Votes</th>
                   <th>Action</th>
@@ -1101,7 +1114,7 @@ body{
             </div>
 
             <div>
-              <label>Vote Code (for USSD)</label>
+              <label>Nominee Code (for USSD)</label>
               <input id="contestantNomineeCode" placeholder="Auto suggested" maxlength="3">
               <p class="smallMuted">3-digit code voters dial (after your event code) to pick this contestant. Must be unique within this event.</p>
             </div>
@@ -1463,6 +1476,12 @@ let toastTimer = null;
 
 menuBtn.addEventListener("click", () => {
   mobileMenu.classList.toggle("show");
+});
+
+mobileMenu.addEventListener("click", (e) => {
+  if(e.target === mobileMenu){
+    mobileMenu.classList.remove("show");
+  }
 });
 
 logoutBtn.addEventListener("click", logout);
@@ -1872,7 +1891,7 @@ function renderContestants(){
         </div>
       </td>
       <td data-label="Category">${c.categoryName || "—"}</td>
-      <td data-label="Vote Code"><b>${c.nomineeCode || "—"}</b></td>
+      <td data-label="Nominee Code"><b>${c.nomineeCode || "—"}</b></td>
       <td data-label="Status">
         <span class="${(c.status || "active") === "active" ? "badge live" : "badge closed"}">
           ${c.status || "active"}
@@ -2270,7 +2289,7 @@ async function addContestant(){
   }
 
   if(!/^[0-9]{3}$/.test(nomineeCode)){
-    setMsg(contestantMsg, "Vote code must be exactly 3 digits.", "error");
+    setMsg(contestantMsg, "Nominee code must be exactly 3 digits.", "error");
     return;
   }
 
@@ -2342,7 +2361,7 @@ async function addContestant(){
 
     if(error.code === "23505" && String(error.message || "").includes("nominee_code")){
       contestantNomineeCode.value = generateNomineeCode();
-      setMsg(contestantMsg, "That vote code is already used by another contestant in this event. Generated a new one — try again.", "error");
+      setMsg(contestantMsg, "That nominee code is already used by another contestant in this event. Generated a new one — try again.", "error");
     }else{
       setMsg(contestantMsg, error.message || "Could not add contestant.", "error");
     }
