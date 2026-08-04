@@ -63,27 +63,6 @@ async function chargeMomo({ clientId, clientSecret, merchantAccountNumber, callb
   return true;
 }
 
-// nominee_code is globally unique (migration 009), so this should only
-// ever return one row in practice. Still fetches every match and lets the
-// caller handle 0/1/many rather than assuming — cheap insurance against
-// leftover duplicate data or the migration not having run yet.
-async function findVotableContestants(contestantCode) {
-  const { data, error } = await supabase
-    .from('event_contestants')
-    .select('id, full_name, status, category_name, event_id, events(event_name, vote_price, status, voting_enabled)')
-    .eq('nominee_code', contestantCode)
-    .order('id', { ascending: true });
-
-  if (error) return { error };
-
-  const votable = (data || []).filter(c =>
-    String(c.status || 'active').toLowerCase() === 'active' &&
-    !!c.events?.voting_enabled &&
-    normalizeStatus(c.events?.status) === 'active'
-  );
-
-  return { votable };
-}
 
 export default async function handler(req, res) {
   try {
@@ -110,103 +89,100 @@ export default async function handler(req, res) {
       response = `CON Welcome to Lumina Vote\n1. Vote for a Contestant\n2. Buy Event Ticket`;
 
     // ================= VOTING =================
-    // 1                    -> ask for contestant code
-    // 1*CODE               -> normal: show price, ask for vote count
-    //                      -> (rare) duplicate code across events: pick-event menu
-    // 1*CODE*VOTES         -> normal: charge
-    //                      -> (rare) duplicate: VOTES is actually the event choice
-    // 1*CODE*EVENT*VOTES   -> (duplicate-code case only) charge
+    // nominee_code is only unique WITHIN one event (unique(event_id,
+    // nominee_code) — migration 010), so the contestant lookup is always
+    // scoped to an event the voter picked first. Same shape as the ticket
+    // flow below, and it means every event gets its own full 3-digit code
+    // space instead of sharing one platform-wide pool of 1000.
+    //
+    // 1                       -> ask for event code
+    // 1*EVENTCODE             -> ask for contestant code
+    // 1*EVENTCODE*CONTESTANT  -> show price, ask for vote count
+    // 1*EVENTCODE*CONTESTANT*VOTES -> charge
     } else if (parts[0] === '1') {
 
       if (parts.length === 1) {
-        response = `CON Enter Contestant Code:`;
+        response = `CON Enter Event Code:`;
 
       } else {
-        const contestantCode = String(parts[1] || '').trim();
-        const { error: lookupError, votable } = await findVotableContestants(contestantCode);
+        const eventCode = String(parts[1] || '').trim();
 
-        if (lookupError) {
-          console.error('USSD contestant lookup error:', lookupError);
+        const { data: event, error: eventError } = await supabase
+          .from('events')
+          .select('id, event_name, status, voting_enabled, vote_price')
+          .eq('event_code', eventCode)
+          .maybeSingle();
+
+        if (eventError) {
+          console.error('USSD vote event lookup error:', eventError);
           response = `END System error. Please try again.`;
-        } else if (!votable || votable.length === 0) {
-          response = `END Contestant code not found, or voting is not open for it right now.`;
+        } else if (!event) {
+          response = `END Event code not found. Please check and try again.`;
+        } else if (!event.voting_enabled) {
+          response = `END Voting is not available for this event.`;
+        } else if (normalizeStatus(event.status) !== 'active') {
+          response = `END Voting is not open for this event right now.`;
+
+        } else if (parts.length === 2) {
+          response = `CON Enter Contestant Code:`;
 
         } else {
-          function votePriceOf(c) {
-            let p = Number(c.events?.vote_price || 1);
-            return isNaN(p) || p < 1 ? 1 : p;
-          }
+          const contestantCode = String(parts[2] || '').trim();
 
-          function voteAskFor(c) {
-            const votePrice = votePriceOf(c);
-            const who = c.category_name ? `${c.full_name} (${c.category_name})` : c.full_name;
-            return `CON Vote for ${who}\n1 vote = GHS ${votePrice.toFixed(2)}\nEnter number of votes:`;
-          }
+          const { data: contestant, error: contestantError } = await supabase
+            .from('event_contestants')
+            .select('id, full_name, status, category_name')
+            .eq('event_id', event.id)
+            .eq('nominee_code', contestantCode)
+            .maybeSingle();
 
-          async function chargeVote(c, votesInput) {
-            const votes = parseInt(votesInput, 10);
+          let votePrice = Number(event.vote_price || 1);
+          if (isNaN(votePrice) || votePrice < 1) votePrice = 1;
 
-            if (!votes || votes < 1) {
-              return `END Invalid number of votes.`;
-            }
+          if (contestantError) {
+            console.error('USSD contestant lookup error:', contestantError);
+            response = `END System error. Please try again.`;
+          } else if (!contestant) {
+            response = `END Contestant code not found for this event.`;
+          } else if (String(contestant.status || 'active').toLowerCase() !== 'active') {
+            response = `END This contestant is not active for voting.`;
 
-            const amount = Number((votes * votePriceOf(c)).toFixed(2));
-
-            const { error: pendingError } = await supabase.from('pending_transactions').insert({
-              key: sessionId,
-              type: 'ussd_vote',
-              event_id: c.event_id,
-              contestant_id: c.id,
-              phone_number: phoneNumber,
-              amount,
-              status: 'pending'
-            });
-
-            if (pendingError) {
-              console.error('pending_transactions insert error:', pendingError);
-              return `END System error. Please try again.`;
-            }
-
-            const charged = await chargeMomo({
-              clientId, clientSecret, merchantAccountNumber, callbackUrl,
-              phoneNumber, amount,
-              description: `${votes}x vote for ${c.full_name}`,
-              clientReference: `ussd_vote_${sessionId}`
-            });
-
-            return charged
-              ? `END You will receive a MoMo prompt on ${formatPhone(phoneNumber)} to approve GHS ${amount.toFixed(2)} for ${votes} vote(s).`
-              : `END Payment failed. Please try again.`;
-          }
-
-          if (votable.length === 1) {
-            // Normal case: nominee_code is globally unique, so exactly one match.
-            const contestant = votable[0];
-
-            if (parts.length === 2) {
-              response = voteAskFor(contestant);
-            } else {
-              response = await chargeVote(contestant, parts[2]);
-            }
+          } else if (parts.length === 3) {
+            const who = contestant.category_name ? `${contestant.full_name} (${contestant.category_name})` : contestant.full_name;
+            response = `CON Vote for ${who}\n1 vote = GHS ${votePrice.toFixed(2)}\nEnter number of votes:`;
 
           } else {
-            // Defensive fallback only — shouldn't happen once nominee codes are
-            // globally unique, but handle leftover/duplicate data gracefully
-            // instead of erroring out.
-            if (parts.length === 2) {
-              const lines = votable.slice(0, 6).map((c, i) => `${i + 1}. ${c.events?.event_name || 'Event'} — ${c.full_name}`);
-              response = `CON Multiple events use this code:\n${lines.join('\n')}`;
+            const votes = parseInt(parts[3], 10);
 
+            if (!votes || votes < 1) {
+              response = `END Invalid number of votes.`;
             } else {
-              const eventIndex = parseInt(parts[2], 10) - 1;
-              const contestant = votable[eventIndex];
+              const amount = Number((votes * votePrice).toFixed(2));
 
-              if (!contestant) {
-                response = `END Invalid selection.`;
-              } else if (parts.length === 3) {
-                response = voteAskFor(contestant);
+              const { error: pendingError } = await supabase.from('pending_transactions').insert({
+                key: sessionId,
+                type: 'ussd_vote',
+                event_id: event.id,
+                contestant_id: contestant.id,
+                phone_number: phoneNumber,
+                amount,
+                status: 'pending'
+              });
+
+              if (pendingError) {
+                console.error('pending_transactions insert error:', pendingError);
+                response = `END System error. Please try again.`;
               } else {
-                response = await chargeVote(contestant, parts[3]);
+                const charged = await chargeMomo({
+                  clientId, clientSecret, merchantAccountNumber, callbackUrl,
+                  phoneNumber, amount,
+                  description: `${votes}x vote for ${contestant.full_name}`,
+                  clientReference: `ussd_vote_${sessionId}`
+                });
+
+                response = charged
+                  ? `END You will receive a MoMo prompt on ${formatPhone(phoneNumber)} to approve GHS ${amount.toFixed(2)} for ${votes} vote(s).`
+                  : `END Payment failed. Please try again.`;
               }
             }
           }

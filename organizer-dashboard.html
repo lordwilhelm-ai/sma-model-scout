@@ -1103,7 +1103,7 @@ body{
             <div>
               <label>Vote Code (for USSD)</label>
               <input id="contestantNomineeCode" placeholder="Auto suggested" maxlength="3">
-              <p class="smallMuted">3-digit code voters dial to pick this contestant. Must be unique across the whole platform.</p>
+              <p class="smallMuted">3-digit code voters dial (after your event code) to pick this contestant. Must be unique within this event.</p>
             </div>
 
             <div>
@@ -2229,9 +2229,11 @@ editPosterFile.addEventListener("change", async (event) => {
 });
 
 function generateNomineeCode(){
-  // 3 digits so it's quick to dial via USSD. Globally unique across every
-  // contestant on the platform (not just this event) — see migration
-  // 009_nominee_code_global_unique.sql.
+  // 3 digits so it's quick to dial via USSD. Unique within this event only
+  // (not across the whole platform) — see migration
+  // 010_nominee_code_per_event.sql. Voters reach it via Event Code first,
+  // then Contestant Code, so the same 3-digit code can't collide across
+  // different events.
   return String(Math.floor(Math.random() * 1000)).padStart(3, "0");
 }
 
@@ -2340,7 +2342,7 @@ async function addContestant(){
 
     if(error.code === "23505" && String(error.message || "").includes("nominee_code")){
       contestantNomineeCode.value = generateNomineeCode();
-      setMsg(contestantMsg, "That vote code is already used by another contestant. Generated a new one — try again.", "error");
+      setMsg(contestantMsg, "That vote code is already used by another contestant in this event. Generated a new one — try again.", "error");
     }else{
       setMsg(contestantMsg, error.message || "Could not add contestant.", "error");
     }
