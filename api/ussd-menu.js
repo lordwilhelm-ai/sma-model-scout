@@ -3,6 +3,8 @@ import { createClient } from '@supabase/supabase-js';
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
 const fetch = globalThis.fetch;
 
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 function formatPhone(phone) {
   // Convert 0551234567 or +233551234567 to 233551234567
   let p = String(phone).replace(/\D/g, '');
@@ -61,6 +63,28 @@ async function chargeMomo({ clientId, clientSecret, merchantAccountNumber, callb
   return true;
 }
 
+// nominee_code is only unique WITHIN one event (schema: unique(event_id,
+// nominee_code)), not globally, so the same short code can legitimately
+// exist in two different events at once. Fetch every match (only from
+// events actually open for voting right now) instead of assuming one.
+async function findVotableContestants(contestantCode) {
+  const { data, error } = await supabase
+    .from('event_contestants')
+    .select('id, full_name, status, event_id, events(event_name, vote_price, status, voting_enabled)')
+    .eq('nominee_code', contestantCode)
+    .order('id', { ascending: true });
+
+  if (error) return { error };
+
+  const votable = (data || []).filter(c =>
+    String(c.status || 'active').toLowerCase() === 'active' &&
+    !!c.events?.voting_enabled &&
+    normalizeStatus(c.events?.status) === 'active'
+  );
+
+  return { votable };
+}
+
 export default async function handler(req, res) {
   try {
     if (req.method !== 'POST') return res.status(405).end();
@@ -86,9 +110,11 @@ export default async function handler(req, res) {
       response = `CON Welcome to Lumina Vote\n1. Vote for a Contestant\n2. Buy Event Ticket`;
 
     // ================= VOTING =================
-    // 1                 -> ask for contestant code
-    // 1*CODE            -> show vote-count menu, priced from the event's real vote_price
-    // 1*CODE*CHOICE     -> charge
+    // 1                    -> ask for contestant code
+    // 1*CODE               -> unambiguous: vote-count menu | ambiguous: pick-event menu
+    // 1*CODE*X             -> unambiguous: X = vote choice, charge
+    //                      -> ambiguous:   X = event choice, show vote-count menu
+    // 1*CODE*EVENT*CHOICE  -> (ambiguous only) charge
     } else if (parts[0] === '1') {
 
       if (parts.length === 1) {
@@ -96,65 +122,90 @@ export default async function handler(req, res) {
 
       } else {
         const contestantCode = String(parts[1] || '').trim();
+        const { error: lookupError, votable } = await findVotableContestants(contestantCode);
 
-        const { data: contestant, error: contestantError } = await supabase
-          .from('event_contestants')
-          .select('id, full_name, status, event_id, events(vote_price, status, voting_enabled)')
-          .eq('nominee_code', contestantCode)
-          .maybeSingle();
-
-        if (contestantError) {
-          console.error('USSD contestant lookup error:', contestantError);
+        if (lookupError) {
+          console.error('USSD contestant lookup error:', lookupError);
           response = `END System error. Please try again.`;
-        } else if (!contestant) {
-          response = `END Contestant code not found. Please check and try again.`;
-        } else if (String(contestant.status || 'active').toLowerCase() !== 'active') {
-          response = `END This contestant is not active for voting.`;
-        } else if (!contestant.events?.voting_enabled || normalizeStatus(contestant.events?.status) !== 'active') {
-          response = `END Voting is not open for this event right now.`;
-        } else {
-          let votePrice = Number(contestant.events?.vote_price || 1);
-          if (isNaN(votePrice) || votePrice < 1) votePrice = 1;
+        } else if (!votable || votable.length === 0) {
+          response = `END Contestant code not found, or voting is not open for it right now.`;
 
-          if (parts.length === 2) {
-            response = `CON Vote for ${contestant.full_name}\n` +
+        } else {
+          function votePriceOf(c) {
+            let p = Number(c.events?.vote_price || 1);
+            return isNaN(p) || p < 1 ? 1 : p;
+          }
+
+          function voteMenuFor(c) {
+            const votePrice = votePriceOf(c);
+            return `CON Vote for ${c.full_name}\n` +
               `1. 1 vote (GHS ${votePrice.toFixed(2)})\n` +
               `2. 5 votes (GHS ${(votePrice * 5).toFixed(2)})\n` +
               `3. 10 votes (GHS ${(votePrice * 10).toFixed(2)})`;
+          }
 
-          } else {
-            const choice = parts[2];
+          async function chargeVote(c, choice) {
             const votes = choice === '1' ? 1 : choice === '2' ? 5 : choice === '3' ? 10 : 0;
 
             if (votes === 0) {
-              response = `END Invalid option.`;
+              return `END Invalid option.`;
+            }
+
+            const amount = Number((votes * votePriceOf(c)).toFixed(2));
+
+            const { error: pendingError } = await supabase.from('pending_transactions').insert({
+              key: sessionId,
+              type: 'ussd_vote',
+              event_id: c.event_id,
+              contestant_id: c.id,
+              phone_number: phoneNumber,
+              amount,
+              status: 'pending'
+            });
+
+            if (pendingError) {
+              console.error('pending_transactions insert error:', pendingError);
+              return `END System error. Please try again.`;
+            }
+
+            const charged = await chargeMomo({
+              clientId, clientSecret, merchantAccountNumber, callbackUrl,
+              phoneNumber, amount,
+              description: `Vote for ${c.full_name}`,
+              clientReference: `ussd_vote_${sessionId}`
+            });
+
+            return charged
+              ? `END You will receive a MoMo prompt on ${formatPhone(phoneNumber)} to approve GHS ${amount.toFixed(2)}.`
+              : `END Payment failed. Please try again.`;
+          }
+
+          if (votable.length === 1) {
+            // Unambiguous: this code only matches one currently-votable contestant.
+            const contestant = votable[0];
+
+            if (parts.length === 2) {
+              response = voteMenuFor(contestant);
             } else {
-              const amount = Number((votes * votePrice).toFixed(2));
+              response = await chargeVote(contestant, parts[2]);
+            }
 
-              const { error: pendingError } = await supabase.from('pending_transactions').insert({
-                key: sessionId,
-                type: 'ussd_vote',
-                event_id: contestant.event_id,
-                contestant_id: contestant.id,
-                phone_number: phoneNumber,
-                amount,
-                status: 'pending'
-              });
+          } else {
+            // Ambiguous: same code used by contestants in more than one live event.
+            if (parts.length === 2) {
+              const lines = votable.slice(0, 6).map((c, i) => `${i + 1}. ${c.events?.event_name || 'Event'} — ${c.full_name}`);
+              response = `CON Multiple events use this code:\n${lines.join('\n')}`;
 
-              if (pendingError) {
-                console.error('pending_transactions insert error:', pendingError);
-                response = `END System error. Please try again.`;
+            } else {
+              const eventIndex = parseInt(parts[2], 10) - 1;
+              const contestant = votable[eventIndex];
+
+              if (!contestant) {
+                response = `END Invalid selection.`;
+              } else if (parts.length === 3) {
+                response = voteMenuFor(contestant);
               } else {
-                const charged = await chargeMomo({
-                  clientId, clientSecret, merchantAccountNumber, callbackUrl,
-                  phoneNumber, amount,
-                  description: `Vote for ${contestant.full_name}`,
-                  clientReference: `ussd_vote_${sessionId}`
-                });
-
-                response = charged
-                  ? `END You will receive a MoMo prompt on ${formatPhone(phoneNumber)} to approve GHS ${amount.toFixed(2)}.`
-                  : `END Payment failed. Please try again.`;
+                response = await chargeVote(contestant, parts[3]);
               }
             }
           }
@@ -162,12 +213,13 @@ export default async function handler(req, res) {
       }
 
     // ================= TICKETS =================
-    // 2                     -> ask for event code
-    // 2*CODE                -> if the event has named ticket types, list them;
-    //                          otherwise ask for quantity directly
-    // 2*CODE*TYPE           -> (only when ticket types exist) ask for quantity
-    // 2*CODE*QTY            -> (legacy single-type event) charge
-    // 2*CODE*TYPE*QTY       -> (multi-type event) charge
+    // 2                        -> ask for event code
+    // 2*CODE                   -> has ticket types: list them | legacy: ask quantity
+    // 2*CODE*TYPE              -> (typed only) ask quantity
+    // 2*CODE*QTY               -> (legacy only) ask email
+    // 2*CODE*TYPE*QTY          -> (typed only) ask email
+    // 2*CODE*QTY*EMAIL         -> (legacy only) charge
+    // 2*CODE*TYPE*QTY*EMAIL    -> (typed only) charge
     } else if (parts[0] === '2') {
 
       if (parts.length === 1) {
@@ -203,6 +255,38 @@ export default async function handler(req, res) {
             console.error('USSD ticket types lookup error:', typesError);
             response = `END System error. Please try again.`;
           } else {
+
+            async function chargeTicket({ ticketTypeId, price, quantity, description, email }) {
+              const amount = Number((quantity * price).toFixed(2));
+              const clientReference = shortRef('ticket');
+
+              const { error: pendingError } = await supabase.from('pending_transactions').insert({
+                key: clientReference,
+                type: 'ticket',
+                event_id: event.id,
+                ticket_type_id: ticketTypeId,
+                phone_number: phoneNumber,
+                buyer_email: email,
+                ticket_price: price,
+                amount,
+                status: 'pending'
+              });
+
+              if (pendingError) {
+                console.error('pending_transactions insert error:', pendingError);
+                return `END System error. Please try again.`;
+              }
+
+              const charged = await chargeMomo({
+                clientId, clientSecret, merchantAccountNumber, callbackUrl,
+                phoneNumber, amount, description, clientReference
+              });
+
+              return charged
+                ? `END You will receive a MoMo prompt on ${formatPhone(phoneNumber)} to approve GHS ${amount.toFixed(2)}. Your ticket QR code will be emailed to ${email}.`
+                : `END Payment failed. Please try again.`;
+            }
+
             const hasTypes = Array.isArray(ticketTypes) && ticketTypes.length > 0;
 
             if (hasTypes) {
@@ -232,36 +316,23 @@ export default async function handler(req, res) {
                     response = `END Invalid quantity.`;
                   } else if (quantity > available) {
                     response = `END Only ${available} ${selectedType.name || 'ticket'}(s) left.`;
+
+                  } else if (parts.length === 4) {
+                    response = `CON Enter your email (your ticket QR code is sent here):`;
+
                   } else {
-                    const price = Number(selectedType.price || 1);
-                    const amount = Number((quantity * price).toFixed(2));
-                    const clientReference = shortRef('ticket');
+                    const email = String(parts[4] || '').trim();
 
-                    const { error: pendingError } = await supabase.from('pending_transactions').insert({
-                      key: clientReference,
-                      type: 'ticket',
-                      event_id: event.id,
-                      ticket_type_id: selectedType.id,
-                      phone_number: phoneNumber,
-                      ticket_price: price,
-                      amount,
-                      status: 'pending'
-                    });
-
-                    if (pendingError) {
-                      console.error('pending_transactions insert error:', pendingError);
-                      response = `END System error. Please try again.`;
+                    if (!EMAIL_RE.test(email)) {
+                      response = `END Invalid email address. Please try again.`;
                     } else {
-                      const charged = await chargeMomo({
-                        clientId, clientSecret, merchantAccountNumber, callbackUrl,
-                        phoneNumber, amount,
-                        description: `${quantity}x ${selectedType.name || 'Ticket'} - ${event.event_name}`,
-                        clientReference
+                      response = await chargeTicket({
+                        ticketTypeId: selectedType.id,
+                        price: Number(selectedType.price || 1),
+                        quantity,
+                        email,
+                        description: `${quantity}x ${selectedType.name || 'Ticket'} - ${event.event_name}`
                       });
-
-                      response = charged
-                        ? `END You will receive a MoMo prompt on ${formatPhone(phoneNumber)} to approve GHS ${amount.toFixed(2)}. Check your ticket later at Ticket Status on our site using this phone number.`
-                        : `END Payment failed. Please try again.`;
                     }
                   }
                 }
@@ -284,35 +355,23 @@ export default async function handler(req, res) {
                   response = `END Invalid quantity.`;
                 } else if (quantity > available) {
                   response = `END Only ${available} ticket(s) left.`;
+
+                } else if (parts.length === 3) {
+                  response = `CON Enter your email (your ticket QR code is sent here):`;
+
                 } else {
-                  const amount = Number((quantity * ticketPrice).toFixed(2));
-                  const clientReference = shortRef('ticket');
+                  const email = String(parts[3] || '').trim();
 
-                  const { error: pendingError } = await supabase.from('pending_transactions').insert({
-                    key: clientReference,
-                    type: 'ticket',
-                    event_id: event.id,
-                    ticket_type_id: null,
-                    phone_number: phoneNumber,
-                    ticket_price: ticketPrice,
-                    amount,
-                    status: 'pending'
-                  });
-
-                  if (pendingError) {
-                    console.error('pending_transactions insert error:', pendingError);
-                    response = `END System error. Please try again.`;
+                  if (!EMAIL_RE.test(email)) {
+                    response = `END Invalid email address. Please try again.`;
                   } else {
-                    const charged = await chargeMomo({
-                      clientId, clientSecret, merchantAccountNumber, callbackUrl,
-                      phoneNumber, amount,
-                      description: `${quantity}x Ticket - ${event.event_name}`,
-                      clientReference
+                    response = await chargeTicket({
+                      ticketTypeId: null,
+                      price: ticketPrice,
+                      quantity,
+                      email,
+                      description: `${quantity}x Ticket - ${event.event_name}`
                     });
-
-                    response = charged
-                      ? `END You will receive a MoMo prompt on ${formatPhone(phoneNumber)} to approve GHS ${amount.toFixed(2)}. Check your ticket later at Ticket Status on our site using this phone number.`
-                      : `END Payment failed. Please try again.`;
                   }
                 }
               }

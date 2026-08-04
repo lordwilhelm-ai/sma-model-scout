@@ -275,6 +275,95 @@ a{color:inherit}
   line-height:1.6;
 }
 
+.searchTabs{
+  display:flex;
+  gap:8px;
+  margin-bottom:14px;
+}
+
+.searchTabBtn{
+  border:1px solid #eee4d3;
+  background:#fff;
+  color:#6b6156;
+  border-radius:999px;
+  padding:9px 16px;
+  font-size:13px;
+  font-weight:800;
+  cursor:pointer;
+}
+
+.searchTabBtn.active{
+  background:#161311;
+  border-color:#161311;
+  color:#fff;
+}
+
+.searchHint{
+  margin:0 0 10px;
+  color:#a99a80;
+  font-size:12.5px;
+}
+
+.ticketList{
+  display:grid;
+  gap:12px;
+}
+
+.ticketListItem{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  padding:16px;
+  border:1px solid #eee4d3;
+  border-radius:16px;
+  background:#fff;
+  cursor:pointer;
+  text-align:left;
+}
+
+.ticketListItem:hover{
+  border-color:#d4af37;
+}
+
+.ticketListItem .ticketListMain{
+  min-width:0;
+}
+
+.ticketListItem b{
+  display:block;
+  font-size:15px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.ticketListItem span{
+  color:#6b6156;
+  font-size:12.5px;
+}
+
+.ticketListPill{
+  flex:0 0 auto;
+  padding:6px 12px;
+  border-radius:999px;
+  font-size:11px;
+  font-weight:900;
+}
+
+.ticketListPill.valid{background:#dcfce7;color:#15803d}
+.ticketListPill.used{background:#fee2e2;color:#dc2626}
+
+.backToList{
+  display:inline-block;
+  margin-bottom:14px;
+  color:#8a5b12;
+  font-weight:800;
+  font-size:13px;
+  text-decoration:none;
+  cursor:pointer;
+}
+
 .smartFooter{background:#0d0906;color:#e7d8aa;padding:55px 22px 60px;margin-top:40px}
 .footerInner{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:36px}
 .footerLogo{display:flex;align-items:center;gap:10px;font-weight:900;font-size:20px;letter-spacing:-.5px;margin-bottom:16px}
@@ -328,14 +417,32 @@ a{color:inherit}
     <a href="index.html">Home</a> / <span class="current">Check Ticket</span>
   </div>
 
-  <div class="searchBox">
+  <div class="searchTabs">
+    <button class="searchTabBtn active" id="codeTabBtn" type="button">Ticket Code</button>
+    <button class="searchTabBtn" id="phoneTabBtn" type="button">Phone Number</button>
+  </div>
+
+  <p class="searchHint" id="codeHint">Have a QR code or ticket code? Paste it below.</p>
+  <p class="searchHint hidden" id="phoneHint">Bought by USSD or didn't get the email? Look your ticket(s) up by the phone number you paid with.</p>
+
+  <div class="searchBox" id="codeSearchBox">
     <input id="codeInput" type="text" placeholder="Paste your ticket code...">
     <button id="checkBtn" type="button">Check</button>
+  </div>
+
+  <div class="searchBox hidden" id="phoneSearchBox">
+    <input id="phoneInput" type="tel" placeholder="e.g. 0551234567">
+    <button id="checkPhoneBtn" type="button">Check</button>
   </div>
 
   <div id="idleState" class="stateBox">Scan your ticket's QR code, or paste its code above.</div>
   <div id="loadingState" class="stateBox hidden">Checking ticket...</div>
   <div id="errorState" class="stateBox hidden"></div>
+
+  <div id="ticketListWrap" class="hidden">
+    <a class="backToList hidden" id="backToListLink">&larr; Back to your tickets</a>
+    <div id="ticketList" class="ticketList"></div>
+  </div>
 
   <div id="resultCard" class="card hidden">
     <div class="statusPill" id="statusPill">—</div>
@@ -420,11 +527,46 @@ menuBtn.addEventListener("click", () => mobileMenu.classList.toggle("show"));
 
 const codeInput = document.getElementById("codeInput");
 const checkBtn = document.getElementById("checkBtn");
+const phoneInput = document.getElementById("phoneInput");
+const checkPhoneBtn = document.getElementById("checkPhoneBtn");
+
+const codeTabBtn = document.getElementById("codeTabBtn");
+const phoneTabBtn = document.getElementById("phoneTabBtn");
+const codeHint = document.getElementById("codeHint");
+const phoneHint = document.getElementById("phoneHint");
+const codeSearchBox = document.getElementById("codeSearchBox");
+const phoneSearchBox = document.getElementById("phoneSearchBox");
 
 const idleState = document.getElementById("idleState");
 const loadingState = document.getElementById("loadingState");
 const errorState = document.getElementById("errorState");
 const resultCard = document.getElementById("resultCard");
+const ticketListWrap = document.getElementById("ticketListWrap");
+const ticketList = document.getElementById("ticketList");
+const backToListLink = document.getElementById("backToListLink");
+
+let lastTicketList = null;
+
+codeTabBtn.addEventListener("click", () => {
+  codeTabBtn.classList.add("active");
+  phoneTabBtn.classList.remove("active");
+  codeSearchBox.classList.remove("hidden");
+  phoneSearchBox.classList.add("hidden");
+  codeHint.classList.remove("hidden");
+  phoneHint.classList.add("hidden");
+  showIdle();
+});
+
+phoneTabBtn.addEventListener("click", () => {
+  phoneTabBtn.classList.add("active");
+  codeTabBtn.classList.remove("active");
+  phoneSearchBox.classList.remove("hidden");
+  codeSearchBox.classList.add("hidden");
+  phoneHint.classList.remove("hidden");
+  codeHint.classList.add("hidden");
+  idleState.textContent = "Enter the phone number you paid with to see your ticket(s).";
+  showIdle();
+});
 
 let countdownTimer = null;
 
@@ -433,6 +575,7 @@ function showIdle(){
   loadingState.classList.add("hidden");
   errorState.classList.add("hidden");
   resultCard.classList.add("hidden");
+  ticketListWrap.classList.add("hidden");
 }
 
 function showLoading(){
@@ -440,6 +583,7 @@ function showLoading(){
   loadingState.classList.remove("hidden");
   errorState.classList.add("hidden");
   resultCard.classList.add("hidden");
+  ticketListWrap.classList.add("hidden");
 }
 
 function showError(text){
@@ -448,6 +592,7 @@ function showError(text){
   errorState.classList.remove("hidden");
   errorState.textContent = text;
   resultCard.classList.add("hidden");
+  ticketListWrap.classList.add("hidden");
 }
 
 function startCountdown(targetIso){
@@ -523,8 +668,49 @@ function renderResult(data){
   idleState.classList.add("hidden");
   loadingState.classList.add("hidden");
   errorState.classList.add("hidden");
+  ticketListWrap.classList.add("hidden");
   resultCard.classList.remove("hidden");
 }
+
+function renderTicketList(tickets){
+  lastTicketList = tickets;
+  ticketList.innerHTML = "";
+
+  tickets.forEach(t => {
+    const used = t.ticketStatus === "used";
+
+    const item = document.createElement("button");
+    item.type = "button";
+    item.className = "ticketListItem";
+    item.innerHTML = `
+      <div class="ticketListMain">
+        <b>${t.eventName || "Event"}</b>
+        <span>${t.ticketTypeName || "Regular Ticket"}</span>
+      </div>
+      <div class="ticketListPill ${used ? "used" : "valid"}">${used ? "Used" : "Valid"}</div>
+    `;
+
+    item.addEventListener("click", () => {
+      backToListLink.classList.remove("hidden");
+      renderResult(t);
+    });
+
+    ticketList.appendChild(item);
+  });
+
+  backToListLink.classList.add("hidden");
+
+  idleState.classList.add("hidden");
+  loadingState.classList.add("hidden");
+  errorState.classList.add("hidden");
+  resultCard.classList.add("hidden");
+  ticketListWrap.classList.remove("hidden");
+}
+
+backToListLink.addEventListener("click", () => {
+  if(!lastTicketList) return;
+  renderTicketList(lastTicketList);
+});
 
 async function checkTicket(code){
   if(!code){
@@ -550,9 +736,42 @@ async function checkTicket(code){
   }
 }
 
+async function checkTicketsByPhone(phone){
+  if(!phone){
+    showError("Enter the phone number you paid with.");
+    return;
+  }
+
+  showLoading();
+
+  try{
+    const resp = await fetch(`/api/ticket-status?phone=${encodeURIComponent(phone)}`);
+    const json = await resp.json();
+
+    if(!resp.ok || !json.status){
+      showError(json.message || "We couldn't find any tickets for that phone number.");
+      return;
+    }
+
+    if(json.data.length === 1){
+      renderResult(json.data[0]);
+    }else{
+      renderTicketList(json.data);
+    }
+  }catch(error){
+    console.error(error);
+    showError("Something went wrong while checking your tickets.");
+  }
+}
+
 checkBtn.addEventListener("click", () => checkTicket(codeInput.value.trim()));
 codeInput.addEventListener("keydown", (e) => {
   if(e.key === "Enter") checkTicket(codeInput.value.trim());
+});
+
+checkPhoneBtn.addEventListener("click", () => checkTicketsByPhone(phoneInput.value.trim()));
+phoneInput.addEventListener("keydown", (e) => {
+  if(e.key === "Enter") checkTicketsByPhone(phoneInput.value.trim());
 });
 
 const params = new URLSearchParams(window.location.search);
