@@ -676,6 +676,11 @@ signupBtn.addEventListener("click", async () => {
       email,
       password,
       options: {
+        // Without this, the confirmation email's link is built from
+        // Supabase's project-level "Site URL" setting — if that's still
+        // the default localhost value, the link opens localhost on
+        // whatever device the user taps it from and fails to connect.
+        emailRedirectTo: `${window.location.origin}/organizer-login.html`,
         data: {
           role: "organizer",
           full_name: fullName,
