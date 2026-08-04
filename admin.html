@@ -68,24 +68,17 @@ body{
 }
 
 .logoMark{
-  width:38px;
-  height:38px;
-  border-radius:50%;
-  background:#f6f0e2;
+  width:34px;
+  height:34px;
+  border-radius:9px;
+  background:linear-gradient(135deg,#d4af37,#b88718);
   display:grid;
   place-items:center;
-  position:relative;
+  color:#fff;
+  font-weight:900;
+  font-size:17px;
+  font-style:italic;
   flex:0 0 auto;
-}
-
-.logoMark::after{
-  content:"";
-  width:18px;
-  height:11px;
-  border-left:6px solid #0b4bea;
-  border-bottom:6px solid #0b4bea;
-  transform:rotate(-45deg);
-  margin-top:-3px;
 }
 
 .headerBtn{
@@ -140,13 +133,6 @@ body{
   .logoMark{
     width:44px;
     height:44px;
-  }
-
-  .logoMark::after{
-    width:22px;
-    height:13px;
-    border-left-width:7px;
-    border-bottom-width:7px;
   }
 
   .headerBtn{
@@ -787,6 +773,48 @@ body{
   font-size:12px;
 }
 
+/* On phones, tables collapse into stacked cards instead of scrolling
+   sideways — each <td> becomes its own row, labeled via data-label. */
+@media(max-width:680px){
+  .tableWrap{overflow-x:visible}
+
+  .table{min-width:0}
+
+  .table thead{display:none}
+
+  .table, .table tbody, .table tr, .table td{
+    display:block;
+    width:100%;
+  }
+
+  .table tr{
+    border:1px solid #eee4d3;
+    border-radius:14px;
+    margin-bottom:10px;
+    overflow:hidden;
+  }
+
+  .table td{
+    border-bottom:1px solid #f2ead9;
+    padding:10px 12px;
+  }
+
+  .table td:last-child{border-bottom:0}
+
+  .table td[data-label]::before{
+    content:attr(data-label);
+    display:block;
+    color:#a99a80;
+    font-size:10.5px;
+    font-weight:900;
+    text-transform:uppercase;
+    letter-spacing:.04em;
+    margin-bottom:4px;
+  }
+
+  .table td[colspan]::before{content:none}
+}
+
 /* FORMS */
 .formGrid{
   display:grid;
@@ -909,7 +937,7 @@ body{
       <button class="menuIcon" id="menuBtn" type="button">☰</button>
 
       <a class="logoLink" href="index.html">
-        <span class="logoMark"></span>
+        <span class="logoMark">V</span>
         <span>Lumina Admin</span>
       </a>
     </div>
@@ -1369,11 +1397,44 @@ body{
 
 </section>
 
-<div class="footer">
-© <span id="y"></span> Lumina Creative Co<br>
-<div style="margin-bottom:10px;"><a href="about.html" style="text-decoration:underline;">About</a> &middot; <a href="terms.html" style="text-decoration:underline;">Terms</a> &middot; <a href="refund-policy.html" style="text-decoration:underline;">Refund Policy</a> &middot; <a href="contact.html" style="text-decoration:underline;">Contact</a></div>
-Website created by <b>Lord Wilhelm</b> (0593410452)
-</div>
+<footer class="smartFooter">
+  <div class="footerInner">
+    <div class="footerBlock" style="grid-column:span 1;">
+      <div class="footerLogo">
+        <span class="logoMark">V</span>
+        <span>Lumina Vote</span>
+      </div>
+      <p>Lumina Vote helps organisers run voting competitions, ticketed events, and public event campaigns online.</p>
+      <div class="socials">
+        <div class="socialCircle">𝕏</div>
+        <div class="socialCircle">◎</div>
+        <div class="socialCircle">f</div>
+      </div>
+    </div>
+
+    <div class="footerBlock">
+      <h3>Platform</h3>
+      <a href="voting-home.html">Events</a>
+      <a href="live-results.html">Live Results</a>
+      <a href="event-registration.html">Create Event</a>
+    </div>
+
+    <div class="footerBlock">
+      <h3>Support</h3>
+      <a href="faq.html">FAQ</a>
+      <a href="verify-vote.html">Verify vote</a>
+      <a href="support.html">Help Center</a>
+      <a href="contact.html">Contact</a>
+      <a href="about.html">About</a>
+      <a href="terms.html">Terms of Service</a>
+      <a href="refund-policy.html">Refund Policy</a>
+    </div>
+  </div>
+
+  <div class="footerCredit">
+    © <span id="y"></span> Lumina Creative Co · A <a href="https://campusplug.app" target="_blank" rel="noopener">Campus Plug Technologies</a> product · Website created by <b>Lord Wilhelm</b> (0593410452)
+  </div>
+</footer>
 
 </main>
 
@@ -1958,10 +2019,10 @@ function renderTopContestants(){
     const tr = document.createElement("tr");
 
     tr.innerHTML = `
-      <td>${c.contestantNumber ? "Contestant " + c.contestantNumber + " — " : ""}${c.fullName || "Unnamed"}</td>
-      <td>${c.categoryName || "—"}</td>
-      <td>${c.status || "active"}</td>
-      <td><b>${numberFormat(c.votes || 0)}</b></td>
+      <td data-label="Top Contestant">${c.contestantNumber ? "Contestant " + c.contestantNumber + " — " : ""}${c.fullName || "Unnamed"}</td>
+      <td data-label="Category">${c.categoryName || "—"}</td>
+      <td data-label="Status">${c.status || "active"}</td>
+      <td data-label="Votes"><b>${numberFormat(c.votes || 0)}</b></td>
     `;
 
     topContestantsList.appendChild(tr);
@@ -1980,7 +2041,7 @@ function renderContestants(){
     const tr = document.createElement("tr");
 
     tr.innerHTML = `
-      <td>
+      <td data-label="Contestant">
         <div class="contestantMini">
           <img src="${c.photoUrl || "images/model1.jpg"}" alt="Contestant">
           <div>
@@ -1989,14 +2050,14 @@ function renderContestants(){
           </div>
         </div>
       </td>
-      <td>${c.categoryName || "—"}</td>
-      <td>
+      <td data-label="Category">${c.categoryName || "—"}</td>
+      <td data-label="Status">
         <span class="${String(c.status || "active").toLowerCase() === "active" ? "badge live" : "badge closed"}">
           ${c.status || "active"}
         </span>
       </td>
-      <td><b>${numberFormat(c.votes || 0)}</b></td>
-      <td>
+      <td data-label="Votes"><b>${numberFormat(c.votes || 0)}</b></td>
+      <td data-label="Action">
         <button class="actionBtn" data-toggle="${c.id}" type="button">
           ${String(c.status || "active").toLowerCase() === "active" ? "Eliminate" : "Activate"}
         </button>
@@ -2021,15 +2082,15 @@ function renderVotePayments(){
     const tr = document.createElement("tr");
 
     tr.innerHTML = `
-      <td>
+      <td data-label="Reference">
         <b>${p.clientReference}</b><br>
         <span class="smallMuted">${p.phoneNumber || ""}</span>
       </td>
-      <td>${contestant?.contestantNumber ? "Contestant " + contestant.contestantNumber : "—"} ${contestant?.fullName ? "— " + contestant.fullName : ""}</td>
-      <td>${contestant?.categoryName || "—"}</td>
-      <td>${numberFormat(p.votes || 0)}</td>
-      <td>${money(p.amount)}</td>
-      <td>${p.status || "paid"}</td>
+      <td data-label="Contestant">${contestant?.contestantNumber ? "Contestant " + contestant.contestantNumber : "—"} ${contestant?.fullName ? "— " + contestant.fullName : ""}</td>
+      <td data-label="Category">${contestant?.categoryName || "—"}</td>
+      <td data-label="Votes">${numberFormat(p.votes || 0)}</td>
+      <td data-label="Amount">${money(p.amount)}</td>
+      <td data-label="Status">${p.status || "paid"}</td>
     `;
 
     votePaymentsList.appendChild(tr);
@@ -2048,15 +2109,15 @@ function renderTicketPayments(){
     const tr = document.createElement("tr");
 
     tr.innerHTML = `
-      <td>
+      <td data-label="Reference">
         <b>${p.clientReference}</b><br>
         <span class="smallMuted">${p.createdAt ? new Date(p.createdAt).toLocaleString() : ""}</span>
       </td>
-      <td>${selectedEvent?.ticketName || "Regular Ticket"}</td>
-      <td>${numberFormat(p.quantity || 0)}</td>
-      <td>${money(p.amount)}</td>
-      <td>${p.phoneNumber || "—"}</td>
-      <td>${p.status || "paid"}</td>
+      <td data-label="Ticket">${selectedEvent?.ticketName || "Regular Ticket"}</td>
+      <td data-label="Quantity">${numberFormat(p.quantity || 0)}</td>
+      <td data-label="Amount">${money(p.amount)}</td>
+      <td data-label="Buyer">${p.phoneNumber || "—"}</td>
+      <td data-label="Status">${p.status || "paid"}</td>
     `;
 
     ticketPaymentsList.appendChild(tr);

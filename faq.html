@@ -1,0 +1,780 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FAQ | Lumina Vote</title>
+
+<style>
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+
+body{
+  margin:0;
+  overflow-x:hidden;
+  background:#faf7f0;
+  color:#161311;
+  font-family:Arial, Helvetica, sans-serif;
+}
+
+a{color:inherit}
+
+/* HEADER */
+.siteHeader{
+  position:sticky;
+  top:0;
+  z-index:100;
+  background:#ffffff;
+  border-bottom:1px solid #eee4d3;
+}
+
+.siteHeaderInner{
+  max-width:1180px;
+  margin:0 auto;
+  height:76px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  padding:0 22px;
+}
+
+.headerLeft,.headerRight{
+  display:flex;
+  align-items:center;
+  gap:16px;
+}
+
+.menuIcon{
+  border:0;
+  background:transparent;
+  color:#161311;
+  cursor:pointer;
+  padding:0;
+  display:grid;
+  place-items:center;
+  font-size:26px;
+  line-height:1;
+}
+
+.logoLink{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  text-decoration:none;
+  color:#161311;
+  font-weight:900;
+  font-size:21px;
+  letter-spacing:-0.5px;
+}
+
+.logoMark{
+  width:34px;
+  height:34px;
+  border-radius:9px;
+  background:linear-gradient(135deg,#d4af37,#b88718);
+  display:grid;
+  place-items:center;
+  color:#fff;
+  font-weight:900;
+  font-size:17px;
+  font-style:italic;
+  flex:0 0 auto;
+}
+
+.navLinks{
+  display:none;
+  align-items:center;
+  gap:26px;
+  font-size:14px;
+  font-weight:700;
+  color:#6b6156;
+}
+
+.navLinks a{text-decoration:none}
+.navLinks a.active{color:#161311}
+
+.sellBtn{
+  border:0;
+  background:#161311;
+  color:#fff;
+  padding:12px 20px;
+  border-radius:999px;
+  font-weight:800;
+  font-size:14px;
+  text-decoration:none;
+  white-space:nowrap;
+}
+
+.mobileMenu{
+  display:none;
+  padding:14px 18px 18px;
+  background:#fff;
+  border-top:1px solid #eee4d3;
+}
+
+.mobileMenu.show{display:block}
+
+.mobileMenu a{
+  width:100%;
+  display:flex;
+  justify-content:center;
+  text-decoration:none;
+  padding:13px;
+  border-radius:12px;
+  margin-top:8px;
+  font-weight:800;
+  background:#f6f0e2;
+  color:#161311;
+  font-size:14px;
+}
+
+@media(min-width:860px){
+  .navLinks{display:flex}
+}
+
+/* MAIN */
+.pageWrap{
+  max-width:820px;
+  margin:0 auto;
+  padding:34px 18px 70px;
+}
+
+.breadcrumb{
+  font-size:13px;
+  color:#a99a80;
+  margin-bottom:16px;
+}
+
+.breadcrumb a{text-decoration:none;color:#a99a80}
+.breadcrumb span.current{color:#161311;font-weight:700}
+
+.eyebrow{
+  display:inline-block;
+  background:#f6e6c8;
+  color:#8a5b12;
+  font-weight:800;
+  font-size:11px;
+  letter-spacing:.05em;
+  text-transform:uppercase;
+  padding:7px 12px;
+  border-radius:999px;
+  margin-bottom:14px;
+}
+
+.pageTitle{
+  margin:0 0 8px;
+  font-family:Georgia, "Times New Roman", serif;
+  font-size:34px;
+  font-weight:900;
+  letter-spacing:-0.6px;
+}
+
+.pageSub{
+  margin:0 0 22px;
+  color:#6b6156;
+  font-size:14.5px;
+  line-height:1.6;
+  max-width:600px;
+}
+
+.searchWrap{
+  position:sticky;
+  top:76px;
+  z-index:50;
+  background:#faf7f0;
+  padding:10px 0 16px;
+  margin-bottom:6px;
+}
+
+.searchInput{
+  width:100%;
+  border:1px solid #e6dabd;
+  border-radius:999px;
+  padding:14px 18px;
+  font-size:15px;
+  outline:none;
+  background:#ffffff;
+  color:#161311;
+}
+
+.searchInput:focus{
+  border-color:#d4af37;
+  box-shadow:0 0 0 4px rgba(212,175,55,.14);
+}
+
+.searchCount{
+  margin-top:8px;
+  font-size:12.5px;
+  color:#a99a80;
+  font-weight:700;
+}
+
+.catNav{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin:14px 0 30px;
+}
+
+.catChip{
+  border:1px solid #e6dabd;
+  background:#ffffff;
+  color:#161311;
+  border-radius:999px;
+  padding:8px 14px;
+  font-size:12.5px;
+  font-weight:800;
+  text-decoration:none;
+}
+
+.catSection{
+  margin-bottom:34px;
+}
+
+.catSection h2{
+  margin:0 0 4px;
+  font-family:Georgia, "Times New Roman", serif;
+  font-size:22px;
+  font-weight:900;
+}
+
+.catCount{
+  color:#a99a80;
+  font-size:12.5px;
+  font-weight:700;
+  margin-bottom:14px;
+}
+
+.faqItem{
+  background:#ffffff;
+  border:1px solid #efe7d8;
+  border-radius:14px;
+  margin-bottom:10px;
+  box-shadow:0 6px 18px rgba(60,45,10,0.04);
+  overflow:hidden;
+}
+
+.faqItem summary{
+  cursor:pointer;
+  list-style:none;
+  padding:16px 46px 16px 18px;
+  font-weight:800;
+  font-size:14.5px;
+  line-height:1.5;
+  position:relative;
+}
+
+.faqItem summary::-webkit-details-marker{display:none}
+
+.faqItem summary::after{
+  content:"+";
+  position:absolute;
+  right:16px;
+  top:50%;
+  transform:translateY(-50%);
+  font-size:20px;
+  font-weight:900;
+  color:#a99a80;
+}
+
+.faqItem[open] summary::after{content:"\2212"}
+
+.faqItem p{
+  margin:0;
+  padding:0 18px 18px;
+  color:#4a423a;
+  font-size:14px;
+  line-height:1.7;
+}
+
+.faqItem p a{
+  color:#8a5b12;
+  font-weight:800;
+  text-decoration:none;
+}
+
+.faqItem.hidden{display:none}
+.catSection.hidden{display:none}
+
+.noResults{
+  display:none;
+  text-align:center;
+  padding:30px 20px;
+  color:#a99a80;
+  font-weight:700;
+}
+
+.noResults.show{display:block}
+
+.contactCard{
+  background:#161311;
+  color:#faf7f0;
+  border-radius:18px;
+  padding:24px;
+  text-align:center;
+  margin-top:10px;
+}
+
+.contactCard h2{
+  margin:0 0 8px;
+  font-family:Georgia, "Times New Roman", serif;
+  font-size:24px;
+}
+
+.contactCard p{
+  margin:0 0 18px;
+  color:#c9bfae;
+  font-size:14px;
+  line-height:1.6;
+}
+
+.contactActions{
+  display:flex;
+  gap:10px;
+  justify-content:center;
+  flex-wrap:wrap;
+}
+
+.contactBtn{
+  text-decoration:none;
+  border-radius:999px;
+  padding:12px 20px;
+  font-weight:800;
+  font-size:13.5px;
+}
+
+.contactBtn.primary{
+  background:linear-gradient(135deg,#d4af37,#b88718);
+  color:#1b1008;
+}
+
+.contactBtn.ghost{
+  border:1px solid rgba(255,255,255,.20);
+  background:rgba(255,255,255,0.06);
+  color:#faf7f0;
+}
+
+.footer{
+  margin-top:34px;
+  text-align:center;
+  color:#a99a80;
+  font-size:12.5px;
+  line-height:1.6;
+}
+
+.smartFooter{
+  background:#0d0906;
+  color:#e7d8aa;
+  padding:55px 22px 60px;
+  margin-top:40px;
+}
+.footerInner{
+  max-width:1180px;
+  margin:0 auto;
+  display:grid;
+  grid-template-columns:1.4fr 1fr 1fr;
+  gap:36px;
+}
+.footerLogo{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-weight:900;
+  font-size:20px;
+  letter-spacing:-.5px;
+  margin-bottom:16px;
+}
+.footerLogo .logoMark{width:32px;height:32px}
+.footerBlock p,.footerBlock a{
+  color:#c9bfae;
+  text-decoration:none;
+  display:block;
+  margin:0 0 12px;
+  font-size:14px;
+  line-height:1.55;
+}
+.footerBlock h3{
+  margin:0 0 16px;
+  font-size:13px;
+  text-transform:uppercase;
+  letter-spacing:.06em;
+  color:#8a7f6f;
+}
+.socials{display:flex;gap:10px;margin-top:6px}
+.socialCircle{
+  width:36px;
+  height:36px;
+  border-radius:50%;
+  border:1px solid #3a332a;
+  display:grid;
+  place-items:center;
+  font-size:15px;
+  font-weight:800;
+  color:#e7d8aa;
+}
+.footerCredit{
+  max-width:1180px;
+  margin:44px auto 0;
+  padding-top:24px;
+  border-top:1px solid #241d15;
+  color:#7a705f;
+  font-size:12.5px;
+  line-height:1.6;
+}
+.footerCredit a{color:#c9bfae;text-decoration:underline}
+@media(max-width:820px){.footerInner{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){.footerInner{grid-template-columns:1fr}}
+</style>
+</head>
+
+<body>
+
+<header class="siteHeader">
+  <div class="siteHeaderInner">
+    <div class="headerLeft">
+      <button class="menuIcon" id="menuBtn" type="button">☰</button>
+
+      <a class="logoLink" href="index.html">
+        <span class="logoMark">V</span>
+        <span>Lumina Vote</span>
+      </a>
+    </div>
+
+    <nav class="navLinks">
+      <a href="voting-home.html">Events</a>
+      <a href="live-results.html">Live Results</a>
+      <a class="active" href="faq.html">FAQ</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+
+    <div class="headerRight">
+      <a class="sellBtn" href="event-registration.html">Sell tickets</a>
+    </div>
+  </div>
+
+  <div class="mobileMenu" id="mobileMenu">
+    <a href="index.html">Home</a>
+    <a href="voting-home.html">Events</a>
+    <a href="faq.html">FAQ</a>
+    <a href="about.html">About</a>
+    <a href="contact.html">Contact</a>
+  </div>
+</header>
+
+<main class="pageWrap">
+
+  <div class="breadcrumb">
+    <a href="index.html">Home</a> / <span class="current">FAQ</span>
+  </div>
+
+  <span class="eyebrow">Help Center</span>
+  <h1 class="pageTitle">Frequently Asked Questions</h1>
+  <p class="pageSub">Everything about voting, tickets, payments, and running your own event on Lumina Vote — organized by topic. Can't find your answer? <a href="contact.html">Contact us</a>.</p>
+
+  <div class="searchWrap">
+    <input id="faqSearch" class="searchInput" type="search" placeholder="Search questions... e.g. refund, QR code, confirm email">
+    <div class="searchCount" id="searchCount"></div>
+  </div>
+
+  <div class="catNav" id="catNav"></div>
+
+  <div id="faqRoot"></div>
+
+  <div class="noResults" id="noResults">No questions match your search. Try a different word, or <a href="contact.html">contact us</a> directly.</div>
+
+  <div class="contactCard">
+    <h2>Still stuck?</h2>
+    <p>Our team replies within 24–48 hours, usually sooner.</p>
+    <div class="contactActions">
+      <a class="contactBtn primary" href="contact.html">Contact Us</a>
+      <a class="contactBtn ghost" href="verify-vote.html">Verify a Payment</a>
+    </div>
+  </div>
+
+  <footer class="smartFooter">
+    <div class="footerInner">
+      <div class="footerBlock" style="grid-column:span 1;">
+        <div class="footerLogo">
+          <span class="logoMark">V</span>
+          <span>Lumina Vote</span>
+        </div>
+        <p>Lumina Vote helps organisers run voting competitions, ticketed events, and public event campaigns online.</p>
+        <div class="socials">
+          <div class="socialCircle">𝕏</div>
+          <div class="socialCircle">◎</div>
+          <div class="socialCircle">f</div>
+        </div>
+      </div>
+
+      <div class="footerBlock">
+        <h3>Platform</h3>
+        <a href="voting-home.html">Events</a>
+        <a href="live-results.html">Live Results</a>
+        <a href="event-registration.html">Create Event</a>
+      </div>
+
+      <div class="footerBlock">
+        <h3>Support</h3>
+        <a href="faq.html">FAQ</a>
+        <a href="verify-vote.html">Verify vote</a>
+        <a href="support.html">Help Center</a>
+        <a href="contact.html">Contact</a>
+        <a href="about.html">About</a>
+        <a href="terms.html">Terms of Service</a>
+        <a href="refund-policy.html">Refund Policy</a>
+      </div>
+    </div>
+
+    <div class="footerCredit">
+      © <span id="y"></span> Lumina Creative Co · A <a href="https://campusplug.app" target="_blank" rel="noopener">Campus Plug Technologies</a> product · Website created by <b>Lord Wilhelm</b> (0593410452)
+    </div>
+  </footer>
+
+</main>
+
+<script>
+document.getElementById("y").textContent = new Date().getFullYear();
+
+document.getElementById("menuBtn").addEventListener("click", () => {
+  document.getElementById("mobileMenu").classList.toggle("show");
+});
+
+const categories = [
+  {
+    id: "getting-started",
+    name: "Getting Started",
+    faqs: [
+      ["What is Lumina Vote?", "Lumina Vote is a voting and ticketing platform, built by Campus Plug Technologies, where organizers run paid voting competitions and sell tickets online, and the public votes for contestants or buys tickets with instant confirmation."],
+      ["Who can use Lumina Vote?", "Anyone. Voters and ticket buyers don't need an account at all — just a phone number and a way to pay. Organizers and contestants create free accounts to manage events or track their own votes."],
+      ["Is it free to use?", "Browsing events, checking results, and creating an organizer or contestant account are all free. You only pay when you cast a vote or buy a ticket."],
+      ["Do I need to download an app?", "No. Lumina Vote runs entirely in your phone or computer's browser — nothing to install."],
+      ["How is Lumina Vote different from just using WhatsApp or a paper ballot?", "Every vote is tied to a real payment and recorded instantly, so results update live and can't be faked by stuffing a ballot box or forwarding messages. Anyone can follow the leaderboard in real time on the event's page."],
+      ["What kinds of events use Lumina Vote?", "Pageants, talent shows, award nights, hall week competitions, and similar contests — plus straightforward ticketed events that don't involve voting at all."],
+      ["Can an event have both voting and ticket sales?", "Yes. Organizers choose when creating an event whether it's voting-only, tickets-only, or both."],
+      ["Where do I find events I can vote in?", "Go to <a href=\"voting-home.html\">Events</a> to browse everything currently listed, or use the search on the homepage if you know the event name."],
+      ["How do I know an event or contestant is real and not a scam?", "Every event on the platform is created by a registered organizer account and goes through the same payment and vote-recording system — see our <a href=\"terms.html\">Terms of Service</a> for how organizer accountability works, or read more on our <a href=\"about.html\">About</a> page."],
+      ["Is Lumina Vote available outside Ghana?", "The platform is built primarily for Ghanaian events and mobile money payments, but anyone with a supported payment method can use it."],
+      ["Who runs Lumina Vote?", "Lumina Vote is a product of Campus Plug Technologies, the same team behind <a href=\"https://campusplug.app\" target=\"_blank\" rel=\"noopener\">campusplug.app</a>, a marketplace for students across Ghana's universities and colleges."]
+    ]
+  },
+  {
+    id: "voting",
+    name: "Voting",
+    faqs: [
+      ["How do I vote for a contestant?", "Open the event from <a href=\"voting-home.html\">Events</a>, find the contestant, choose how many votes you want, and complete payment. Your vote is added the moment payment is confirmed."],
+      ["How much does a vote cost?", "Each organizer sets their own price per vote for their event — you'll see the exact price on the voting page before you pay."],
+      ["Can I vote more than once for the same contestant?", "Yes. There's no limit on how many votes you can buy for a contestant, as long as the competition is still open."],
+      ["Can I vote for more than one contestant in the same event?", "Yes, you can vote for as many different contestants as you like."],
+      ["Can I undo or change my vote after paying?", "No. Votes are credited automatically the instant payment is confirmed and can't be reversed — double-check you've picked the right contestant before you pay."],
+      ["Why hasn't my vote shown up yet?", "Most votes reflect within a minute. Go to <a href=\"verify-vote.html\">Verify Vote</a> and enter the phone number you paid with to check the exact status. If it still shows nothing after several minutes, contact us with your payment reference."],
+      ["How do I see the current results?", "Open <a href=\"live-results.html\">Live Results</a> or the event's own page — the leaderboard updates in real time as votes come in."],
+      ["Can I see how many votes a specific contestant has?", "Yes, every contestant's vote count is shown publicly on the event page while voting is open."],
+      ["What happens when voting closes?", "The organizer marks the competition as closed and the final vote counts stand as the result. No more votes can be purchased for that event."],
+      ["Can an organizer delete or hide votes?", "No — votes are recorded automatically by the payment system, not entered manually, so an organizer can't edit or remove valid votes."],
+      ["Is there a minimum or maximum number of votes I can buy at once?", "The minimum is 1 vote. There's no fixed maximum, though very large purchases may be limited by your payment provider's own transaction limits."],
+      ["Why do some events show 'Paused' or 'Upcoming' instead of letting me vote?", "An event only accepts votes while it's marked 'Live' by the organizer. 'Upcoming' means voting hasn't opened yet, and 'Paused' means the organizer has temporarily suspended voting."]
+    ]
+  },
+  {
+    id: "tickets",
+    name: "Tickets",
+    faqs: [
+      ["How do I buy a ticket to an event?", "Open the event from <a href=\"voting-home.html\">Events</a>, choose your ticket type and quantity, and complete payment. Your ticket (with a QR code) is issued immediately."],
+      ["Where do I find my ticket after buying it?", "Check <a href=\"ticket-status.html\">Ticket Status</a> with the phone number or reference used to pay, or check the confirmation shown right after payment."],
+      ["Do I need to print my ticket?", "No — the QR code on your phone screen is scanned at the door. A printed copy also works if you prefer."],
+      ["Can I transfer my ticket to someone else?", "You can share your ticket's QR code with someone else to use in your place, but each code can only be checked in once — whoever scans it first at the door gets in."],
+      ["What if I lose my ticket confirmation?", "Go to <a href=\"ticket-status.html\">Ticket Status</a> and look it up using the phone number you paid with, or contact us with your payment reference."],
+      ["Can I get a refund if I can't attend?", "Ticket purchases are generally final once confirmed. See our <a href=\"refund-policy.html\">Refund Policy</a> for the specific situations refunds are available."],
+      ["What happens if the event is cancelled or postponed?", "Refunds for a cancelled or postponed event are coordinated with the organizer — <a href=\"contact.html\">contact us</a> and we'll help sort it out."],
+      ["How does check-in work at the door?", "Organizer staff scan your ticket's QR code with the Lumina Vote scanner. Once scanned, that ticket is marked used and can't be scanned again."],
+      ["What if my QR code won't scan at the door?", "Door staff can type in the ticket code manually as a backup — make sure you have the confirmation screen or code visible."],
+      ["Can I buy multiple tickets in one purchase?", "Yes, choose the quantity you need at checkout and pay once for all of them."]
+    ]
+  },
+  {
+    id: "payments",
+    name: "Payments",
+    faqs: [
+      ["What payment methods are supported?", "Mobile money and card payments through our secure third-party payment provider — the exact options available depend on your event and location."],
+      ["Is it safe to pay on Lumina Vote?", "Yes. Payments are handled by a licensed, secure payment provider — we never see or store your card number or mobile money PIN."],
+      ["I was charged but nothing was credited. What do I do?", "Go to <a href=\"verify-vote.html\">Verify Vote</a> first — payments are sometimes confirmed a little after the charge itself. If nothing shows after 10–15 minutes, contact us with your payment reference or the phone number you used."],
+      ["Why was my payment declined?", "This is usually due to insufficient balance, an expired card, or a temporary issue with your mobile money provider. Try again, or use a different payment method."],
+      ["Do you charge extra fees on top of the vote or ticket price?", "The price shown at checkout is the price you pay — there are no hidden fees added afterward."],
+      ["Can I pay with someone else's phone number?", "Yes, the vote or ticket is credited based on the payment confirmation, not tied to a specific phone owner."],
+      ["I was charged twice for the same vote or ticket. What happens?", "Duplicate charges for the same order are eligible for a refund — see our <a href=\"refund-policy.html\">Refund Policy</a> and contact us with both transaction references."],
+      ["Do I get a receipt?", "You'll see a confirmation on-screen after payment, and can look up any payment's status anytime via <a href=\"verify-vote.html\">Verify Vote</a> or <a href=\"ticket-status.html\">Ticket Status</a>."],
+      ["How long does payment confirmation take?", "Almost always under a minute. Occasionally mobile money prompts are delayed by the network — give it a few minutes before assuming something went wrong."]
+    ]
+  },
+  {
+    id: "refunds",
+    name: "Refunds",
+    faqs: [
+      ["Can I get a refund for a vote?", "Votes are non-refundable once credited, since they're counted immediately. See our full <a href=\"refund-policy.html\">Refund Policy</a> for exceptions like duplicate charges or technical errors."],
+      ["Can I get a refund for a ticket?", "Ticket purchases are final once confirmed, except in specific cases (duplicate charge, technical error, or organizer cancellation) — details in our <a href=\"refund-policy.html\">Refund Policy</a>."],
+      ["How do I request a refund?", "Contact us within 7 days of the payment through our <a href=\"contact.html\">Contact page</a> with your payment reference or the phone number used to pay."],
+      ["How long do approved refunds take?", "Approved refunds are returned to your original payment method within 5–10 business days."],
+      ["I voted for the wrong contestant by mistake — can I get my money back?", "Unfortunately no. Because votes are credited instantly, we can't reverse a vote once it's been counted, even if it went to the wrong contestant. Please double-check before paying."]
+    ]
+  },
+  {
+    id: "organizers",
+    name: "For Organizers",
+    faqs: [
+      ["How do I become an organizer?", "Go to <a href=\"organizer-login.html\">Organizer Login</a>, choose 'Create Account', and fill in your details. Once your account is set up you can create your first event."],
+      ["How do I create a voting competition or ticketed event?", "Log in to your organizer account and go to <a href=\"event-registration.html\">Create Event</a>. You'll choose the event type (voting, tickets, or both), set pricing, and add your event details."],
+      ["Can I set my own price per vote or per ticket?", "Yes, you set the price when you create the event and can adjust it from your dashboard afterward."],
+      ["How do I add contestants to my competition?", "From your <a href=\"organizer-dashboard.html\">Organizer Dashboard</a>, open your event and use the 'Add Contestant' tab to add each contestant's details and photo."],
+      ["Can contestants add themselves instead of me adding them?", "Yes — contestants can create their own account and register themselves for your event if you share your event details with them."],
+      ["How do I track votes and ticket sales?", "Your <a href=\"organizer-dashboard.html\">Organizer Dashboard</a> shows live vote counts, ticket sales, and payment history for every event you run."],
+      ["Can I pause or close voting early?", "Yes, you can pause voting temporarily or close the competition entirely from your dashboard at any time."],
+      ["How do I check tickets in at the door?", "Use <a href=\"scan-ticket.html\">Scan Tickets</a> on your phone or laptop to scan each guest's QR code as they arrive."],
+      ["When and how do I get paid out?", "Payouts are coordinated directly with our team based on your event's confirmed revenue — <a href=\"contact.html\">contact us</a> to arrange your payout."],
+      ["Can I edit my event after it's published?", "Yes, most event details can be updated from the 'Edit Event' tab in your dashboard, though some core settings like the event type may be locked once voting or ticket sales have started."],
+      ["What's my responsibility as an organizer?", "You're responsible for the accuracy of your event listing, contestant information, and actually running the event as described — see our <a href=\"terms.html\">Terms of Service</a> for the full breakdown."]
+    ]
+  },
+  {
+    id: "contestants",
+    name: "For Contestants",
+    faqs: [
+      ["How do I create a contestant account?", "Go to <a href=\"contestant-login.html\">Contestant Login</a>, choose 'Create Account', and fill in your details along with the event name and your contestant number."],
+      ["What can I do from my contestant dashboard?", "Track your total votes, see your ranking on the leaderboard, and follow the event's status in real time."],
+      ["Do I need an account to be voted for?", "No — an organizer can add you as a contestant without you having an account. Creating your own account just lets you track your own votes and ranking directly."],
+      ["I signed up but can't log in — why?", "Your account may still be waiting on email confirmation. Check your inbox (and spam folder) for the confirmation link sent when you signed up, then try logging in again."],
+      ["Can I remove myself from a competition?", "Contact the event's organizer directly, or reach out to us and we'll help coordinate."],
+      ["Can I change my contestant number or event after signing up?", "Contact us or your event's organizer to correct any details on your contestant profile."]
+    ]
+  },
+  {
+    id: "account",
+    name: "Account & Login",
+    faqs: [
+      ["Do I need an account to vote or buy a ticket?", "No — voting and buying tickets don't require an account. Accounts are only needed for organizers and contestants."],
+      ["I created an account but can't log in.", "This almost always means your email hasn't been confirmed yet. Check your inbox (and spam folder) for a confirmation link from us, click it, then log in again."],
+      ["I never received the confirmation email — what now?", "Check your spam/junk folder first. If it's genuinely missing after a few minutes, <a href=\"contact.html\">contact us</a> with the email address you signed up with."],
+      ["I forgot my password.", "Use the login page's password reset option if available, or <a href=\"contact.html\">contact us</a> and we'll help you regain access."],
+      ["Can I change the email address on my account?", "Contact us with your current account details and the new email you'd like to use."],
+      ["Can I have both an organizer and a contestant account?", "Yes, they're separate account types tied to separate logins — you can create one of each if you need both roles."],
+      ["Is my personal information safe?", "We only collect what's needed to run your account and process payments, and we never store your card number or mobile money PIN — see our <a href=\"terms.html\">Terms of Service</a> for details."]
+    ]
+  },
+  {
+    id: "safety",
+    name: "Safety & Trust",
+    faqs: [
+      ["How does Lumina Vote prevent fake votes?", "Every vote requires a real, confirmed payment before it's counted — there's no way to add votes without paying, which rules out the kind of manual ballot-stuffing paper or WhatsApp voting is vulnerable to."],
+      ["What if I suspect an event or organizer is fraudulent?", "Contact us immediately with the event name and details, and we'll look into it. Don't send any payment you're unsure about."],
+      ["Does Lumina Vote guarantee the outcome of an event?", "We guarantee that votes and ticket sales are recorded accurately as paid. The event itself — its rules, prizes, and how a winner is decided — is run and decided by the organizer."],
+      ["Can someone else see who I voted for?", "Vote counts per contestant are public, but individual voter identities are not displayed publicly."],
+      ["What should I do if I think I was scammed?", "Contact us right away with your payment reference, phone number used, and any details about the event or organizer involved."]
+    ]
+  },
+  {
+    id: "technical",
+    name: "Technical",
+    faqs: [
+      ["The page won't load or looks broken — what do I do?", "Try refreshing, or open the site in a different browser. Lumina Vote works best on the latest version of Chrome, Safari, or Firefox."],
+      ["Do I need a specific browser or device?", "No — any modern smartphone or computer browser works. No app download is required."],
+      ["The QR scanner on Scan Tickets isn't opening my camera.", "Make sure you've allowed camera permission for the site when prompted, and that no other app is currently using your camera. You can also type the ticket code in manually as a backup."],
+      ["Why is a page asking me to log in again?", "Login sessions can expire after a period of inactivity for security. Simply log in again to continue."],
+      ["Can I use Lumina Vote on a slow or unstable internet connection?", "Yes, though payment confirmation may take a little longer on a weak connection. Avoid refreshing or closing the page mid-payment."],
+      ["Does Lumina Vote work outside of Ghana's networks?", "The site itself works anywhere with internet access; available payment methods depend on your location and provider."]
+    ]
+  },
+  {
+    id: "support",
+    name: "Support & Contact",
+    faqs: [
+      ["How do I contact Lumina Vote directly?", "Visit our <a href=\"contact.html\">Contact page</a> for email and phone details, or reach out via WhatsApp using the number listed there."],
+      ["How long does support take to respond?", "We aim to reply within 24–48 hours, and most questions are answered a lot sooner."],
+      ["What information should I include when contacting support about a payment?", "Your payment reference (or the phone number you paid with), the event and contestant/ticket involved, and roughly when you paid."],
+      ["Is there a phone number I can call?", "Yes, see our <a href=\"contact.html\">Contact page</a> for the current phone number."],
+      ["Where can I read the full rules for using the platform?", "See our <a href=\"terms.html\">Terms of Service</a> and <a href=\"refund-policy.html\">Refund Policy</a> for the complete details."]
+    ]
+  }
+];
+
+const faqRoot = document.getElementById("faqRoot");
+const catNav = document.getElementById("catNav");
+const searchInput = document.getElementById("faqSearch");
+const searchCount = document.getElementById("searchCount");
+const noResults = document.getElementById("noResults");
+
+let totalCount = 0;
+
+categories.forEach(cat => {
+  const chip = document.createElement("a");
+  chip.className = "catChip";
+  chip.href = "#" + cat.id;
+  chip.textContent = cat.name;
+  catNav.appendChild(chip);
+
+  const section = document.createElement("section");
+  section.className = "catSection";
+  section.id = cat.id;
+  section.dataset.cat = cat.id;
+
+  const heading = document.createElement("h2");
+  heading.textContent = cat.name;
+  section.appendChild(heading);
+
+  const count = document.createElement("div");
+  count.className = "catCount";
+  count.textContent = cat.faqs.length + " question" + (cat.faqs.length === 1 ? "" : "s");
+  section.appendChild(count);
+
+  cat.faqs.forEach(([q, a]) => {
+    totalCount++;
+    const item = document.createElement("details");
+    item.className = "faqItem";
+    item.dataset.q = q.toLowerCase();
+    item.dataset.a = a.toLowerCase();
+
+    const summary = document.createElement("summary");
+    summary.textContent = q;
+    item.appendChild(summary);
+
+    const p = document.createElement("p");
+    p.innerHTML = a;
+    item.appendChild(p);
+
+    section.appendChild(item);
+  });
+
+  faqRoot.appendChild(section);
+});
+
+searchCount.textContent = totalCount.toLocaleString() + " questions across " + categories.length + " topics";
+
+searchInput.addEventListener("input", () => {
+  const term = searchInput.value.trim().toLowerCase();
+  let visibleCount = 0;
+
+  document.querySelectorAll(".catSection").forEach(section => {
+    let sectionHasMatch = false;
+
+    section.querySelectorAll(".faqItem").forEach(item => {
+      const matches = !term || item.dataset.q.includes(term) || item.dataset.a.includes(term);
+      item.classList.toggle("hidden", !matches);
+      if(matches){
+        sectionHasMatch = true;
+        visibleCount++;
+        if(term) item.open = true;
+        else item.open = false;
+      }
+    });
+
+    section.classList.toggle("hidden", !sectionHasMatch);
+  });
+
+  noResults.classList.toggle("show", visibleCount === 0);
+  searchCount.textContent = term
+    ? visibleCount.toLocaleString() + " match" + (visibleCount === 1 ? "" : "es") + " for \"" + searchInput.value.trim() + "\""
+    : totalCount.toLocaleString() + " questions across " + categories.length + " topics";
+});
+</script>
+
+</body>
+</html>

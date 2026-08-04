@@ -246,50 +246,6 @@ a{color:inherit}
   .heroPrimary,.heroGhost{min-width:0;width:100%;max-width:290px}
 }
 
-/* STATS STRIP */
-.statsStrip{
-  position:relative;
-  max-width:900px;
-  margin:44px auto 0;
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:12px;
-  padding:0 22px;
-}
-
-.statCard{
-  background:#ffffff;
-  border:1px solid #efe7d8;
-  border-radius:16px;
-  padding:20px 14px;
-  text-align:center;
-  box-shadow:0 10px 26px rgba(60,45,10,0.05);
-}
-
-.statCard b{
-  display:block;
-  font-size:26px;
-  font-weight:900;
-  letter-spacing:-.4px;
-}
-
-.statCard span{
-  display:block;
-  margin-top:5px;
-  font-size:11.5px;
-  font-weight:700;
-  color:#8a7f6f;
-  text-transform:uppercase;
-  letter-spacing:.04em;
-}
-
-@media(max-width:680px){
-  .statsStrip{margin-top:32px;gap:8px}
-  .statCard{padding:16px 8px}
-  .statCard b{font-size:20px}
-  .statCard span{font-size:9.5px}
-}
-
 /* SECTIONS */
 .pageSection{
   padding:70px 22px;
@@ -723,21 +679,6 @@ a{color:inherit}
         <a class="heroGhost" href="event-registration.html">Host an event</a>
       </div>
     </div>
-
-    <div class="statsStrip">
-      <div class="statCard">
-        <b id="statTotalVotes">0</b>
-        <span>Votes cast so far</span>
-      </div>
-      <div class="statCard">
-        <b id="statLiveEvents">0</b>
-        <span>Live events</span>
-      </div>
-      <div class="statCard">
-        <b id="statNominees">0</b>
-        <span>Nominees running</span>
-      </div>
-    </div>
   </section>
 
   <section class="pageSection" id="popular">
@@ -786,6 +727,7 @@ a{color:inherit}
 
     <div class="footerBlock">
       <h3>Support</h3>
+      <a href="faq.html">FAQ</a>
       <a href="verify-vote.html">Verify vote</a>
       <a href="support.html">Help Center</a>
       <a href="contact.html">Contact</a>
@@ -796,7 +738,7 @@ a{color:inherit}
   </div>
 
   <div class="footerCredit">
-    © <span id="y"></span> Lumina Creative Co · A Campus Plug product · Website created by <b>Lord Wilhelm</b> (0593410452)
+    © <span id="y"></span> Lumina Creative Co · A <a href="https://campusplug.app" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;">Campus Plug Technologies</a> product · Website created by <b>Lord Wilhelm</b> (0593410452)
   </div>
 </footer>
 
@@ -836,14 +778,9 @@ const popularLoading = document.getElementById("popularLoading");
 const popularEmpty = document.getElementById("popularEmpty");
 const popularScroller = document.getElementById("popularScroller");
 
-const statTotalVotes = document.getElementById("statTotalVotes");
-const statLiveEvents = document.getElementById("statLiveEvents");
-const statNominees = document.getElementById("statNominees");
-
 let allEvents = [];
 let allContestants = [];
 let searchText = "";
-let lastRenderedTotalVotes = 0;
 
 menuBtn.addEventListener("click", () => {
   mobileMenu.classList.toggle("show");
@@ -1044,36 +981,6 @@ function renderPopularEvents(){
   });
 }
 
-function animateCount(el, from, to){
-  const duration = 700;
-  const start = performance.now();
-
-  function frame(now){
-    const progress = Math.min((now - start) / duration, 1);
-    const eased = 1 - Math.pow(1 - progress, 3);
-    const value = Math.round(from + (to - from) * eased);
-    el.textContent = value.toLocaleString();
-
-    if(progress < 1){
-      requestAnimationFrame(frame);
-    }
-  }
-
-  requestAnimationFrame(frame);
-}
-
-function renderStats(){
-  const totalVotes = allContestants.reduce((sum, c) => sum + Number(c.votes || 0), 0);
-  const liveEvents = allEvents.filter(ev => normalizeStatus(ev.status) === "active").length;
-  const nominees = allContestants.length;
-
-  animateCount(statTotalVotes, lastRenderedTotalVotes, totalVotes);
-  lastRenderedTotalVotes = totalVotes;
-
-  statLiveEvents.textContent = liveEvents.toLocaleString();
-  statNominees.textContent = nominees.toLocaleString();
-}
-
 async function loadEvents(){
   const { data, error } = await supabase.from("events").select("*");
 
@@ -1085,7 +992,6 @@ async function loadEvents(){
 
   allEvents = (data || []).map(toCamel);
   renderPopularEvents();
-  renderStats();
 }
 
 async function loadContestants(){
@@ -1098,7 +1004,6 @@ async function loadContestants(){
 
   allContestants = (data || []).map(toCamel);
   renderPopularEvents();
-  renderStats();
 }
 
 loadEvents();

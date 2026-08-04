@@ -52,6 +52,9 @@ img{
 }
 
 .brand{
+  display:flex;
+  align-items:center;
+  gap:9px;
   font-weight:900;
   font-size:1rem;
   letter-spacing:0.2px;
@@ -62,6 +65,20 @@ img{
   color:var(--muted);
   font-weight:700;
   margin-left:6px;
+}
+
+.logoMark{
+  width:34px;
+  height:34px;
+  border-radius:9px;
+  background:linear-gradient(135deg,#d4af37,#b88718);
+  display:grid;
+  place-items:center;
+  color:#fff;
+  font-weight:900;
+  font-size:17px;
+  font-style:italic;
+  flex:0 0 auto;
 }
 
 .container{
@@ -304,6 +321,89 @@ p{
   padding:18px 12px 8px;
   color:var(--muted);
   font-size:14px;
+}
+
+/* RICH SITE FOOTER — shared across every page, matches index.html */
+.smartFooter{
+  background:#0d0906;
+  color:#e7d8aa;
+  padding:55px 22px 60px;
+  margin-top:40px;
+}
+
+.footerInner{
+  max-width:1180px;
+  margin:0 auto;
+  display:grid;
+  grid-template-columns:1.4fr 1fr 1fr;
+  gap:36px;
+}
+
+.footerLogo{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-weight:900;
+  font-size:20px;
+  letter-spacing:-.5px;
+  margin-bottom:16px;
+}
+
+.footerLogo .logoMark{width:32px;height:32px}
+
+.footerBlock p,.footerBlock a{
+  color:#c9bfae;
+  text-decoration:none;
+  display:block;
+  margin:0 0 12px;
+  font-size:14px;
+  line-height:1.55;
+}
+
+.footerBlock h3{
+  margin:0 0 16px;
+  font-size:13px;
+  text-transform:uppercase;
+  letter-spacing:.06em;
+  color:#8a7f6f;
+}
+
+.socials{
+  display:flex;
+  gap:10px;
+  margin-top:6px;
+}
+
+.socialCircle{
+  width:36px;
+  height:36px;
+  border-radius:50%;
+  border:1px solid #3a332a;
+  display:grid;
+  place-items:center;
+  font-size:15px;
+  font-weight:800;
+  color:#e7d8aa;
+}
+
+.footerCredit{
+  max-width:1180px;
+  margin:44px auto 0;
+  padding-top:24px;
+  border-top:1px solid #241d15;
+  color:#7a705f;
+  font-size:12.5px;
+  line-height:1.6;
+}
+
+.footerCredit a{color:#c9bfae;text-decoration:underline}
+
+@media(max-width:820px){
+  .footerInner{grid-template-columns:1fr 1fr}
+}
+
+@media(max-width:520px){
+  .footerInner{grid-template-columns:1fr}
 }
 
 .section-tag{

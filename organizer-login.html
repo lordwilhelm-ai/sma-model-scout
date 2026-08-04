@@ -73,27 +73,6 @@ body{
   letter-spacing:-1px;
 }
 
-.logoMark{
-  width:38px;
-  height:38px;
-  border-radius:50%;
-  background:#f6f0e2;
-  display:grid;
-  place-items:center;
-  position:relative;
-  flex:0 0 auto;
-}
-
-.logoMark::after{
-  content:"";
-  width:18px;
-  height:11px;
-  border-left:6px solid #0b4bea;
-  border-bottom:6px solid #0b4bea;
-  transform:rotate(-45deg);
-  margin-top:-3px;
-}
-
 .headerBtn{
   border:0;
   background:linear-gradient(135deg, #d4af37, #b88718);
@@ -138,18 +117,6 @@ body{
 
   .logoLink{
     font-size:27px;
-  }
-
-  .logoMark{
-    width:44px;
-    height:44px;
-  }
-
-  .logoMark::after{
-    width:22px;
-    height:13px;
-    border-left-width:7px;
-    border-bottom-width:7px;
   }
 
   .headerBtn{
@@ -429,7 +396,7 @@ body{
       <button class="menuIcon" id="menuBtn" type="button">☰</button>
 
       <a class="logoLink" href="index.html">
-        <span class="logoMark"></span>
+        <span class="logoMark">V</span>
         <span>Lumina Vote</span>
       </a>
     </div>
@@ -530,16 +497,49 @@ body{
         </form>
       </div>
 
-      <div class="footer">
-        © <span id="y"></span> Lumina Creative Co<br>
-        <div style="margin-bottom:10px;"><a href="about.html" style="text-decoration:underline;">About</a> &middot; <a href="terms.html" style="text-decoration:underline;">Terms</a> &middot; <a href="refund-policy.html" style="text-decoration:underline;">Refund Policy</a> &middot; <a href="contact.html" style="text-decoration:underline;">Contact</a></div>
-        Website created by <b>Lord Wilhelm</b> (0593410452)
-      </div>
-
     </div>
   </section>
 
 </main>
+
+<footer class="smartFooter">
+  <div class="footerInner">
+    <div class="footerBlock" style="grid-column:span 1;">
+      <div class="footerLogo">
+        <span class="logoMark">V</span>
+        <span>Lumina Vote</span>
+      </div>
+      <p>Lumina Vote helps organisers run voting competitions, ticketed events, and public event campaigns online.</p>
+      <div class="socials">
+        <div class="socialCircle">𝕏</div>
+        <div class="socialCircle">◎</div>
+        <div class="socialCircle">f</div>
+      </div>
+    </div>
+
+    <div class="footerBlock">
+      <h3>Platform</h3>
+      <a href="voting-home.html">Events</a>
+      <a href="live-results.html">Live Results</a>
+      <a href="event-registration.html">Create Event</a>
+    </div>
+
+    <div class="footerBlock">
+      <h3>Support</h3>
+      <a href="faq.html">FAQ</a>
+      <a href="verify-vote.html">Verify vote</a>
+      <a href="support.html">Help Center</a>
+      <a href="contact.html">Contact</a>
+      <a href="about.html">About</a>
+      <a href="terms.html">Terms of Service</a>
+      <a href="refund-policy.html">Refund Policy</a>
+    </div>
+  </div>
+
+  <div class="footerCredit">
+    © <span id="y"></span> Lumina Creative Co · A <a href="https://campusplug.app" target="_blank" rel="noopener">Campus Plug Technologies</a> product · Website created by <b>Lord Wilhelm</b> (0593410452)
+  </div>
+</footer>
 
 <script type="module">
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";

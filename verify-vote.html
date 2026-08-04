@@ -368,6 +368,19 @@ a{color:inherit}
   font-size:12.5px;
   line-height:1.6;
 }
+
+.smartFooter{background:#0d0906;color:#e7d8aa;padding:55px 22px 60px;margin-top:40px}
+.footerInner{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:36px}
+.footerLogo{display:flex;align-items:center;gap:10px;font-weight:900;font-size:20px;letter-spacing:-.5px;margin-bottom:16px}
+.footerLogo .logoMark{width:32px;height:32px}
+.footerBlock p,.footerBlock a{color:#c9bfae;text-decoration:none;display:block;margin:0 0 12px;font-size:14px;line-height:1.55}
+.footerBlock h3{margin:0 0 16px;font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:#8a7f6f}
+.socials{display:flex;gap:10px;margin-top:6px}
+.socialCircle{width:36px;height:36px;border-radius:50%;border:1px solid #3a332a;display:grid;place-items:center;font-size:15px;font-weight:800;color:#e7d8aa}
+.footerCredit{max-width:1180px;margin:44px auto 0;padding-top:24px;border-top:1px solid #241d15;color:#7a705f;font-size:12.5px;line-height:1.6}
+.footerCredit a{color:#c9bfae;text-decoration:underline}
+@media(max-width:820px){.footerInner{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){.footerInner{grid-template-columns:1fr}}
 </style>
 </head>
 
@@ -436,13 +449,46 @@ a{color:inherit}
 
   <div class="resultsList" id="resultsList"></div>
 
-  <div class="footer">
-    © <span id="y"></span> Lumina Creative Co<br>
-    <div style="margin-bottom:10px;"><a href="about.html" style="text-decoration:underline;">About</a> &middot; <a href="terms.html" style="text-decoration:underline;">Terms</a> &middot; <a href="refund-policy.html" style="text-decoration:underline;">Refund Policy</a> &middot; <a href="contact.html" style="text-decoration:underline;">Contact</a></div>
-    Website created by <b>Lord Wilhelm</b> (0593410452)
+</main>
+
+<footer class="smartFooter">
+  <div class="footerInner">
+    <div class="footerBlock" style="grid-column:span 1;">
+      <div class="footerLogo">
+        <span class="logoMark">V</span>
+        <span>Lumina Vote</span>
+      </div>
+      <p>Lumina Vote helps organisers run voting competitions, ticketed events, and public event campaigns online.</p>
+      <div class="socials">
+        <div class="socialCircle">𝕏</div>
+        <div class="socialCircle">◎</div>
+        <div class="socialCircle">f</div>
+      </div>
+    </div>
+
+    <div class="footerBlock">
+      <h3>Platform</h3>
+      <a href="voting-home.html">Events</a>
+      <a href="live-results.html">Live Results</a>
+      <a href="event-registration.html">Create Event</a>
+    </div>
+
+    <div class="footerBlock">
+      <h3>Support</h3>
+      <a href="faq.html">FAQ</a>
+      <a href="verify-vote.html">Verify vote</a>
+      <a href="support.html">Help Center</a>
+      <a href="contact.html">Contact</a>
+      <a href="about.html">About</a>
+      <a href="terms.html">Terms of Service</a>
+      <a href="refund-policy.html">Refund Policy</a>
+    </div>
   </div>
 
-</main>
+  <div class="footerCredit">
+    © <span id="y"></span> Lumina Creative Co · A <a href="https://campusplug.app" target="_blank" rel="noopener">Campus Plug Technologies</a> product · Website created by <b>Lord Wilhelm</b> (0593410452)
+  </div>
+</footer>
 
 <script>
 document.getElementById("y").textContent = new Date().getFullYear();

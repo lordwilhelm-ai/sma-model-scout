@@ -8,7 +8,7 @@
 </head>
 <body>
   <header class="nav">
-    <div class="brand">SMA <span>Model Scout</span></div>
+    <div class="brand"><span class="logoMark">V</span>SMA <span>Model Scout</span></div>
     <a class="btn small ghost" href="index.html">Home</a>
   </header>
 
@@ -108,10 +108,47 @@
         <p class="small">Confirmation will be sent within <b>24 hours</b>.</p>
       </form>
 
-      <div style="margin-bottom:10px;"><a href="about.html" style="text-decoration:underline;">About</a> &middot; <a href="terms.html" style="text-decoration:underline;">Terms</a> &middot; <a href="refund-policy.html" style="text-decoration:underline;">Refund Policy</a> &middot; <a href="contact.html" style="text-decoration:underline;">Contact</a></div>
-      <div class="footer">Website created by <b>Lord Wilhelm</b> (0593410452)</div>
     </section>
   </main>
+
+  <footer class="smartFooter">
+    <div class="footerInner">
+      <div class="footerBlock" style="grid-column:span 1;">
+        <div class="footerLogo">
+          <span class="logoMark">V</span>
+          <span>Lumina Vote</span>
+        </div>
+        <p>Lumina Vote helps organisers run voting competitions, ticketed events, and public event campaigns online.</p>
+        <div class="socials">
+          <div class="socialCircle">𝕏</div>
+          <div class="socialCircle">◎</div>
+          <div class="socialCircle">f</div>
+        </div>
+      </div>
+
+      <div class="footerBlock">
+        <h3>Platform</h3>
+        <a href="voting-home.html">Events</a>
+        <a href="live-results.html">Live Results</a>
+        <a href="event-registration.html">Create Event</a>
+      </div>
+
+      <div class="footerBlock">
+        <h3>Support</h3>
+        <a href="faq.html">FAQ</a>
+        <a href="verify-vote.html">Verify vote</a>
+        <a href="support.html">Help Center</a>
+        <a href="contact.html">Contact</a>
+        <a href="about.html">About</a>
+        <a href="terms.html">Terms of Service</a>
+        <a href="refund-policy.html">Refund Policy</a>
+      </div>
+    </div>
+
+    <div class="footerCredit">
+      © <span id="y"></span> Lumina Creative Co · A <a href="https://campusplug.app" target="_blank" rel="noopener">Campus Plug Technologies</a> product · Website created by <b>Lord Wilhelm</b> (0593410452)
+    </div>
+  </footer>
 
   <script type="module">
     import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
@@ -120,6 +157,8 @@
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNodHphZ29ldWhxZHRoZ3p2bWp4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUxMDYyNjMsImV4cCI6MjEwMDY4MjI2M30.ChyQ1hAxsyitWRVXgcMOa8ztuI6WB3oKUhciXgguYyk";
 
     const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    document.getElementById("y").textContent = new Date().getFullYear();
 
     const OWNER_ENDPOINT = "https://formsubmit.co/mensahpaa00@gmail.com";
     const MANAGER_ENDPOINT = "https://formsubmit.co/techhubgraph@gmail.com";
