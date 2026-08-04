@@ -810,19 +810,25 @@ function renderResults(){
     const rowEl = document.createElement("div");
     rowEl.className = "resultRow";
 
+    const checkoutHref = `vote-checkout.html?eventId=${currentEvent.id}&contestantId=${row.id}`;
+
     const voteBtnHtml = canVoteNow
-      ? `<a class="voteMiniBtn" href="vote-checkout.html?eventId=${currentEvent.id}&contestantId=${row.id}">Vote</a>`
+      ? `<a class="voteMiniBtn" href="${checkoutHref}">Vote</a>`
       : `<button class="voteMiniBtn" type="button" style="opacity:.6;cursor:not-allowed;" disabled>Closed</button>`;
+
+    const nameHtml = canVoteNow
+      ? `<a href="${checkoutHref}" style="color:inherit;text-decoration:none;"><b>${row.fullName || "Unnamed"}</b></a>`
+      : `<b>${row.fullName || "Unnamed"}</b>`;
 
     rowEl.innerHTML = `
       <div class="resultTop">
         <div class="rankBadge" style="background:${color};color:${textColor}">${index + 1}</div>
         <div class="resultName">
           <div class="resultNameTop">
-            <b>${row.fullName || "Unnamed"}</b>
+            ${nameHtml}
             <span class="categoryTag">${cat}</span>
           </div>
-          ${row.contestantNumber ? `<span class="numTag">No. ${row.contestantNumber}</span>` : ""}
+          ${row.nomineeCode ? `<span class="numTag">Vote Code: ${row.nomineeCode}</span>` : ""}
         </div>
         <div class="resultStats">
           <b>${pct.toFixed(1)}%</b>

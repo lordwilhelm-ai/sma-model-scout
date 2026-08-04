@@ -280,6 +280,11 @@ View your votes, rank, event details, and overall progress.
 </div>
 
 <div class="infoItem">
+<div class="small">Vote Code (share this for USSD)</div>
+<div style="font-weight:900;" id="infoNomineeCode">—</div>
+</div>
+
+<div class="infoItem">
 <div class="small">Event</div>
 <div style="font-weight:900;" id="infoEvent">—</div>
 </div>
@@ -513,6 +518,7 @@ async function loadDashboard(user){
   }
 
   document.getElementById("infoNumber").textContent = matched.contestantNumber || "—";
+  document.getElementById("infoNomineeCode").textContent = matched.nomineeCode || "—";
   document.getElementById("infoEvent").textContent = event.eventName || "—";
   document.getElementById("infoEndDate").textContent = event.endDate || "—";
 

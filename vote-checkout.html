@@ -142,7 +142,7 @@ a{color:inherit}
 .contestantPhoto{
   width:100%;
   height:100%;
-  object-fit:cover;
+  object-fit:contain;
   display:block;
 }
 
@@ -498,7 +498,7 @@ a{color:inherit}
 
       <div class="photoTopRow">
         <span class="photoPill" id="eventStatusDisplay">Status: —</span>
-        <span class="photoPill" id="contestantNumberDisplay">Contestant: —</span>
+        <span class="photoPill" id="nomineeCodeDisplay" style="display:none;">Vote Code: —</span>
         <span class="photoPill" id="categoryDisplay" style="display:none;">Category: —</span>
       </div>
 
@@ -636,7 +636,7 @@ const photoWrap = document.getElementById("photoWrap");
 const photoName = document.getElementById("photoName");
 
 const eventStatusDisplay = document.getElementById("eventStatusDisplay");
-const contestantNumberDisplay = document.getElementById("contestantNumberDisplay");
+const nomineeCodeDisplay = document.getElementById("nomineeCodeDisplay");
 const categoryDisplay = document.getElementById("categoryDisplay");
 
 const voteInput = document.getElementById("voteInput");
@@ -865,20 +865,22 @@ async function loadCheckout(){
 
     const eventName = eventData.eventName || "Competition";
     const contestantName = contestantData.fullName || "Contestant";
-    const contestantNumber = contestantData.contestantNumber || "";
 
     renderPhoto();
 
-    photoName.textContent = contestantNumber
-      ? `Contestant ${contestantNumber} — ${contestantName}`
-      : contestantName;
+    photoName.textContent = contestantName;
 
     eventStatusDisplay.textContent = `Status: ${prettyStatus(eventData.status)}`;
     eventStatusDisplay.className = normalizeStatus(eventData.status) === "active"
       ? "photoPill ok"
       : "photoPill danger";
 
-    contestantNumberDisplay.textContent = `Contestant: ${contestantNumber || "—"}`;
+    if(contestantData.nomineeCode){
+      nomineeCodeDisplay.textContent = `Vote Code: ${contestantData.nomineeCode}`;
+      nomineeCodeDisplay.style.display = "inline-flex";
+    }else{
+      nomineeCodeDisplay.style.display = "none";
+    }
 
     if(contestantData.categoryName){
       categoryDisplay.textContent = `Category: ${contestantData.categoryName}`;
