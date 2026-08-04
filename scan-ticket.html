@@ -126,6 +126,14 @@ body{
 
 .muted{color:#6b6156;font-size:13px}
 
+.footer{
+  margin-top:28px;
+  text-align:center;
+  color:#a99a80;
+  font-size:12.5px;
+  line-height:1.6;
+}
+
 @media(max-width:480px){
   .container{
     padding:16px 12px 50px;
@@ -219,6 +227,12 @@ body{
     <div id="resultBox" class="resultBox hidden"></div>
   </div>
 
+  <div class="footer">
+    <div style="margin-bottom:10px;"><a href="about.html" style="text-decoration:underline;">About</a> &middot; <a href="terms.html" style="text-decoration:underline;">Terms</a> &middot; <a href="refund-policy.html" style="text-decoration:underline;">Refund Policy</a> &middot; <a href="contact.html" style="text-decoration:underline;">Contact</a></div>
+    © <span id="y"></span> Lumina Creative Co · A Campus Plug product<br>
+    Website created by <b>Lord Wilhelm</b> (0593410452)
+  </div>
+
 </main>
 
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
@@ -229,6 +243,8 @@ const SUPABASE_URL = "https://shtzagoeuhqdthgzvmjx.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNodHphZ29ldWhxZHRoZ3p2bWp4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUxMDYyNjMsImV4cCI6MjEwMDY4MjI2M30.ChyQ1hAxsyitWRVXgcMOa8ztuI6WB3oKUhciXgguYyk";
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+document.getElementById("y").textContent = new Date().getFullYear();
 
 const loginBox = document.getElementById("loginBox");
 const loadingBox = document.getElementById("loadingBox");
