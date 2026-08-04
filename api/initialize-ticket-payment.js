@@ -19,6 +19,18 @@ function hasTickets(eventData) {
   );
 }
 
+// Hubtel caps ClientReference at 32 characters. eventId alone (a Postgres
+// uuid) is 36, so a naive `ticket_${eventId}_...`.slice(0, 32) truncates
+// straight through the uuid and drops the quantity/timestamp suffix
+// entirely — every purchase for the same event then produces the exact
+// same ClientReference, colliding on pending_transactions' primary key
+// whenever two purchases for that event are pending at once. Use a short
+// random reference instead, same as api/pay/initialize.js.
+function shortRef(prefix) {
+  const rand = Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
+  return `${prefix}_${rand}`.slice(0, 32);
+}
+
 function getSiteUrl(req) {
   const override = process.env.HUBTEL_SITE_URL || process.env.SITE_URL;
   if (override && typeof override === 'string' && override.trim()) {
@@ -96,7 +108,7 @@ export default async function handler(req, res) {
     const cancellationUrl = process.env.HUBTEL_CANCELLATION_URL || `${siteUrl}/voting-home.html`;
 
     const phone = String(metadata.phone || '').trim();
-    const clientReference = `ticket_${eventId}_${quantity}_${Date.now()}`.slice(0, 32);
+    const clientReference = shortRef('ticket');
 
     const payload = {
       totalAmount: amount,
