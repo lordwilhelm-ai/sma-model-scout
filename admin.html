@@ -1188,6 +1188,7 @@ body{
                 <tr>
                   <th>Contestant</th>
                   <th>Category</th>
+                  <th>Vote Code</th>
                   <th>Status</th>
                   <th>Votes</th>
                   <th>Action</th>
@@ -2033,7 +2034,7 @@ function renderContestants(){
   contestantsList.innerHTML = "";
 
   if(selectedContestants.length === 0){
-    contestantsList.innerHTML = `<tr><td colspan="5">No contestants found.</td></tr>`;
+    contestantsList.innerHTML = `<tr><td colspan="6">No contestants found.</td></tr>`;
     return;
   }
 
@@ -2051,6 +2052,7 @@ function renderContestants(){
         </div>
       </td>
       <td data-label="Category">${c.categoryName || "—"}</td>
+      <td data-label="Vote Code"><b>${c.nomineeCode || "—"}</b></td>
       <td data-label="Status">
         <span class="${String(c.status || "active").toLowerCase() === "active" ? "badge live" : "badge closed"}">
           ${c.status || "active"}

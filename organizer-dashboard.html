@@ -1070,6 +1070,7 @@ body{
                 <tr>
                   <th>Contestant</th>
                   <th>Category</th>
+                  <th>Vote Code</th>
                   <th>Status</th>
                   <th>Votes</th>
                   <th>Action</th>
@@ -1097,6 +1098,12 @@ body{
             <div>
               <label>Contestant Number</label>
               <input id="contestantNumber" placeholder="Auto suggested">
+            </div>
+
+            <div>
+              <label>Vote Code (for USSD)</label>
+              <input id="contestantNomineeCode" placeholder="Auto suggested" maxlength="3">
+              <p class="smallMuted">3-digit code voters dial to pick this contestant. Must be unique across the whole platform.</p>
             </div>
 
             <div>
@@ -1397,6 +1404,7 @@ const contestantsList = document.getElementById("contestantsList");
 const contestantCategory = document.getElementById("contestantCategory");
 const contestantName = document.getElementById("contestantName");
 const contestantNumber = document.getElementById("contestantNumber");
+const contestantNomineeCode = document.getElementById("contestantNomineeCode");
 const contestantVotes = document.getElementById("contestantVotes");
 const contestantStatus = document.getElementById("contestantStatus");
 const contestantPhotoFile = document.getElementById("contestantPhotoFile");
@@ -1479,7 +1487,10 @@ tabButtons.forEach(btn => {
     const tab = btn.dataset.tab;
 
     if(tab === "contestants") tabContestants.style.display = "block";
-    if(tab === "addContestant") tabAddContestant.style.display = "block";
+    if(tab === "addContestant"){
+      tabAddContestant.style.display = "block";
+      if(!contestantNomineeCode.value.trim()) contestantNomineeCode.value = generateNomineeCode();
+    }
     if(tab === "ticketPayments") tabTicketPayments.style.display = "block";
     if(tab === "votePayments") tabVotePayments.style.display = "block";
     if(tab === "editEvent") tabEditEvent.style.display = "block";
@@ -1843,7 +1854,7 @@ function renderContestants(){
   contestantsList.innerHTML = "";
 
   if(selectedContestants.length === 0){
-    contestantsList.innerHTML = `<tr><td colspan="5">No contestants yet.</td></tr>`;
+    contestantsList.innerHTML = `<tr><td colspan="6">No contestants yet.</td></tr>`;
     return;
   }
 
@@ -1861,6 +1872,7 @@ function renderContestants(){
         </div>
       </td>
       <td data-label="Category">${c.categoryName || "—"}</td>
+      <td data-label="Vote Code"><b>${c.nomineeCode || "—"}</b></td>
       <td data-label="Status">
         <span class="${(c.status || "active") === "active" ? "badge live" : "badge closed"}">
           ${c.status || "active"}
@@ -2216,6 +2228,13 @@ editPosterFile.addEventListener("change", async (event) => {
   }
 });
 
+function generateNomineeCode(){
+  // 3 digits so it's quick to dial via USSD. Globally unique across every
+  // contestant on the platform (not just this event) — see migration
+  // 009_nominee_code_global_unique.sql.
+  return String(Math.floor(Math.random() * 1000)).padStart(3, "0");
+}
+
 async function addContestant(){
   if(!selectedEvent) return;
 
@@ -2228,6 +2247,7 @@ async function addContestant(){
 
   const fullName = contestantName.value.trim();
   const number = contestantNumber.value.trim();
+  const nomineeCode = contestantNomineeCode.value.trim();
   const votes = Number(contestantVotes.value || 0);
   const status = contestantStatus.value;
 
@@ -2244,6 +2264,11 @@ async function addContestant(){
 
   if(!number){
     setMsg(contestantMsg, "Enter contestant number.", "error");
+    return;
+  }
+
+  if(!/^[0-9]{3}$/.test(nomineeCode)){
+    setMsg(contestantMsg, "Vote code must be exactly 3 digits.", "error");
     return;
   }
 
@@ -2281,6 +2306,7 @@ async function addContestant(){
     const { error: insertError } = await supabase.from("event_contestants").insert({
       full_name: fullName,
       contestant_number: number,
+      nominee_code: nomineeCode,
 
       event_id: selectedEvent.id,
       organizer_id: selectedEvent.organizerId || currentUser.id,
@@ -2299,6 +2325,7 @@ async function addContestant(){
     setMsg(contestantMsg, "Contestant added successfully.", "success");
 
     contestantName.value = "";
+    contestantNomineeCode.value = generateNomineeCode();
     contestantVotes.value = "0";
     contestantStatus.value = "active";
     contestantPhotoFile.value = "";
@@ -2310,7 +2337,13 @@ async function addContestant(){
 
   }catch(error){
     console.error(error);
-    setMsg(contestantMsg, error.message || "Could not add contestant.", "error");
+
+    if(error.code === "23505" && String(error.message || "").includes("nominee_code")){
+      contestantNomineeCode.value = generateNomineeCode();
+      setMsg(contestantMsg, "That vote code is already used by another contestant. Generated a new one — try again.", "error");
+    }else{
+      setMsg(contestantMsg, error.message || "Could not add contestant.", "error");
+    }
   }finally{
     addContestantBtn.disabled = false;
     addContestantBtn.textContent = "Add Contestant";

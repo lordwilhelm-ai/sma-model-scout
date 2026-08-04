@@ -897,9 +897,11 @@ function setUploadStatus(text, type="success"){
 }
 
 function generateEventCode(){
-  const year = new Date().getFullYear().toString().slice(-2);
-  const random = Math.floor(1000 + Math.random() * 9000);
-  return `${year}${random}`;
+  // 3 digits so it's quick to dial via USSD, same format as nominee codes.
+  // Only 000-999 exist platform-wide (event_code is globally unique), so
+  // collisions on create are expected as more events pile up — handled by
+  // regenerating and asking the organizer to retry, not by widening this.
+  return String(Math.floor(Math.random() * 1000)).padStart(3, "0");
 }
 
 function isVotingType(type){
@@ -1408,7 +1410,13 @@ createBtn.addEventListener("click", async () => {
 
   }catch(error){
     console.error("Create event error:", error);
-    setMsg(error.message || "Could not create event. Check upload or login.");
+
+    if(error.code === "23505" && String(error.message || "").includes("event_code")){
+      eventCodeInput.value = generateEventCode();
+      setMsg("That event code was just taken by someone else. Generated a new one — hit Create again.");
+    }else{
+      setMsg(error.message || "Could not create event. Check upload or login.");
+    }
   }finally{
     createBtn.disabled = false;
     syncTypeUI();

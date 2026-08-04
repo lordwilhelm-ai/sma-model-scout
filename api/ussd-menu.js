@@ -63,14 +63,14 @@ async function chargeMomo({ clientId, clientSecret, merchantAccountNumber, callb
   return true;
 }
 
-// nominee_code is only unique WITHIN one event (schema: unique(event_id,
-// nominee_code)), not globally, so the same short code can legitimately
-// exist in two different events at once. Fetch every match (only from
-// events actually open for voting right now) instead of assuming one.
+// nominee_code is globally unique (migration 009), so this should only
+// ever return one row in practice. Still fetches every match and lets the
+// caller handle 0/1/many rather than assuming — cheap insurance against
+// leftover duplicate data or the migration not having run yet.
 async function findVotableContestants(contestantCode) {
   const { data, error } = await supabase
     .from('event_contestants')
-    .select('id, full_name, status, event_id, events(event_name, vote_price, status, voting_enabled)')
+    .select('id, full_name, status, category_name, event_id, events(event_name, vote_price, status, voting_enabled)')
     .eq('nominee_code', contestantCode)
     .order('id', { ascending: true });
 
@@ -111,10 +111,11 @@ export default async function handler(req, res) {
 
     // ================= VOTING =================
     // 1                    -> ask for contestant code
-    // 1*CODE               -> unambiguous: vote-count menu | ambiguous: pick-event menu
-    // 1*CODE*X             -> unambiguous: X = vote choice, charge
-    //                      -> ambiguous:   X = event choice, show vote-count menu
-    // 1*CODE*EVENT*CHOICE  -> (ambiguous only) charge
+    // 1*CODE               -> normal: show price, ask for vote count
+    //                      -> (rare) duplicate code across events: pick-event menu
+    // 1*CODE*VOTES         -> normal: charge
+    //                      -> (rare) duplicate: VOTES is actually the event choice
+    // 1*CODE*EVENT*VOTES   -> (duplicate-code case only) charge
     } else if (parts[0] === '1') {
 
       if (parts.length === 1) {
@@ -136,19 +137,17 @@ export default async function handler(req, res) {
             return isNaN(p) || p < 1 ? 1 : p;
           }
 
-          function voteMenuFor(c) {
+          function voteAskFor(c) {
             const votePrice = votePriceOf(c);
-            return `CON Vote for ${c.full_name}\n` +
-              `1. 1 vote (GHS ${votePrice.toFixed(2)})\n` +
-              `2. 5 votes (GHS ${(votePrice * 5).toFixed(2)})\n` +
-              `3. 10 votes (GHS ${(votePrice * 10).toFixed(2)})`;
+            const who = c.category_name ? `${c.full_name} (${c.category_name})` : c.full_name;
+            return `CON Vote for ${who}\n1 vote = GHS ${votePrice.toFixed(2)}\nEnter number of votes:`;
           }
 
-          async function chargeVote(c, choice) {
-            const votes = choice === '1' ? 1 : choice === '2' ? 5 : choice === '3' ? 10 : 0;
+          async function chargeVote(c, votesInput) {
+            const votes = parseInt(votesInput, 10);
 
-            if (votes === 0) {
-              return `END Invalid option.`;
+            if (!votes || votes < 1) {
+              return `END Invalid number of votes.`;
             }
 
             const amount = Number((votes * votePriceOf(c)).toFixed(2));
@@ -171,27 +170,29 @@ export default async function handler(req, res) {
             const charged = await chargeMomo({
               clientId, clientSecret, merchantAccountNumber, callbackUrl,
               phoneNumber, amount,
-              description: `Vote for ${c.full_name}`,
+              description: `${votes}x vote for ${c.full_name}`,
               clientReference: `ussd_vote_${sessionId}`
             });
 
             return charged
-              ? `END You will receive a MoMo prompt on ${formatPhone(phoneNumber)} to approve GHS ${amount.toFixed(2)}.`
+              ? `END You will receive a MoMo prompt on ${formatPhone(phoneNumber)} to approve GHS ${amount.toFixed(2)} for ${votes} vote(s).`
               : `END Payment failed. Please try again.`;
           }
 
           if (votable.length === 1) {
-            // Unambiguous: this code only matches one currently-votable contestant.
+            // Normal case: nominee_code is globally unique, so exactly one match.
             const contestant = votable[0];
 
             if (parts.length === 2) {
-              response = voteMenuFor(contestant);
+              response = voteAskFor(contestant);
             } else {
               response = await chargeVote(contestant, parts[2]);
             }
 
           } else {
-            // Ambiguous: same code used by contestants in more than one live event.
+            // Defensive fallback only — shouldn't happen once nominee codes are
+            // globally unique, but handle leftover/duplicate data gracefully
+            // instead of erroring out.
             if (parts.length === 2) {
               const lines = votable.slice(0, 6).map((c, i) => `${i + 1}. ${c.events?.event_name || 'Event'} — ${c.full_name}`);
               response = `CON Multiple events use this code:\n${lines.join('\n')}`;
@@ -203,7 +204,7 @@ export default async function handler(req, res) {
               if (!contestant) {
                 response = `END Invalid selection.`;
               } else if (parts.length === 3) {
-                response = voteMenuFor(contestant);
+                response = voteAskFor(contestant);
               } else {
                 response = await chargeVote(contestant, parts[3]);
               }
