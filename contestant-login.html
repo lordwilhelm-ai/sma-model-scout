@@ -192,7 +192,8 @@ Create Account
 
 <div class="footer">
 © <span id="y"></span> Lumina Creative Co<br>
-Site created by <b>Lord Wilhelm</b> (0593410452)
+<div style="margin-bottom:10px;"><a href="about.html" style="text-decoration:underline;">About</a> &middot; <a href="terms.html" style="text-decoration:underline;">Terms</a> &middot; <a href="refund-policy.html" style="text-decoration:underline;">Refund Policy</a> &middot; <a href="contact.html" style="text-decoration:underline;">Contact</a></div>
+Website created by <b>Lord Wilhelm</b> (0593410452)
 </div>
 
 </main>
@@ -254,7 +255,17 @@ const { error } = await supabase.auth.signInWithPassword({ email, password });
 
 if(error){
 console.error(error);
+
+const message = String(error.message || "").toLowerCase();
+
+if(message.includes("email not confirmed") || message.includes("not confirmed")){
+loginMsg.textContent="Please confirm your email first. Check your inbox (and spam folder) for the confirmation link we sent when you signed up.";
+}else if(message.includes("invalid login credentials")){
+loginMsg.textContent="Login failed. Check email or password.";
+}else{
 loginMsg.textContent="Login failed";
+}
+
 loginMsg.className="msg error";
 return;
 }
@@ -282,7 +293,7 @@ signupMsg.className="msg error";
 return;
 }
 
-const { error } = await supabase.auth.signUp({
+const { data, error } = await supabase.auth.signUp({
 email,
 password,
 options: {
@@ -305,6 +316,16 @@ return;
 
 // Profile row is created server-side by a database trigger reading the
 // metadata above, so it exists immediately even before email confirmation.
+// signUp() only returns an active session when "Confirm email" is off for
+// this project. When it's on, there's no session yet — redirecting to the
+// dashboard would just bounce back to login, so tell the user to confirm
+// their email instead of pretending they're signed in.
+if(!data?.session){
+signupMsg.textContent="Account created. Check your email for a confirmation link, then log in.";
+signupMsg.className="msg success";
+return;
+}
+
 signupMsg.textContent="Account created";
 signupMsg.className="msg success";
 

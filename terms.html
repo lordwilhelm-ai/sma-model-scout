@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Terms of Service | Lumina Vote</title>
+
+<style>
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+
+body{
+  margin:0;
+  overflow-x:hidden;
+  background:#faf7f0;
+  color:#161311;
+  font-family:Arial, Helvetica, sans-serif;
+}
+
+a{color:inherit}
+
+/* HEADER */
+.siteHeader{
+  position:sticky;
+  top:0;
+  z-index:100;
+  background:#ffffff;
+  border-bottom:1px solid #eee4d3;
+}
+
+.siteHeaderInner{
+  max-width:1180px;
+  margin:0 auto;
+  height:76px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  padding:0 22px;
+}
+
+.headerLeft,.headerRight{
+  display:flex;
+  align-items:center;
+  gap:16px;
+}
+
+.menuIcon{
+  border:0;
+  background:transparent;
+  color:#161311;
+  cursor:pointer;
+  padding:0;
+  display:grid;
+  place-items:center;
+  font-size:26px;
+  line-height:1;
+}
+
+.logoLink{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  text-decoration:none;
+  color:#161311;
+  font-weight:900;
+  font-size:21px;
+  letter-spacing:-0.5px;
+}
+
+.logoMark{
+  width:34px;
+  height:34px;
+  border-radius:9px;
+  background:linear-gradient(135deg,#d4af37,#b88718);
+  display:grid;
+  place-items:center;
+  color:#fff;
+  font-weight:900;
+  font-size:17px;
+  font-style:italic;
+  flex:0 0 auto;
+}
+
+.navLinks{
+  display:none;
+  align-items:center;
+  gap:26px;
+  font-size:14px;
+  font-weight:700;
+  color:#6b6156;
+}
+
+.navLinks a{text-decoration:none}
+.navLinks a.active{color:#161311}
+
+.sellBtn{
+  border:0;
+  background:#161311;
+  color:#fff;
+  padding:12px 20px;
+  border-radius:999px;
+  font-weight:800;
+  font-size:14px;
+  text-decoration:none;
+  white-space:nowrap;
+}
+
+.mobileMenu{
+  display:none;
+  padding:14px 18px 18px;
+  background:#fff;
+  border-top:1px solid #eee4d3;
+}
+
+.mobileMenu.show{display:block}
+
+.mobileMenu a{
+  width:100%;
+  display:flex;
+  justify-content:center;
+  text-decoration:none;
+  padding:13px;
+  border-radius:12px;
+  margin-top:8px;
+  font-weight:800;
+  background:#f6f0e2;
+  color:#161311;
+  font-size:14px;
+}
+
+@media(min-width:860px){
+  .navLinks{display:flex}
+}
+
+/* MAIN */
+.pageWrap{
+  max-width:760px;
+  margin:0 auto;
+  padding:34px 18px 70px;
+}
+
+.breadcrumb{
+  font-size:13px;
+  color:#a99a80;
+  margin-bottom:16px;
+}
+
+.breadcrumb a{text-decoration:none;color:#a99a80}
+.breadcrumb span.current{color:#161311;font-weight:700}
+
+.eyebrow{
+  display:inline-block;
+  background:#f6e6c8;
+  color:#8a5b12;
+  font-weight:800;
+  font-size:11px;
+  letter-spacing:.05em;
+  text-transform:uppercase;
+  padding:7px 12px;
+  border-radius:999px;
+  margin-bottom:14px;
+}
+
+.pageTitle{
+  margin:0 0 8px;
+  font-family:Georgia, "Times New Roman", serif;
+  font-size:34px;
+  font-weight:900;
+  letter-spacing:-0.6px;
+}
+
+.pageSub{
+  margin:0 0 26px;
+  color:#6b6156;
+  font-size:14.5px;
+  line-height:1.6;
+  max-width:600px;
+}
+
+.lastUpdated{
+  color:#a99a80;
+  font-size:12.5px;
+  font-weight:700;
+  margin:-16px 0 26px;
+}
+
+.legalSection{
+  margin-bottom:26px;
+}
+
+.legalSection h2{
+  margin:0 0 10px;
+  font-family:Georgia, "Times New Roman", serif;
+  font-size:19px;
+  font-weight:900;
+}
+
+.legalSection p{
+  margin:0 0 12px;
+  color:#4a423a;
+  font-size:14.5px;
+  line-height:1.7;
+}
+
+.legalSection ul{
+  margin:0 0 12px;
+  padding-left:20px;
+  color:#4a423a;
+  font-size:14.5px;
+  line-height:1.7;
+}
+
+.legalSection li{margin-bottom:6px}
+.legalSection p:last-child, .legalSection ul:last-child{margin-bottom:0}
+
+.footer{
+  margin-top:34px;
+  text-align:center;
+  color:#a99a80;
+  font-size:12.5px;
+  line-height:1.6;
+}
+</style>
+</head>
+
+<body>
+
+<header class="siteHeader">
+  <div class="siteHeaderInner">
+    <div class="headerLeft">
+      <button class="menuIcon" id="menuBtn" type="button">☰</button>
+
+      <a class="logoLink" href="index.html">
+        <span class="logoMark">V</span>
+        <span>Lumina Vote</span>
+      </a>
+    </div>
+
+    <nav class="navLinks">
+      <a href="voting-home.html">Events</a>
+      <a href="live-results.html">Live Results</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+
+    <div class="headerRight">
+      <a class="sellBtn" href="event-registration.html">Sell tickets</a>
+    </div>
+  </div>
+
+  <div class="mobileMenu" id="mobileMenu">
+    <a href="index.html">Home</a>
+    <a href="voting-home.html">Events</a>
+    <a href="about.html">About</a>
+    <a href="contact.html">Contact</a>
+    <a href="support.html">Support</a>
+  </div>
+</header>
+
+<main class="pageWrap">
+
+  <div class="breadcrumb">
+    <a href="index.html">Home</a> / <span class="current">Terms of Service</span>
+  </div>
+
+  <span class="eyebrow">Legal</span>
+  <h1 class="pageTitle">Terms of Service</h1>
+  <p class="pageSub">Please read these terms carefully before using Lumina Vote to vote, buy tickets, or organize an event.</p>
+  <div class="lastUpdated">Last updated: August 2026</div>
+
+  <div class="legalSection">
+    <h2>1. About Lumina Vote</h2>
+    <p>
+      Lumina Vote is an online voting and ticketing platform built and operated by Campus Plug
+      ("we", "us", "our"). We allow organizers to create voting competitions and ticketed events,
+      and allow the public to cast paid votes or buy tickets for those events. By using this
+      site, you agree to these Terms of Service.
+    </p>
+  </div>
+
+  <div class="legalSection">
+    <h2>2. Accounts</h2>
+    <p>
+      Organizers and contestants may create accounts to manage events, track votes, or view
+      results. You're responsible for keeping your login details secure and for all activity
+      that happens under your account. Provide accurate information when signing up.
+    </p>
+  </div>
+
+  <div class="legalSection">
+    <h2>3. Voting</h2>
+    <ul>
+      <li>Each vote is a paid transaction — payment confirms and credits the vote to the contestant selected.</li>
+      <li>Vote counts are recorded as soon as payment is confirmed and update in real time on the event's results page.</li>
+      <li>Organizers set the price per vote and the rules of their own competition (eligibility, voting window, and how a winner is decided).</li>
+      <li>Votes are final once confirmed. See our <a href="refund-policy.html">Refund Policy</a> for what happens if a payment goes wrong.</li>
+    </ul>
+  </div>
+
+  <div class="legalSection">
+    <h2>4. Tickets</h2>
+    <p>
+      Ticket purchases are confirmed by payment and issued with a unique QR code for entry.
+      Organizers are responsible for their own event details, capacity, and check-in process.
+      Lumina Vote provides the platform to sell and verify tickets; the event itself is run by
+      the organizer.
+    </p>
+  </div>
+
+  <div class="legalSection">
+    <h2>5. Organizer responsibilities</h2>
+    <p>
+      Organizers are responsible for the accuracy of their event listings, contestant
+      information, pricing, and for delivering the event as described. Lumina Vote does not
+      guarantee the outcome, fairness beyond what the platform records, or occurrence of any
+      third-party event listed by an organizer.
+    </p>
+  </div>
+
+  <div class="legalSection">
+    <h2>6. Payments</h2>
+    <p>
+      Payments are processed through a licensed third-party payment provider. We do not store
+      your card or mobile money PIN. Once a payment is confirmed by the provider, the
+      corresponding vote or ticket is credited automatically.
+    </p>
+  </div>
+
+  <div class="legalSection">
+    <h2>7. Prohibited use</h2>
+    <ul>
+      <li>Attempting to manipulate vote counts outside of normal paid voting.</li>
+      <li>Creating fraudulent events, contestants, or ticket listings.</li>
+      <li>Using stolen payment details or attempting chargebacks on confirmed votes/tickets.</li>
+      <li>Interfering with or attempting to disrupt the platform's normal operation.</li>
+    </ul>
+    <p>We reserve the right to suspend accounts or events that violate these terms.</p>
+  </div>
+
+  <div class="legalSection">
+    <h2>8. Limitation of liability</h2>
+    <p>
+      Lumina Vote is provided "as is." While we work to keep the platform accurate and available,
+      we're not liable for losses arising from event cancellations, organizer decisions, or
+      circumstances outside our control (such as network or payment provider outages).
+    </p>
+  </div>
+
+  <div class="legalSection">
+    <h2>9. Changes to these terms</h2>
+    <p>
+      We may update these terms from time to time. Continued use of Lumina Vote after changes
+      means you accept the updated terms.
+    </p>
+  </div>
+
+  <div class="legalSection">
+    <h2>10. Contact</h2>
+    <p>
+      Questions about these terms? Reach us on our <a href="contact.html">Contact page</a>.
+    </p>
+  </div>
+
+  <div class="footer">
+    © <span id="y"></span> Lumina Creative Co · A Campus Plug product<br>
+    Website created by <b>Lord Wilhelm</b> (0593410452)
+  </div>
+
+</main>
+
+<script>
+document.getElementById("y").textContent = new Date().getFullYear();
+
+document.getElementById("menuBtn").addEventListener("click", () => {
+  document.getElementById("mobileMenu").classList.toggle("show");
+});
+</script>
+
+</body>
+</html>

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Support | Lumina Vote</title>
+<title>About Us | Lumina Vote</title>
 
 <style>
 *{box-sizing:border-box}
@@ -178,38 +178,95 @@ a{color:inherit}
   max-width:600px;
 }
 
-.faqList{
-  display:flex;
-  flex-direction:column;
-  gap:14px;
-  margin-bottom:30px;
-}
-
-.faqCard{
+.infoCard{
   background:#ffffff;
   border:1px solid #efe7d8;
   border-radius:16px;
-  padding:18px 20px;
+  padding:22px 20px;
   box-shadow:0 8px 24px rgba(60,45,10,0.05);
+  margin-bottom:16px;
 }
 
-.faqCard h3{
-  margin:0 0 8px;
-  font-size:16px;
-  font-weight:800;
+.infoCard h2{
+  margin:0 0 10px;
+  font-family:Georgia, "Times New Roman", serif;
+  font-size:20px;
+  font-weight:900;
 }
 
-.faqCard p{
-  margin:0;
-  color:#6b6156;
+.infoCard p{
+  margin:0 0 12px;
+  color:#4a423a;
+  font-size:14.5px;
+  line-height:1.7;
+}
+
+.infoCard p:last-child{margin-bottom:0}
+
+.valueGrid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  margin-top:6px;
+}
+
+.valueItem{
+  background:#f6f0e2;
+  border-radius:14px;
+  padding:16px 14px;
+  text-align:center;
+}
+
+.valueItem b{
+  display:block;
   font-size:14px;
-  line-height:1.6;
+  margin-bottom:4px;
 }
 
-.faqCard a{
-  color:#8a5b12;
-  font-weight:800;
-  text-decoration:none;
+.valueItem span{
+  color:#6b6156;
+  font-size:12.5px;
+  line-height:1.5;
+}
+
+@media(max-width:600px){
+  .valueGrid{grid-template-columns:1fr}
+}
+
+.statRow{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  margin:20px 0;
+}
+
+.statBox{
+  background:#161311;
+  color:#faf7f0;
+  border-radius:14px;
+  padding:16px 10px;
+  text-align:center;
+}
+
+.statBox b{
+  display:block;
+  font-family:Georgia, "Times New Roman", serif;
+  font-size:24px;
+  font-weight:900;
+}
+
+.statBox span{
+  display:block;
+  margin-top:4px;
+  color:#c9bfae;
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:.04em;
+  font-weight:700;
+}
+
+@media(max-width:600px){
+  .statRow{grid-template-columns:1fr}
 }
 
 .contactCard{
@@ -218,6 +275,7 @@ a{color:inherit}
   border-radius:18px;
   padding:24px;
   text-align:center;
+  margin-top:10px;
 }
 
 .contactCard h2{
@@ -285,7 +343,8 @@ a{color:inherit}
     <nav class="navLinks">
       <a href="voting-home.html">Events</a>
       <a href="live-results.html">Live Results</a>
-      <a href="verify-vote.html">Verify vote</a>
+      <a class="active" href="about.html">About</a>
+      <a href="contact.html">Contact</a>
     </nav>
 
     <div class="headerRight">
@@ -296,7 +355,8 @@ a{color:inherit}
   <div class="mobileMenu" id="mobileMenu">
     <a href="index.html">Home</a>
     <a href="voting-home.html">Events</a>
-    <a href="verify-vote.html">Verify vote</a>
+    <a href="about.html">About</a>
+    <a href="contact.html">Contact</a>
     <a href="support.html">Support</a>
   </div>
 </header>
@@ -304,74 +364,67 @@ a{color:inherit}
 <main class="pageWrap">
 
   <div class="breadcrumb">
-    <a href="index.html">Home</a> / <span class="current">Support</span>
+    <a href="index.html">Home</a> / <span class="current">About Us</span>
   </div>
 
-  <span class="eyebrow">Help Center</span>
-  <h1 class="pageTitle">Support</h1>
-  <p class="pageSub">Answers to the most common questions about voting, tickets, and payments.</p>
+  <span class="eyebrow">About Us</span>
+  <h1 class="pageTitle">Built for events that need real engagement</h1>
+  <p class="pageSub">Lumina Vote is a voting and ticketing platform built by Campus Plug for organizers who need a fast, transparent way to run competitions and sell tickets online.</p>
 
-  <div class="faqList">
+  <div class="infoCard">
+    <h2>Who we are</h2>
+    <p>
+      Lumina Vote is a product of <b>Campus Plug</b>, a Ghana-based company that also runs
+      <a href="https://campusplug.app" target="_blank" rel="noopener">campusplug.app</a>, a
+      marketplace connecting students across Ghana's universities, technical universities, and
+      training colleges. We built Lumina Vote to bring that same local, no-nonsense approach to
+      event voting and ticketing — pageants, talent shows, award nights, and campus events that
+      need a fair, trackable way to collect votes or sell tickets.
+    </p>
+    <p>
+      Every vote and every ticket sale on Lumina Vote is recorded and reflected in real time, so
+      organizers and voters can both see exactly where things stand.
+    </p>
+  </div>
 
-    <div class="faqCard">
-      <h3>I paid but my vote hasn't reflected yet</h3>
-      <p>
-        Vote confirmations usually land within a minute of payment. Go to
-        <a href="verify-vote.html">Verify Vote</a> and enter the phone number you paid with
-        (or the payment reference from your receipt) to check the exact status. If it still
-        shows nothing after a few minutes, contact us below with your reference.
-      </p>
+  <div class="infoCard">
+    <h2>What we do</h2>
+    <div class="valueGrid">
+      <div class="valueItem">
+        <b>Voting Competitions</b>
+        <span>Organizers create events, add contestants, and votes get tallied live.</span>
+      </div>
+      <div class="valueItem">
+        <b>Ticketed Events</b>
+        <span>Sell tickets online with QR codes and check-in at the door.</span>
+      </div>
+      <div class="valueItem">
+        <b>Live Results</b>
+        <span>Anyone can follow a leaderboard as it updates in real time.</span>
+      </div>
     </div>
+  </div>
 
-    <div class="faqCard">
-      <h3>I paid but got no confirmation message</h3>
-      <p>
-        Check <a href="verify-vote.html">Verify Vote</a> first — payments are sometimes confirmed
-        even if the SMS/prompt was delayed. If nothing shows up after 10 minutes, reach out with
-        your MoMo transaction ID.
-      </p>
-    </div>
-
-    <div class="faqCard">
-      <h3>How do I buy a ticket or vote for a contestant?</h3>
-      <p>
-        Browse <a href="voting-home.html">Events</a>, open the one you want, and choose a
-        contestant to vote for or a ticket to buy. You'll be redirected to Hubtel to complete
-        payment securely.
-      </p>
-    </div>
-
-    <div class="faqCard">
-      <h3>Can I get a refund?</h3>
-      <p>
-        Votes and tickets are non-refundable once payment is confirmed, since votes are credited
-        immediately. If you were charged without receiving any votes or ticket after 15+ minutes,
-        contact us with your reference and we'll investigate.
-      </p>
-    </div>
-
-    <div class="faqCard">
-      <h3>I want to organize my own event</h3>
-      <p>
-        Head to <a href="event-registration.html">Create Event</a> to set up a voting
-        competition or ticketed event — you'll need an organizer account first.
-      </p>
-    </div>
-
+  <div class="infoCard">
+    <h2>Our approach</h2>
+    <p>
+      We keep things local, honest, and simple — the same principles behind everything Campus
+      Plug builds. That means clear pricing, no hidden fees, and support you can actually reach
+      when something goes wrong.
+    </p>
   </div>
 
   <div class="contactCard">
-    <h2>Still need help?</h2>
-    <p>Reach out directly and we'll sort it out.</p>
+    <h2>Want to know more?</h2>
+    <p>Reach out and we'll answer any question about how Lumina Vote works.</p>
     <div class="contactActions">
-      <a class="contactBtn primary" href="tel:0593410452">Call 0593410452</a>
-      <a class="contactBtn ghost" href="verify-vote.html">Verify a Payment</a>
+      <a class="contactBtn primary" href="contact.html">Contact Us</a>
+      <a class="contactBtn ghost" href="voting-home.html">Browse Events</a>
     </div>
   </div>
 
   <div class="footer">
-    © <span id="y"></span> Lumina Creative Co<br>
-    <div style="margin-bottom:10px;"><a href="about.html" style="text-decoration:underline;">About</a> &middot; <a href="terms.html" style="text-decoration:underline;">Terms</a> &middot; <a href="refund-policy.html" style="text-decoration:underline;">Refund Policy</a> &middot; <a href="contact.html" style="text-decoration:underline;">Contact</a></div>
+    © <span id="y"></span> Lumina Creative Co · A Campus Plug product<br>
     Website created by <b>Lord Wilhelm</b> (0593410452)
   </div>
 

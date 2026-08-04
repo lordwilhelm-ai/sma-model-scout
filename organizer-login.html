@@ -532,7 +532,8 @@ body{
 
       <div class="footer">
         © <span id="y"></span> Lumina Creative Co<br>
-        Site created by <b>Lord Wilhelm</b> (0593410452)
+        <div style="margin-bottom:10px;"><a href="about.html" style="text-decoration:underline;">About</a> &middot; <a href="terms.html" style="text-decoration:underline;">Terms</a> &middot; <a href="refund-policy.html" style="text-decoration:underline;">Refund Policy</a> &middot; <a href="contact.html" style="text-decoration:underline;">Contact</a></div>
+        Website created by <b>Lord Wilhelm</b> (0593410452)
       </div>
 
     </div>
@@ -626,6 +627,8 @@ loginBtn.addEventListener("click", async () => {
 
       if(message.includes("invalid login credentials")){
         setMsg(loginMsg, "Login failed. Check email or password.");
+      }else if(message.includes("email not confirmed") || message.includes("not confirmed")){
+        setMsg(loginMsg, "Please confirm your email first. Check your inbox (and spam folder) for the confirmation link we sent when you signed up.");
       }else if(message.includes("rate limit") || message.includes("too many")){
         setMsg(loginMsg, "Too many attempts. Wait small and try again.");
       }else{
@@ -669,7 +672,7 @@ signupBtn.addEventListener("click", async () => {
   setMsg(signupMsg, "", "success");
 
   try{
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -700,6 +703,15 @@ signupBtn.addEventListener("click", async () => {
 
     // Profile row is created server-side by a database trigger reading the
     // metadata above, so it exists immediately even before email confirmation.
+    // signUp() only returns an active session when "Confirm email" is off for
+    // this project. When it's on, there's no session yet — redirecting to the
+    // dashboard would just bounce back to login, so tell the user to confirm
+    // their email instead of pretending they're signed in.
+    if(!data?.session){
+      setMsg(signupMsg, "Account created. Check your email for a confirmation link, then log in.", "success");
+      return;
+    }
+
     setMsg(signupMsg, "Account created successfully.", "success");
 
     setTimeout(() => {

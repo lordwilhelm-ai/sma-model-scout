@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Support | Lumina Vote</title>
+<title>Contact Us | Lumina Vote</title>
 
 <style>
 *{box-sizing:border-box}
@@ -178,86 +178,82 @@ a{color:inherit}
   max-width:600px;
 }
 
-.faqList{
-  display:flex;
-  flex-direction:column;
+.contactGrid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
   gap:14px;
-  margin-bottom:30px;
+  margin-bottom:16px;
 }
 
-.faqCard{
+@media(max-width:600px){
+  .contactGrid{grid-template-columns:1fr}
+}
+
+.contactTile{
   background:#ffffff;
   border:1px solid #efe7d8;
   border-radius:16px;
-  padding:18px 20px;
+  padding:20px;
   box-shadow:0 8px 24px rgba(60,45,10,0.05);
 }
 
-.faqCard h3{
-  margin:0 0 8px;
-  font-size:16px;
-  font-weight:800;
+.contactTile .icon{
+  width:42px;
+  height:42px;
+  border-radius:12px;
+  background:#f6e6c8;
+  color:#8a5b12;
+  display:grid;
+  place-items:center;
+  font-weight:900;
+  font-size:18px;
+  margin-bottom:12px;
 }
 
-.faqCard p{
-  margin:0;
+.contactTile h3{
+  margin:0 0 6px;
+  font-size:15px;
+  font-weight:900;
+}
+
+.contactTile p{
+  margin:0 0 10px;
   color:#6b6156;
-  font-size:14px;
+  font-size:13.5px;
   line-height:1.6;
 }
 
-.faqCard a{
+.contactTile a.link{
   color:#8a5b12;
   font-weight:800;
   text-decoration:none;
-}
-
-.contactCard{
-  background:#161311;
-  color:#faf7f0;
-  border-radius:18px;
-  padding:24px;
-  text-align:center;
-}
-
-.contactCard h2{
-  margin:0 0 8px;
-  font-family:Georgia, "Times New Roman", serif;
-  font-size:24px;
-}
-
-.contactCard p{
-  margin:0 0 18px;
-  color:#c9bfae;
   font-size:14px;
-  line-height:1.6;
 }
 
-.contactActions{
-  display:flex;
-  gap:10px;
-  justify-content:center;
-  flex-wrap:wrap;
+.infoCard{
+  background:#ffffff;
+  border:1px solid #efe7d8;
+  border-radius:16px;
+  padding:22px 20px;
+  box-shadow:0 8px 24px rgba(60,45,10,0.05);
+  margin-bottom:16px;
 }
 
-.contactBtn{
-  text-decoration:none;
-  border-radius:999px;
-  padding:12px 20px;
-  font-weight:800;
-  font-size:13.5px;
+.infoCard h2{
+  margin:0 0 10px;
+  font-family:Georgia, "Times New Roman", serif;
+  font-size:20px;
+  font-weight:900;
 }
 
-.contactBtn.primary{
-  background:linear-gradient(135deg,#d4af37,#b88718);
-  color:#1b1008;
+.infoCard p{
+  margin:0 0 12px;
+  color:#4a423a;
+  font-size:14.5px;
+  line-height:1.7;
 }
 
-.contactBtn.ghost{
-  border:1px solid rgba(255,255,255,.20);
-  background:rgba(255,255,255,0.06);
-  color:#faf7f0;
-}
+.infoCard p:last-child{margin-bottom:0}
 
 .footer{
   margin-top:34px;
@@ -285,7 +281,8 @@ a{color:inherit}
     <nav class="navLinks">
       <a href="voting-home.html">Events</a>
       <a href="live-results.html">Live Results</a>
-      <a href="verify-vote.html">Verify vote</a>
+      <a href="about.html">About</a>
+      <a class="active" href="contact.html">Contact</a>
     </nav>
 
     <div class="headerRight">
@@ -296,7 +293,8 @@ a{color:inherit}
   <div class="mobileMenu" id="mobileMenu">
     <a href="index.html">Home</a>
     <a href="voting-home.html">Events</a>
-    <a href="verify-vote.html">Verify vote</a>
+    <a href="about.html">About</a>
+    <a href="contact.html">Contact</a>
     <a href="support.html">Support</a>
   </div>
 </header>
@@ -304,74 +302,50 @@ a{color:inherit}
 <main class="pageWrap">
 
   <div class="breadcrumb">
-    <a href="index.html">Home</a> / <span class="current">Support</span>
+    <a href="index.html">Home</a> / <span class="current">Contact</span>
   </div>
 
-  <span class="eyebrow">Help Center</span>
-  <h1 class="pageTitle">Support</h1>
-  <p class="pageSub">Answers to the most common questions about voting, tickets, and payments.</p>
+  <span class="eyebrow">Get In Touch</span>
+  <h1 class="pageTitle">Contact Us</h1>
+  <p class="pageSub">Questions about voting, tickets, payments, or setting up your own event? Reach out and we'll get back to you.</p>
 
-  <div class="faqList">
-
-    <div class="faqCard">
-      <h3>I paid but my vote hasn't reflected yet</h3>
-      <p>
-        Vote confirmations usually land within a minute of payment. Go to
-        <a href="verify-vote.html">Verify Vote</a> and enter the phone number you paid with
-        (or the payment reference from your receipt) to check the exact status. If it still
-        shows nothing after a few minutes, contact us below with your reference.
-      </p>
+  <div class="contactGrid">
+    <div class="contactTile">
+      <div class="icon">✉</div>
+      <h3>Email</h3>
+      <p>For general questions, payment issues, or support requests.</p>
+      <a class="link" href="mailto:joincampusplug@gmail.com">joincampusplug@gmail.com</a>
     </div>
 
-    <div class="faqCard">
-      <h3>I paid but got no confirmation message</h3>
-      <p>
-        Check <a href="verify-vote.html">Verify Vote</a> first — payments are sometimes confirmed
-        even if the SMS/prompt was delayed. If nothing shows up after 10 minutes, reach out with
-        your MoMo transaction ID.
-      </p>
+    <div class="contactTile">
+      <div class="icon">☎</div>
+      <h3>Phone</h3>
+      <p>Call or WhatsApp us directly for urgent issues.</p>
+      <a class="link" href="tel:0593410452">0593410452</a>
     </div>
-
-    <div class="faqCard">
-      <h3>How do I buy a ticket or vote for a contestant?</h3>
-      <p>
-        Browse <a href="voting-home.html">Events</a>, open the one you want, and choose a
-        contestant to vote for or a ticket to buy. You'll be redirected to Hubtel to complete
-        payment securely.
-      </p>
-    </div>
-
-    <div class="faqCard">
-      <h3>Can I get a refund?</h3>
-      <p>
-        Votes and tickets are non-refundable once payment is confirmed, since votes are credited
-        immediately. If you were charged without receiving any votes or ticket after 15+ minutes,
-        contact us with your reference and we'll investigate.
-      </p>
-    </div>
-
-    <div class="faqCard">
-      <h3>I want to organize my own event</h3>
-      <p>
-        Head to <a href="event-registration.html">Create Event</a> to set up a voting
-        competition or ticketed event — you'll need an organizer account first.
-      </p>
-    </div>
-
   </div>
 
-  <div class="contactCard">
-    <h2>Still need help?</h2>
-    <p>Reach out directly and we'll sort it out.</p>
-    <div class="contactActions">
-      <a class="contactBtn primary" href="tel:0593410452">Call 0593410452</a>
-      <a class="contactBtn ghost" href="verify-vote.html">Verify a Payment</a>
-    </div>
+  <div class="infoCard">
+    <h2>Response times</h2>
+    <p>
+      We aim to reply to every message within 24 to 48 hours, and most questions are answered a
+      lot sooner than that. Before reaching out, check our
+      <a href="support.html">Support</a> page — many common questions about voting, tickets, and
+      payments are already answered there.
+    </p>
+  </div>
+
+  <div class="infoCard">
+    <h2>Who you're reaching</h2>
+    <p>
+      Lumina Vote is built and operated by <b>Campus Plug</b>, based in Ghana. You can find out
+      more about us on our <a href="about.html">About</a> page or visit
+      <a href="https://campusplug.app" target="_blank" rel="noopener">campusplug.app</a>.
+    </p>
   </div>
 
   <div class="footer">
-    © <span id="y"></span> Lumina Creative Co<br>
-    <div style="margin-bottom:10px;"><a href="about.html" style="text-decoration:underline;">About</a> &middot; <a href="terms.html" style="text-decoration:underline;">Terms</a> &middot; <a href="refund-policy.html" style="text-decoration:underline;">Refund Policy</a> &middot; <a href="contact.html" style="text-decoration:underline;">Contact</a></div>
+    © <span id="y"></span> Lumina Creative Co · A Campus Plug product<br>
     Website created by <b>Lord Wilhelm</b> (0593410452)
   </div>
 
