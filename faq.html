@@ -568,7 +568,7 @@ const categories = [
     id: "getting-started",
     name: "Getting Started",
     faqs: [
-      ["What is Lumina Vote?", "Lumina Vote is a voting and ticketing platform, built by Campus Plug Technologies, where organizers run paid voting competitions and sell tickets online, and the public votes for contestants or buys tickets with instant confirmation."],
+      ["What is Lumina Vote?", "Lumina Vote is a voting and ticketing platform, built by Campus Plug Technologies, where organizers run paid voting competitions and sell tickets online, and the public votes for contestants or buys tickets with instant confirmation — on the website or by USSD."],
       ["Who can use Lumina Vote?", "Anyone. Voters and ticket buyers don't need an account at all — just a phone number and a way to pay. Organizers and contestants create free accounts to manage events or track their own votes."],
       ["Is it free to use?", "Browsing events, checking results, and creating an organizer or contestant account are all free. You only pay when you cast a vote or buy a ticket."],
       ["Do I need to download an app?", "No. Lumina Vote runs entirely in your phone or computer's browser — nothing to install."],
@@ -596,7 +596,10 @@ const categories = [
       ["What happens when voting closes?", "The organizer marks the competition as closed and the final vote counts stand as the result. No more votes can be purchased for that event."],
       ["Can an organizer delete or hide votes?", "No — votes are recorded automatically by the payment system, not entered manually, so an organizer can't edit or remove valid votes."],
       ["Is there a minimum or maximum number of votes I can buy at once?", "The minimum is 1 vote. There's no fixed maximum, though very large purchases may be limited by your payment provider's own transaction limits."],
-      ["Why do some events show 'Paused' or 'Upcoming' instead of letting me vote?", "An event only accepts votes while it's marked 'Live' by the organizer. 'Upcoming' means voting hasn't opened yet, and 'Paused' means the organizer has temporarily suspended voting."]
+      ["Why do some events show 'Paused' or 'Upcoming' instead of letting me vote?", "An event only accepts votes while it's marked 'Live' by the organizer. 'Upcoming' means voting hasn't opened yet, and 'Paused' means the organizer has temporarily suspended voting."],
+      ["Can I vote without internet or a smartphone?", "Yes — dial our USSD code from any phone, select Vote, enter the contestant's code, choose how many votes you want, and confirm with Mobile Money. No internet or app needed."],
+      ["How do I find a contestant's code for USSD voting?", "Every contestant has a short nominee code shown on the event's results page and on their profile — ask the contestant directly, or check the event page online if you have access to it."],
+      ["Does USSD voting cost the same as voting online?", "Yes, the price per vote is exactly the same regardless of which way you vote — USSD just charges your Mobile Money directly instead of opening a payment page."]
     ]
   },
   {
@@ -604,6 +607,8 @@ const categories = [
     name: "Tickets",
     faqs: [
       ["How do I buy a ticket to an event?", "Open the event from <a href=\"voting-home.html\">Events</a>, choose your ticket type and quantity, and complete payment. Your ticket (with a QR code) is issued immediately."],
+      ["Can I buy a ticket without internet, using USSD?", "Yes — dial our USSD code, choose Buy Event Ticket, enter the event code, pick a quantity, and enter your email address. Your ticket QR code is emailed to you once payment is confirmed."],
+      ["Why does USSD ask for my email if I'm not using the internet?", "Your ticket's QR code still needs to reach you somehow, and email is the most reliable way. If you don't get the email, look your ticket up anytime at <a href=\"ticket-status.html\">Ticket Status</a> using the phone number you paid with."],
       ["Where do I find my ticket after buying it?", "Check <a href=\"ticket-status.html\">Ticket Status</a> with the phone number or reference used to pay, or check the confirmation shown right after payment."],
       ["Do I need to print my ticket?", "No — the QR code on your phone screen is scanned at the door. A printed copy also works if you prefer."],
       ["Can I transfer my ticket to someone else?", "You can share your ticket's QR code with someone else to use in your place, but each code can only be checked in once — whoever scans it first at the door gets in."],
@@ -619,7 +624,8 @@ const categories = [
     id: "payments",
     name: "Payments",
     faqs: [
-      ["What payment methods are supported?", "Mobile money and card payments through our secure third-party payment provider — the exact options available depend on your event and location."],
+      ["What payment methods are supported?", "Mobile money and card payments through our secure third-party payment provider on the website, and Mobile Money directly through USSD — the exact options available depend on your event and location."],
+      ["How is paying by USSD different from paying online?", "Both charge your Mobile Money account the same way and credit your vote or ticket the same way. USSD just skips the web checkout page — you approve the charge with the Mobile Money prompt sent straight to your phone."],
       ["Is it safe to pay on Lumina Vote?", "Yes. Payments are handled by a licensed, secure payment provider — we never see or store your card number or mobile money PIN."],
       ["I was charged but nothing was credited. What do I do?", "Go to <a href=\"verify-vote.html\">Verify Vote</a> first — payments are sometimes confirmed a little after the charge itself. If nothing shows after 10–15 minutes, contact us with your payment reference or the phone number you used."],
       ["Why was my payment declined?", "This is usually due to insufficient balance, an expired card, or a temporary issue with your mobile money provider. Try again, or use a different payment method."],
